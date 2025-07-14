@@ -7,7 +7,12 @@
       "Bash(bun test:*)",
       "Bash(bun remove:*)",
       "Bash(bun storybook dev:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(mkdir:*)",
+      "WebFetch(domain:ui.shadcn.com)",
+      "Bash(bunx:*)",
+      "Bash(timeout:*)",
+      "Bash(true)"
     ],
     "deny": []
   }

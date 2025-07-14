@@ -11,3 +11,7 @@ export type {
 
 // Backward compatibility
 export { VoteFeedback as ApprovalFeedback } from './components/vote-feedback';
+
+// shadcn/ui styled components
+export { ShadcnVoteFeedback } from './ui/shadcn';
+export type { ShadcnVoteFeedbackProps } from './ui/shadcn';

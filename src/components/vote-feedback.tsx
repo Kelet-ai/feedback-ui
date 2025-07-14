@@ -48,6 +48,7 @@ interface VoteFeedbackContextValue {
   setFeedbackText: (text: string) => void;
   isSubmitting: boolean;
   setIsSubmitting: (submitting: boolean) => void;
+  vote: 'upvote' | 'downvote' | null;
   handleUpvote: () => void;
   handleDownvote: () => void;
   handleTextareaChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
@@ -86,6 +87,7 @@ const VoteFeedbackRoot = ({
   const [showPopover, setShowPopover] = useState(false);
   const [feedbackText, setFeedbackText] = useState(defaultText);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [vote, setVote] = useState<'upvote' | 'downvote' | null>(null);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -94,6 +96,7 @@ const VoteFeedbackRoot = ({
   const triggerId = useId();
 
   const handleUpvote = useCallback(async () => {
+    setVote('upvote');
     if (onFeedback) {
       const data: FeedbackData = {
         identifier,
@@ -111,6 +114,7 @@ const VoteFeedbackRoot = ({
   }, [onFeedback, identifier, extra_metadata]);
 
   const handleDownvote = useCallback(async () => {
+    setVote('downvote');
     // First: Send feedback immediately (without explanation)
     if (onFeedback) {
       const data: FeedbackData = {
@@ -230,6 +234,7 @@ const VoteFeedbackRoot = ({
     setFeedbackText,
     isSubmitting,
     setIsSubmitting,
+    vote,
     handleUpvote,
     handleDownvote,
     handleTextareaChange,
@@ -257,7 +262,7 @@ const UpvoteButton = ({
   onClick,
   ...props
 }: UpvoteButtonProps) => {
-  const { handleUpvote, isSubmitting } = useVoteFeedbackContext();
+  const { handleUpvote, isSubmitting, vote } = useVoteFeedbackContext();
 
   const handleClick = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -276,13 +281,18 @@ const UpvoteButton = ({
 
   };
 
-  if (asChild && isValidElement(children)) {
-    return cloneElement(children, mergeProps(slotProps, children.props as Record<string, any>));
+  const isSelected = vote === 'upvote';
+
+  if (asChild) {
+    const child = typeof children === 'function' ? children({ isSelected }) : children;
+    if (isValidElement(child)) {
+      return cloneElement(child, mergeProps(slotProps, child.props as Record<string, any>));
+    }
   }
 
   return (
     <button {...slotProps}>
-      {children}
+      {typeof children === 'function' ? children({ isSelected }) : children}
     </button>
   );
 };
@@ -301,6 +311,7 @@ const DownvoteButton = ({
     popoverId,
     triggerId,
     triggerRef,
+    vote,
   } = useVoteFeedbackContext();
 
   const handleClick = useCallback(
@@ -323,13 +334,20 @@ const DownvoteButton = ({
     type: 'button' as const,
   };
 
-  if (asChild && isValidElement(children)) {
-    return cloneElement(children, mergeProps(slotProps, children.props as Record<string, any>));
+  const isSelected = vote === 'downvote';
+
+  if (asChild) {
+    const child = typeof children === 'function' ? children({ isSelected }) : children;
+    if (isValidElement(child)) {
+      return cloneElement(child, mergeProps(slotProps, child.props as any));
+    } else if (child) {
+      return child;
+    }
   }
 
   return (
     <button {...slotProps}>
-      {children}
+      {typeof children === 'function' ? children({ isSelected }) : children}
     </button>
   );
 };

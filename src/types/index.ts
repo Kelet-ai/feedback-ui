@@ -32,9 +32,9 @@ export interface VoteFeedbackRootProps {
  * Headless - you provide your own styling and content
  */
 export interface UpvoteButtonProps
-  extends ButtonHTMLAttributes<HTMLButtonElement> {
+  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
   asChild?: boolean;
-  children: ReactNode;
+  children: ReactNode | (({ isSelected }: { isSelected: boolean }) => ReactNode);
 }
 
 /**
@@ -42,9 +42,9 @@ export interface UpvoteButtonProps
  * Headless - you provide your own styling and content
  */
 export interface DownvoteButtonProps
-  extends ButtonHTMLAttributes<HTMLButtonElement> {
+  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
   asChild?: boolean;
-  children: ReactNode;
+  children: ReactNode | (({ isSelected }: { isSelected: boolean }) => ReactNode);
 }
 
 /**

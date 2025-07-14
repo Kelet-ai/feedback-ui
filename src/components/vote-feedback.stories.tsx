@@ -93,44 +93,75 @@ export const HeadlessBasic: Story = {
     const canvas = within(canvasElement);
 
     // Test upvote button
-    const upvoteButton = canvas.getByText('👍 Like');
+    const upvoteButton = canvas.getByText(/👍 Like/);
+    const downvoteButton = canvas.getByText(/👎 Dislike/);
+
+    // 1. Initial state: neither is selected
+    await expect(upvoteButton).not.toHaveTextContent('(Selected)');
+    await expect(downvoteButton).not.toHaveTextContent('(Selected)');
+
+    // 2. Click upvote
     await userEvent.click(upvoteButton);
 
+    // Assert upvote is selected and downvote is not
+    await expect(upvoteButton).toHaveTextContent('(Selected)');
+    await expect(downvoteButton).not.toHaveTextContent('(Selected)');
     await expect(args.onFeedback).toHaveBeenCalledWith({
       identifier: 'story-demo',
       type: 'upvote',
+    });
+
+    // 3. Click downvote
+    await userEvent.click(downvoteButton);
+
+    // Assert downvote is selected and upvote is not
+    await expect(downvoteButton).toHaveTextContent('(Selected)');
+    await expect(upvoteButton).not.toHaveTextContent('(Selected)');
+    await expect(args.onFeedback).toHaveBeenCalledWith({
+      identifier: 'story-demo',
+      type: 'downvote',
     });
   },
   render: args => (
     <VoteFeedback.Root {...args}>
       <div style={{ position: 'relative', display: 'inline-block' }}>
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-          <VoteFeedback.UpvoteButton
-            style={{
-              padding: '8px 16px',
-              backgroundColor: '#22c55e',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontSize: '14px',
-            }}
-          >
-            👍 Like
+          <VoteFeedback.UpvoteButton>
+            {({ isSelected }) => (
+              <button
+                style={{
+                  padding: '8px 16px',
+                  backgroundColor: '#22c55e',
+                  color: 'white',
+                  border: isSelected ? '2px solid #14532d' : 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  opacity: isSelected ? 1 : 0.7,
+                }}
+              >
+                👍 Like {isSelected && '(Selected)'}
+              </button>
+            )}
           </VoteFeedback.UpvoteButton>
 
-          <VoteFeedback.DownvoteButton
-            style={{
-              padding: '8px 16px',
-              backgroundColor: '#ef4444',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontSize: '14px',
-            }}
-          >
-            👎 Dislike
+          <VoteFeedback.DownvoteButton>
+            {({ isSelected }) => (
+              <button
+                style={{
+                  padding: '8px 16px',
+                  backgroundColor: '#ef4444',
+                  color: 'white',
+                  border: isSelected ? '2px solid #7f1d1d' : 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  opacity: isSelected ? 1 : 0.7,
+                }}
+              >
+                👎 Dislike {isSelected && '(Selected)'}
+              </button>
+            )}
           </VoteFeedback.DownvoteButton>
         </div>
 

@@ -1,6 +1,8 @@
-import type { Preview } from '@storybook/react-vite';
-import '../src/styles/globals.css';
-import '../src/styles/accessibility.css';
+import type {Preview} from '@storybook/react-vite';
+import {withThemeByClassName} from '@storybook/addon-themes'
+
+import '@/styles/globals.css';
+import '@/styles/accessibility.css';
 
 const preview: Preview = {
   parameters: {
@@ -11,6 +13,16 @@ const preview: Preview = {
       },
     },
   },
+
+  decorators: [
+    withThemeByClassName({
+      themes: {
+        light: '',
+        dark: 'dark',
+      },
+      defaultTheme: 'light',
+    }),
+  ],
 
   tags: ['autodocs'],
 };
