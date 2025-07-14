@@ -1,11 +1,4 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useId,
-  useRef,
-  useState,
-} from 'react';
+import {cloneElement, createContext, isValidElement, useCallback, useContext, useId, useRef, useState,} from 'react';
 import type {
   DownvoteButtonProps,
   FeedbackData,
@@ -15,6 +8,36 @@ import type {
   UpvoteButtonProps,
   VoteFeedbackRootProps,
 } from '@/types';
+
+// Utility function to merge props with a child element (asChild pattern)
+const mergeProps = (slotProps: Record<string, any>, childProps: Record<string, any>) => {
+  const overrideProps = { ...childProps };
+
+  for (const propName in childProps) {
+    const slotPropValue = slotProps[propName];
+    const childPropValue = childProps[propName];
+
+    const isHandler = /^on[A-Z]/.test(propName);
+    if (isHandler) {
+      if (slotPropValue && childPropValue) {
+        overrideProps[propName] = (...args: any[]) => {
+          childPropValue(...args);
+          slotPropValue(...args);
+        };
+      } else if (slotPropValue) {
+        overrideProps[propName] = slotPropValue;
+      }
+    } else if (propName === 'style') {
+      overrideProps[propName] = { ...slotPropValue, ...childPropValue };
+    } else if (propName === 'className') {
+      overrideProps[propName] = [slotPropValue, childPropValue].filter(Boolean).join(' ');
+    } else {
+      overrideProps[propName] = childPropValue !== undefined ? childPropValue : slotPropValue;
+    }
+  }
+
+  return { ...slotProps, ...overrideProps };
+};
 
 // Context for the VoteFeedback component
 interface VoteFeedbackContextValue {
@@ -244,19 +267,21 @@ const UpvoteButton = ({
     [handleUpvote, onClick]
   );
 
-  if (asChild) {
-    // TODO: Implement asChild pattern similar to Radix UI
-    return children as React.ReactElement;
+  const slotProps = {
+    ...props,
+    onClick: handleClick,
+    disabled: isSubmitting || props.disabled,
+    'aria-label': props['aria-label'] || 'Upvote feedback',
+    type: 'button' as const,
+
+  };
+
+  if (asChild && isValidElement(children)) {
+    return cloneElement(children, mergeProps(slotProps, children.props as Record<string, any>));
   }
 
   return (
-    <button
-      {...props}
-      onClick={handleClick}
-      disabled={isSubmitting || props.disabled}
-      aria-label="Upvote feedback"
-      type="button"
-    >
+    <button {...slotProps}>
       {children}
     </button>
   );
@@ -286,23 +311,24 @@ const DownvoteButton = ({
     [handleDownvote, onClick]
   );
 
-  if (asChild) {
-    // TODO: Implement asChild pattern similar to Radix UI
-    return children as React.ReactElement;
+  const slotProps = {
+    ...props,
+    ref: triggerRef,
+    onClick: handleClick,
+    disabled: isSubmitting || props.disabled,
+    'aria-label': props['aria-label'] || 'Downvote feedback',
+    'aria-expanded': showPopover,
+    'aria-controls': popoverId,
+    id: triggerId,
+    type: 'button' as const,
+  };
+
+  if (asChild && isValidElement(children)) {
+    return cloneElement(children, mergeProps(slotProps, children.props as Record<string, any>));
   }
 
   return (
-    <button
-      {...props}
-      ref={triggerRef}
-      onClick={handleClick}
-      disabled={isSubmitting || props.disabled}
-      aria-label="Downvote feedback"
-      aria-expanded={showPopover}
-      aria-controls={popoverId}
-      id={triggerId}
-      type="button"
-    >
+    <button {...slotProps}>
       {children}
     </button>
   );
@@ -317,22 +343,30 @@ const Popover = ({ asChild, children, ...props }: PopoverProps) => {
     return null;
   }
 
-  if (asChild) {
-    // TODO: Implement asChild pattern similar to Radix UI
-    return children as React.ReactElement;
+  const slotProps = {
+    ...props,
+    role: 'dialog' as const,
+    'aria-labelledby': triggerId,
+    'aria-modal': true,
+    'aria-describedby': `${popoverId}-description`,
+    id: popoverId,
+    onKeyDown: handleKeyDown,
+    tabIndex: -1,
+  };
+
+  if (asChild && isValidElement(children)) {
+    return (
+      <>
+        {cloneElement(children, mergeProps(slotProps, children.props as Record<string, any>))}
+        <div id={`${popoverId}-description`} className="sr-only">
+          Provide additional feedback for your downvote
+        </div>
+      </>
+    );
   }
 
   return (
-    <div
-      {...props}
-      role="dialog"
-      aria-labelledby={triggerId}
-      aria-modal="true"
-      aria-describedby={`${popoverId}-description`}
-      id={popoverId}
-      onKeyDown={handleKeyDown}
-      tabIndex={-1}
-    >
+    <div {...slotProps}>
       <div id={`${popoverId}-description`} className="sr-only">
         Provide additional feedback for your downvote
       </div>
@@ -351,23 +385,24 @@ const Textarea = ({ asChild, value, onChange, ...props }: TextareaProps) => {
     popoverId,
   } = useVoteFeedbackContext();
 
-  if (asChild) {
-    // TODO: Implement asChild pattern similar to Radix UI
-    return props.children as React.ReactElement;
+  const slotProps = {
+    ...props,
+    ref: textareaRef,
+    value: value !== undefined ? value : feedbackText,
+    onChange: onChange || handleTextareaChange,
+    onKeyDown: handleKeyDown,
+    placeholder: props.placeholder || 'What did we miss?',
+    'aria-label': props['aria-label'] || 'Additional feedback',
+    'aria-describedby': `${popoverId}-help`,
+    rows: props.rows || 3,
+  };
+
+  if (asChild && isValidElement(props.children)) {
+    return cloneElement(props.children, mergeProps(slotProps, props.children.props as Record<string, any>));
   }
 
   return (
-    <textarea
-      {...props}
-      ref={textareaRef}
-      value={value !== undefined ? value : feedbackText}
-      onChange={onChange || handleTextareaChange}
-      onKeyDown={handleKeyDown}
-      placeholder={props.placeholder || 'What did we miss?'}
-      aria-label={props['aria-label'] || 'Additional feedback'}
-      aria-describedby={`${popoverId}-help`}
-      rows={3}
-    />
+    <textarea {...slotProps} />
   );
 };
 
@@ -388,23 +423,33 @@ const SubmitButton = ({
     [handleSubmit, onClick]
   );
 
-  if (asChild) {
-    // TODO: Implement asChild pattern similar to Radix UI
-    return children as React.ReactElement;
-  }
-
   const hasText = feedbackText.trim().length > 0;
   const buttonText = hasText ? 'Submit feedback' : 'Close without feedback';
 
+  const slotProps = {
+    ...props,
+    onClick: handleClick,
+    disabled: isSubmitting || props.disabled,
+    type: 'button' as const,
+    'aria-label': props['aria-label'] || buttonText,
+    'aria-describedby': hasText ? undefined : 'submit-help',
+  };
+
+  if (asChild && isValidElement(children)) {
+    return (
+      <>
+        {cloneElement(children, mergeProps(slotProps, children.props as Record<string, any>))}
+        {!hasText && (
+          <span id="submit-help" className="sr-only">
+            This will close the dialog without submitting feedback
+          </span>
+        )}
+      </>
+    );
+  }
+
   return (
-    <button
-      {...props}
-      onClick={handleClick}
-      disabled={isSubmitting || props.disabled}
-      type="button"
-      aria-label={props['aria-label'] || buttonText}
-      aria-describedby={hasText ? undefined : 'submit-help'}
-    >
+    <button {...slotProps}>
       {children}
       {!hasText && (
         <span id="submit-help" className="sr-only">

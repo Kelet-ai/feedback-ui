@@ -411,6 +411,238 @@ export const HeadlessMinimal: Story = {
     </VoteFeedback.Root>
   ),
 };
+export const AsChildPattern: Story = {
+  args: {
+    identifier: 'as-child-demo',
+    extra_metadata: {
+      testId: 'as-child-pattern',
+    },
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: `
+**AsChild Pattern Demo** - Shows how to use custom elements with the \`asChild\` prop:
+
+1. **Custom Button Elements** - Use your own button/div/span with asChild
+2. **Prop Merging** - Component props merge correctly with child props
+3. **Event Handling** - Both component and child event handlers work
+4. **Accessibility** - ARIA attributes are preserved and merged
+5. **Styling** - Child element styles are preserved, component behavior added
+
+The \`asChild\` pattern is inspired by Radix UI and allows maximum flexibility while keeping all the headless logic.
+        `,
+      },
+    },
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+
+    // Test custom upvote element
+    const customUpvote = canvas.getByTestId('custom-upvote');
+    await userEvent.click(customUpvote);
+
+    await expect(args.onFeedback).toHaveBeenCalledWith({
+      identifier: 'as-child-demo',
+      extra_metadata: {
+        testId: 'as-child-pattern',
+      },
+      type: 'upvote',
+    });
+
+    // Test custom downvote element
+    const customDownvote = canvas.getByTestId('custom-downvote');
+    await userEvent.click(customDownvote);
+
+    await expect(args.onFeedback).toHaveBeenLastCalledWith({
+      identifier: 'as-child-demo',
+      extra_metadata: {
+        testId: 'as-child-pattern',
+      },
+      type: 'downvote',
+    });
+
+    // Test custom textarea
+    const customTextarea = canvas.getByTestId('custom-textarea');
+    await userEvent.type(customTextarea, 'Using custom elements!');
+
+    // Test custom submit button
+    const customSubmit = canvas.getByTestId('custom-submit');
+    await userEvent.click(customSubmit);
+
+    await expect(args.onFeedback).toHaveBeenLastCalledWith({
+      identifier: 'as-child-demo',
+      extra_metadata: {
+        testId: 'as-child-pattern',
+      },
+      type: 'downvote',
+      explanation: 'Using custom elements!',
+    });
+
+    // Verify accessibility attributes are applied to custom elements
+    expect(customUpvote).toHaveAttribute('aria-label', 'Upvote feedback');
+    expect(customDownvote).toHaveAttribute('aria-expanded', 'false');
+    expect(customTextarea).toHaveAttribute('aria-label', 'Additional feedback');
+  },
+  render: args => (
+    <VoteFeedback.Root {...args}>
+      <div style={{ position: 'relative', display: 'inline-block' }}>
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          {/* Custom upvote element using asChild */}
+          <VoteFeedback.UpvoteButton asChild>
+            <div
+              data-testid="custom-upvote"
+              style={{
+                padding: '10px 20px',
+                background: 'linear-gradient(45deg, #ff6b6b, #ff8e8e)',
+                color: 'white',
+                borderRadius: '25px',
+                cursor: 'pointer',
+                fontSize: '16px',
+                fontWeight: 'bold',
+                textAlign: 'center',
+                userSelect: 'none',
+                border: '2px solid transparent',
+                transition: 'all 0.3s ease',
+                boxShadow: '0 4px 15px rgba(255, 107, 107, 0.3)',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 8px 25px rgba(255, 107, 107, 0.4)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 4px 15px rgba(255, 107, 107, 0.3)';
+              }}
+              className="custom-vote-button"
+            >
+              🚀 Love It!
+            </div>
+          </VoteFeedback.UpvoteButton>
+
+          {/* Custom downvote element using asChild */}
+          <VoteFeedback.DownvoteButton asChild>
+            <span
+              data-testid="custom-downvote"
+              style={{
+                padding: '10px 20px',
+                background: 'linear-gradient(45deg, #667eea, #764ba2)',
+                color: 'white',
+                borderRadius: '25px',
+                cursor: 'pointer',
+                fontSize: '16px',
+                fontWeight: 'bold',
+                textAlign: 'center',
+                userSelect: 'none',
+                display: 'inline-block',
+                transition: 'all 0.3s ease',
+                boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'scale(1.05)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'scale(1)';
+              }}
+              className="custom-vote-button"
+            >
+              🤔 Needs Work
+            </span>
+          </VoteFeedback.DownvoteButton>
+        </div>
+
+        {/* Custom popover container using asChild */}
+        <VoteFeedback.Popover asChild>
+          <section
+            style={{
+              position: 'absolute',
+              top: '100%',
+              left: '0',
+              marginTop: '12px',
+              padding: '20px',
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              borderRadius: '12px',
+              boxShadow: '0 10px 40px rgba(0, 0, 0, 0.2)',
+              width: '320px',
+              zIndex: 10,
+              color: 'white',
+            }}
+            className="custom-popover"
+          >
+            <h3
+              style={{
+                marginBottom: '16px',
+                fontWeight: '600',
+                fontSize: '18px',
+                color: 'white',
+                margin: '0 0 16px 0',
+              }}
+            >
+              Help us improve! ✨
+            </h3>
+            
+            {/* Custom textarea using asChild */}
+            <VoteFeedback.Textarea asChild>
+              <textarea
+                data-testid="custom-textarea"
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  border: 'none',
+                  borderRadius: '8px',
+                  resize: 'none',
+                  marginBottom: '16px',
+                  minHeight: '100px',
+                  fontSize: '14px',
+                  fontFamily: 'inherit',
+                  backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                  color: '#333',
+                  outline: 'none',
+                  boxSizing: 'border-box',
+                }}
+                placeholder="What could we do better? Your feedback helps us improve..."
+                className="custom-textarea"
+              />
+            </VoteFeedback.Textarea>
+            
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              {/* Custom submit button using asChild */}
+              <VoteFeedback.SubmitButton asChild>
+                <button
+                  data-testid="custom-submit"
+                  style={{
+                    padding: '12px 24px',
+                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                    color: 'white',
+                    border: '2px solid rgba(255, 255, 255, 0.3)',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    transition: 'all 0.3s ease',
+                    backdropFilter: 'blur(10px)',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.3)';
+                    e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.5)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
+                    e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+                  }}
+                  className="custom-submit-button"
+                >
+                  Send Feedback 📤
+                </button>
+              </VoteFeedback.SubmitButton>
+            </div>
+          </section>
+        </VoteFeedback.Popover>
+      </div>
+    </VoteFeedback.Root>
+  ),
+};
+
 export const CompleteWorkflow: Story = {
   args: {
     identifier: 'workflow-test',
