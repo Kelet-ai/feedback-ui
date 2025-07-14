@@ -537,13 +537,15 @@ The \`asChild\` pattern is inspired by Radix UI and allows maximum flexibility w
                 transition: 'all 0.3s ease',
                 boxShadow: '0 4px 15px rgba(255, 107, 107, 0.3)',
               }}
-              onMouseEnter={(e) => {
+              onMouseEnter={e => {
                 e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 8px 25px rgba(255, 107, 107, 0.4)';
+                e.currentTarget.style.boxShadow =
+                  '0 8px 25px rgba(255, 107, 107, 0.4)';
               }}
-              onMouseLeave={(e) => {
+              onMouseLeave={e => {
                 e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 4px 15px rgba(255, 107, 107, 0.3)';
+                e.currentTarget.style.boxShadow =
+                  '0 4px 15px rgba(255, 107, 107, 0.3)';
               }}
               className="custom-vote-button"
             >
@@ -569,10 +571,10 @@ The \`asChild\` pattern is inspired by Radix UI and allows maximum flexibility w
                 transition: 'all 0.3s ease',
                 boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)',
               }}
-              onMouseEnter={(e) => {
+              onMouseEnter={e => {
                 e.currentTarget.style.transform = 'scale(1.05)';
               }}
-              onMouseLeave={(e) => {
+              onMouseLeave={e => {
                 e.currentTarget.style.transform = 'scale(1)';
               }}
               className="custom-vote-button"
@@ -611,7 +613,7 @@ The \`asChild\` pattern is inspired by Radix UI and allows maximum flexibility w
             >
               Help us improve! ✨
             </h3>
-            
+
             {/* Custom textarea using asChild */}
             <VoteFeedback.Textarea asChild>
               <textarea
@@ -635,7 +637,7 @@ The \`asChild\` pattern is inspired by Radix UI and allows maximum flexibility w
                 className="custom-textarea"
               />
             </VoteFeedback.Textarea>
-            
+
             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
               {/* Custom submit button using asChild */}
               <VoteFeedback.SubmitButton asChild>
@@ -653,13 +655,17 @@ The \`asChild\` pattern is inspired by Radix UI and allows maximum flexibility w
                     transition: 'all 0.3s ease',
                     backdropFilter: 'blur(10px)',
                   }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.3)';
-                    e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.5)';
+                  onMouseEnter={e => {
+                    e.currentTarget.style.backgroundColor =
+                      'rgba(255, 255, 255, 0.3)';
+                    e.currentTarget.style.borderColor =
+                      'rgba(255, 255, 255, 0.5)';
                   }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
-                    e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+                  onMouseLeave={e => {
+                    e.currentTarget.style.backgroundColor =
+                      'rgba(255, 255, 255, 0.2)';
+                    e.currentTarget.style.borderColor =
+                      'rgba(255, 255, 255, 0.3)';
                   }}
                   className="custom-submit-button"
                 >

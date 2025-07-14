@@ -1,4 +1,13 @@
-import {cloneElement, createContext, isValidElement, useCallback, useContext, useId, useRef, useState,} from 'react';
+import {
+  cloneElement,
+  createContext,
+  isValidElement,
+  useCallback,
+  useContext,
+  useId,
+  useRef,
+  useState,
+} from 'react';
 import type {
   DownvoteButtonProps,
   FeedbackData,
@@ -10,7 +19,10 @@ import type {
 } from '@/types';
 
 // Utility function to merge props with a child element (asChild pattern)
-const mergeProps = (slotProps: Record<string, any>, childProps: Record<string, any>) => {
+const mergeProps = (
+  slotProps: Record<string, any>,
+  childProps: Record<string, any>
+) => {
   const overrideProps = { ...childProps };
 
   for (const propName in childProps) {
@@ -30,9 +42,12 @@ const mergeProps = (slotProps: Record<string, any>, childProps: Record<string, a
     } else if (propName === 'style') {
       overrideProps[propName] = { ...slotPropValue, ...childPropValue };
     } else if (propName === 'className') {
-      overrideProps[propName] = [slotPropValue, childPropValue].filter(Boolean).join(' ');
+      overrideProps[propName] = [slotPropValue, childPropValue]
+        .filter(Boolean)
+        .join(' ');
     } else {
-      overrideProps[propName] = childPropValue !== undefined ? childPropValue : slotPropValue;
+      overrideProps[propName] =
+        childPropValue !== undefined ? childPropValue : slotPropValue;
     }
   }
 
@@ -278,15 +293,18 @@ const UpvoteButton = ({
     disabled: isSubmitting || props.disabled,
     'aria-label': props['aria-label'] || 'Upvote feedback',
     type: 'button' as const,
-
   };
 
   const isSelected = vote === 'upvote';
 
   if (asChild) {
-    const child = typeof children === 'function' ? children({ isSelected }) : children;
+    const child =
+      typeof children === 'function' ? children({ isSelected }) : children;
     if (isValidElement(child)) {
-      return cloneElement(child, mergeProps(slotProps, child.props as Record<string, any>));
+      return cloneElement(
+        child,
+        mergeProps(slotProps, child.props as Record<string, any>)
+      );
     }
   }
 
@@ -337,7 +355,8 @@ const DownvoteButton = ({
   const isSelected = vote === 'downvote';
 
   if (asChild) {
-    const child = typeof children === 'function' ? children({ isSelected }) : children;
+    const child =
+      typeof children === 'function' ? children({ isSelected }) : children;
     if (isValidElement(child)) {
       return cloneElement(child, mergeProps(slotProps, child.props as any));
     } else if (child) {
@@ -375,7 +394,10 @@ const Popover = ({ asChild, children, ...props }: PopoverProps) => {
   if (asChild && isValidElement(children)) {
     return (
       <>
-        {cloneElement(children, mergeProps(slotProps, children.props as Record<string, any>))}
+        {cloneElement(
+          children,
+          mergeProps(slotProps, children.props as Record<string, any>)
+        )}
         <div id={`${popoverId}-description`} className="sr-only">
           Provide additional feedback for your downvote
         </div>
@@ -416,12 +438,13 @@ const Textarea = ({ asChild, value, onChange, ...props }: TextareaProps) => {
   };
 
   if (asChild && isValidElement(props.children)) {
-    return cloneElement(props.children, mergeProps(slotProps, props.children.props as Record<string, any>));
+    return cloneElement(
+      props.children,
+      mergeProps(slotProps, props.children.props as Record<string, any>)
+    );
   }
 
-  return (
-    <textarea {...slotProps} />
-  );
+  return <textarea {...slotProps} />;
 };
 
 // Submit button component
@@ -456,7 +479,10 @@ const SubmitButton = ({
   if (asChild && isValidElement(children)) {
     return (
       <>
-        {cloneElement(children, mergeProps(slotProps, children.props as Record<string, any>))}
+        {cloneElement(
+          children,
+          mergeProps(slotProps, children.props as Record<string, any>)
+        )}
         {!hasText && (
           <span id="submit-help" className="sr-only">
             This will close the dialog without submitting feedback

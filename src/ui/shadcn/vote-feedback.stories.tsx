@@ -1,6 +1,6 @@
-import type {Meta, StoryObj} from '@storybook/react';
-import {expect, fn, userEvent, within} from 'storybook/test';
-import {ShadcnVoteFeedback} from './vote-feedback';
+import type { Meta, StoryObj } from '@storybook/react';
+import { expect, fn, userEvent, within } from 'storybook/test';
+import { ShadcnVoteFeedback } from './vote-feedback';
 
 const meta: Meta<typeof ShadcnVoteFeedback> = {
   title: 'UI/Shadcn/VoteFeedback',
@@ -169,7 +169,9 @@ Professional and clean!
     });
 
     // 4. Add detailed feedback
-    const textarea = await within(document.body).findByPlaceholderText('What could we do better?');
+    const textarea = await within(document.body).findByPlaceholderText(
+      'What could we do better?'
+    );
     await userEvent.type(textarea, 'The explanation could be clearer');
 
     const submitButton = within(document.body).getByText('Submit');
@@ -288,10 +290,11 @@ Shows how the component looks when used inline with text or other content.
       },
     },
   },
-  render: (args) => (
+  render: args => (
     <div className="max-w-md space-y-4">
       <p className="text-sm text-muted-foreground">
-        This article explains how to implement authentication in React applications using modern best practices.
+        This article explains how to implement authentication in React
+        applications using modern best practices.
       </p>
       <div className="flex items-center justify-between">
         <span className="text-sm font-medium">Was this helpful?</span>

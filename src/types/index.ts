@@ -34,7 +34,9 @@ export interface VoteFeedbackRootProps {
 export interface UpvoteButtonProps
   extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
   asChild?: boolean;
-  children: ReactNode | (({ isSelected }: { isSelected: boolean }) => ReactNode);
+  children:
+    | ReactNode
+    | (({ isSelected }: { isSelected: boolean }) => ReactNode);
 }
 
 /**
@@ -44,7 +46,9 @@ export interface UpvoteButtonProps
 export interface DownvoteButtonProps
   extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
   asChild?: boolean;
-  children: ReactNode | (({ isSelected }: { isSelected: boolean }) => ReactNode);
+  children:
+    | ReactNode
+    | (({ isSelected }: { isSelected: boolean }) => ReactNode);
 }
 
 /**
