@@ -1,0 +1,79 @@
+{
+  "name": "feedback-ui",
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kelet-ai/feedback-ui.git"
+  },
+  "main": "./dist/feedback-ui.umd.js",
+  "module": "./dist/feedback-ui.es.js",
+  "devDependencies": {
+    "@chromatic-com/storybook": "^4.0.1",
+    "@storybook/addon-a11y": "^9.0.16",
+    "@storybook/addon-docs": "^9.0.16",
+    "@storybook/addon-vitest": "^9.0.16",
+    "@storybook/react-vite": "9.0.16",
+    "@tailwindcss/forms": "^0.5.10",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.5.2",
+    "@types/bun": "latest",
+    "@types/node": "^24.0.13",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "@vitejs/plugin-react": "^4.6.0",
+    "@vitest/browser": "^3.2.4",
+    "@vitest/coverage-v8": "^3.2.4",
+    "jsdom": "^26.1.0",
+    "playwright": "^1.54.1",
+    "prettier": "^3.6.2",
+    "storybook": "^9.0.16",
+    "tailwindcss": "^4.1.11",
+    "typescript": "^5.8.3",
+    "vite": "^7.0.4",
+    "vite-plugin-dts": "^4.5.4",
+    "vitest": "^3.2.4"
+  },
+  "peerDependencies": {
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/feedback-ui.es.js",
+      "require": "./dist/feedback-ui.umd.js"
+    }
+  },
+  "description": "A React component library for feedback UI components",
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "react",
+    "components",
+    "feedback",
+    "ui",
+    "typescript"
+  ],
+  "license": "APACHE-2.0",
+  "scripts": {
+    "dev": "NODE_NO_WARNINGS=1 storybook dev -p 6006",
+    "build": "vite build",
+    "build-storybook": "storybook build",
+    "test": "vitest",
+    "test:storybook": "vitest --project=storybook",
+    "test:storybook:coverage": "vitest --project=storybook --coverage",
+    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "preview": "vite preview",
+    "prepublishOnly": "bun run build",
+    "storybook": "NODE_NO_WARNINGS=1 storybook dev -p 6006"
+  },
+  "type": "module",
+  "types": "./dist/index.d.ts",
+  "dependencies": {
+    "happy-dom": "^18.0.1"
+  }
+}

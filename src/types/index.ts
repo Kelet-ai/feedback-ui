@@ -1,0 +1,76 @@
+import type {
+  ButtonHTMLAttributes,
+  HTMLAttributes,
+  ReactNode,
+  TextareaHTMLAttributes,
+} from 'react';
+
+/**
+ * Feedback data structure returned by the component
+ */
+export interface FeedbackData {
+  identifier: string;
+  extra_metadata?: Record<string, any>;
+  type: 'upvote' | 'downvote';
+  explanation?: string;
+}
+
+/**
+ * Props for the root VoteFeedback component
+ * This is a headless component - no styling included
+ */
+export interface VoteFeedbackRootProps {
+  children: ReactNode;
+  onFeedback?: (data: FeedbackData) => void | Promise<void>;
+  defaultText?: string;
+  identifier: string;
+  extra_metadata?: Record<string, any>;
+}
+
+/**
+ * Props for the upvote button
+ * Headless - you provide your own styling and content
+ */
+export interface UpvoteButtonProps
+  extends ButtonHTMLAttributes<HTMLButtonElement> {
+  asChild?: boolean;
+  children: ReactNode;
+}
+
+/**
+ * Props for the downvote button
+ * Headless - you provide your own styling and content
+ */
+export interface DownvoteButtonProps
+  extends ButtonHTMLAttributes<HTMLButtonElement> {
+  asChild?: boolean;
+  children: ReactNode;
+}
+
+/**
+ * Props for the popover container
+ * Headless - you control the positioning and styling
+ */
+export interface PopoverProps extends HTMLAttributes<HTMLDivElement> {
+  asChild?: boolean;
+  children: ReactNode;
+}
+
+/**
+ * Props for the textarea input
+ * Headless - you provide your own styling
+ */
+export interface TextareaProps
+  extends TextareaHTMLAttributes<HTMLTextAreaElement> {
+  asChild?: boolean;
+}
+
+/**
+ * Props for the submit button
+ * Headless - you provide your own styling and content
+ */
+export interface SubmitButtonProps
+  extends ButtonHTMLAttributes<HTMLButtonElement> {
+  asChild?: boolean;
+  children: ReactNode;
+}

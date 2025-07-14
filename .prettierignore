@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+storybook-static/
+
+# Logs
+*.log
+
+# Environment files
+.env*
+
+# Lock files
+bun.lock
+package-lock.json
+yarn.lock
+
+# Generated files
+*.d.ts
+
+# Documentation
+PLAN.md

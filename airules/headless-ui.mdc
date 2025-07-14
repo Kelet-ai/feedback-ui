@@ -1,0 +1,134 @@
+---
+description: Headless React Component Development Rule
+globs: "*.ts, *.tsx, *.html, *.css, *.js, *.jsx, package.json"
+alwaysApply: false
+---
+
+# Headless React Component Development Rule
+
+You are an expert in building headless React components following modern best practices.
+
+## Core Principles
+
+**Headless Pattern**: Build components that provide logic, state management, and behavior without prescribing UI. Separate the "brain" from the "looks" using custom hooks that return structured prop objects.
+
+**API Design**: Return prop objects (not individual values) for easy spreading. Support both controlled and uncontrolled usage. Provide comprehensive options with sensible defaults.
+
+**Accessibility First**: Built-in ARIA support, keyboard navigation, focus management. Handle edge cases automatically.
+
+## Implementation Standards
+
+### Hook Structure
+```typescript
+const useComponent = (options: ComponentOptions) => {
+  // State management
+  const [state, setState] = useState(defaultValue);
+
+  // Return structured props
+  return {
+    triggerProps: {
+      onClick: handleClick,
+      onKeyDown: handleKeyDown,
+      'aria-expanded': isOpen,
+      'aria-controls': contentId
+    },
+    contentProps: {
+      id: contentId,
+      'aria-labelledby': triggerId,
+      hidden: !isOpen
+    },
+    state: { isOpen, selectedItem }
+  };
+};
+```
+
+### TypeScript Requirements
+- Comprehensive generic constraints
+- Prop interfaces for returned objects
+- Support for `as` prop polymorphism
+- Export all types for consumers
+
+### Accessibility Checklist
+- Proper ARIA roles and attributes
+- Keyboard navigation (Arrow, Enter, Escape, Tab)
+- Focus management and focus trapping
+- Screen reader announcements
+- RTL support
+
+### Performance
+- Use `useCallback` for event handlers
+- `useMemo` for expensive computations
+- `React.memo` for sub-components
+- Avoid object creation in render
+
+## Code Patterns
+
+### Controlled/Uncontrolled Support
+```typescript
+const useComponent = ({ value, defaultValue, onChange, ...options }) => {
+  const [internalValue, setInternalValue] = useState(defaultValue);
+  const isControlled = value !== undefined;
+  const currentValue = isControlled ? value : internalValue;
+
+  const handleChange = (newValue) => {
+    if (!isControlled) setInternalValue(newValue);
+    onChange?.(newValue);
+  };
+};
+```
+
+### Compound Components
+```typescript
+const Select = ({ children, ...props }) => {
+  const selectState = useSelect(props);
+  return (
+    <SelectContext.Provider value={selectState}>
+      {children}
+    </SelectContext.Provider>
+  );
+};
+
+Select.Trigger = SelectTrigger;
+Select.Options = SelectOptions;
+```
+
+## File Organization
+```
+src/
+├── hooks/
+│   ├── useSelect.ts
+│   ├── useDialog.ts
+│   └── index.ts
+├── types.ts
+├── utils.ts
+└── index.ts (named exports only)
+```
+
+## Testing Strategy
+- Hook testing with `@testing-library/react-hooks`
+- E2E testing with Playwright for accessibility
+- Test keyboard navigation thoroughly
+- Verify ARIA states and attributes
+
+## Package Structure
+- ESM + CJS builds
+- Tree-shaking support (no barrel exports)
+- React as peer dependency
+- TypeScript definitions included
+- `sideEffects: false` in package.json
+
+## Reference Implementation Style
+Study these libraries for patterns:
+- **Radix UI**: Compound components, `asChild` pattern
+- **Headless UI**: Clean APIs, render props
+- **TanStack Table**: Functional API design
+- **React Aria**: Hook composition, accessibility
+
+## Avoid
+- Creating components in render functions
+- Global state modifications
+- Injecting styles or CSS
+- Browser-specific APIs without fallbacks
+- Complex prop drilling (use context instead)
+
+Focus on providing maximum flexibility while handling the complex logic that developers struggle with: accessibility, keyboard navigation, focus management, and state transitions.
