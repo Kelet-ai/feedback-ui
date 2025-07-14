@@ -148,7 +148,7 @@ const VoteFeedbackRoot = ({
 
     // Second: Show popover for detailed feedback
     setShowPopover(true);
-    // Auto-focus textarea when popover opens and announce to screen readers
+    // Autofocus textarea when popover opens and announce to screen readers
     setTimeout(() => {
       textareaRef.current?.focus();
       // Announce to screen readers
@@ -514,6 +514,6 @@ export const VoteFeedback = {
   SubmitButton,
 };
 
-// Backward compatibility exports
-export const ApprovalFeedback = VoteFeedback;
+// Default export
+// noinspection JSUnusedGlobalSymbols
 export { VoteFeedback as default };
