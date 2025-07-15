@@ -19,6 +19,16 @@ const config: StorybookConfig = {
   typescript: {
     reactDocgen: 'react-docgen-typescript',
   },
+
+  async viteFinal(viteConfig) {
+    viteConfig.optimizeDeps = {
+      include: [
+        ...(viteConfig.optimizeDeps?.include || []),
+        'react/jsx-dev-runtime',
+      ],
+    };
+    return viteConfig;
+  },
 };
 
 export default config;
