@@ -12,12 +12,15 @@ on:
 
 
 jobs:
+  tests:
+    name: Run tests
+    uses: ./.github/workflows/tests.yml
+
   publish:
+    name: Publish to NPM
+    needs: [tests]
     runs-on: ubuntu-latest
     steps:
-      - name: Run tests and build storybook
-        uses: ./.github/workflows/tests.yml
-
       - name: Checkout code
         uses: actions/checkout@v4
 

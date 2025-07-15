@@ -9,7 +9,13 @@ on:
   workflow_dispatch:
 
 jobs:
+  tests:
+    name: Run tests
+    uses: ./.github/workflows/tests.yml
+
   deploy:
+    needs: tests
+    name: Deploy to GitHub Pages
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -17,9 +23,6 @@ jobs:
       id-token: write
 
     steps:
-      - name: Run tests and build storybook
-        uses: ./.github/workflows/tests.yml
-
       - name: Checkout code
         uses: actions/checkout@v4
 
