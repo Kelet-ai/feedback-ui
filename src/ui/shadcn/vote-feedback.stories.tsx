@@ -163,7 +163,7 @@ Professional and clean!
     await expect(downvoteButton).toHaveClass('bg-background');
     await expect(args.onFeedback).toHaveBeenCalledWith({
       identifier: 'shadcn-default',
-      type: 'upvote',
+      vote: 'upvote',
     });
 
     // 3. Click downvote
@@ -174,7 +174,7 @@ Professional and clean!
     await expect(upvoteButton).toHaveClass('bg-background');
     await expect(args.onFeedback).toHaveBeenLastCalledWith({
       identifier: 'shadcn-default',
-      type: 'downvote',
+      vote: 'downvote',
     });
 
     // 4. Add detailed feedback
@@ -188,7 +188,7 @@ Professional and clean!
 
     await expect(args.onFeedback).toHaveBeenLastCalledWith({
       identifier: 'shadcn-default',
-      type: 'downvote',
+      vote: 'downvote',
       explanation: 'The explanation could be clearer',
     });
   },

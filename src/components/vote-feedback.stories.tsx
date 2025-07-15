@@ -113,7 +113,7 @@ export const HeadlessBasic: Story = {
     await expect(downvoteButton).not.toHaveTextContent('(Selected)');
     await expect(args.onFeedback).toHaveBeenCalledWith({
       identifier: 'story-demo',
-      type: 'upvote',
+      vote: 'upvote',
     });
 
     // 3. Click downvote
@@ -124,7 +124,7 @@ export const HeadlessBasic: Story = {
     await expect(upvoteButton).not.toHaveTextContent('(Selected)');
     await expect(args.onFeedback).toHaveBeenCalledWith({
       identifier: 'story-demo',
-      type: 'downvote',
+      vote: 'downvote',
     });
   },
   render: args => (
@@ -245,7 +245,7 @@ export const HeadlessCustomStyling: Story = {
 
     await expect(args.onFeedback).toHaveBeenCalledWith({
       identifier: 'story-demo',
-      type: 'downvote',
+      vote: 'downvote',
       explanation: 'Could be improved',
     });
   },
@@ -364,7 +364,7 @@ export const HeadlessMinimal: Story = {
 
     await expect(args.onFeedback).toHaveBeenCalledWith({
       identifier: 'story-demo',
-      type: 'downvote',
+      vote: 'downvote',
     });
   },
   render: args => (
@@ -483,7 +483,7 @@ The \`asChild\` pattern is inspired by Radix UI and allows maximum flexibility w
       extra_metadata: {
         testId: 'as-child-pattern',
       },
-      type: 'upvote',
+      vote: 'upvote',
     });
 
     // Test custom downvote element
@@ -495,7 +495,7 @@ The \`asChild\` pattern is inspired by Radix UI and allows maximum flexibility w
       extra_metadata: {
         testId: 'as-child-pattern',
       },
-      type: 'downvote',
+      vote: 'downvote',
     });
 
     // Test custom textarea
@@ -511,7 +511,7 @@ The \`asChild\` pattern is inspired by Radix UI and allows maximum flexibility w
       extra_metadata: {
         testId: 'as-child-pattern',
       },
-      type: 'downvote',
+      vote: 'downvote',
       explanation: 'Using custom elements!',
     });
 
@@ -722,7 +722,7 @@ Watch the **Interactions** panel to see automated testing, and **Actions** panel
         userId: 'user-123',
         sessionId: 'session-456',
       },
-      type: 'upvote',
+      vote: 'upvote',
     });
 
     // Test 2: Downvote with immediate callback first
@@ -736,7 +736,7 @@ Watch the **Interactions** panel to see automated testing, and **Actions** panel
         userId: 'user-123',
         sessionId: 'session-456',
       },
-      type: 'downvote',
+      vote: 'downvote',
     });
 
     // Then user can provide detailed feedback
@@ -750,7 +750,7 @@ Watch the **Interactions** panel to see automated testing, and **Actions** panel
         userId: 'user-123',
         sessionId: 'session-456',
       },
-      type: 'downvote',
+      vote: 'downvote',
       explanation: 'This needs improvement',
     });
 
@@ -764,7 +764,7 @@ Watch the **Interactions** panel to see automated testing, and **Actions** panel
         userId: 'user-123',
         sessionId: 'session-456',
       },
-      type: 'downvote',
+      vote: 'downvote',
     });
 
     // Clicking submit without text should just close (no additional call)

@@ -30,7 +30,7 @@ jobs:
         run: bunx playwright install
 
       - name: Run tests
-        run: bun test:storybook
+        run: bun test:storybook --run
 
       - name: Run linting
         run: bun run lint
