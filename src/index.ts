@@ -9,6 +9,10 @@ export type {
   SubmitButtonProps,
 } from './types';
 
+// Default handler and context
+export { createDefaultHandler, useDefaultHandler } from './handlers/default';
+export { KeletProvider, KeletContext } from './contexts/kelet';
+
 // Backward compatibility
 export { VoteFeedback as ApprovalFeedback } from './components/vote-feedback';
 

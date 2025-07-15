@@ -2,6 +2,7 @@ import {
   cloneElement,
   createContext,
   isValidElement,
+  type KeyboardEvent,
   useCallback,
   useContext,
   useId,
@@ -17,6 +18,7 @@ import type {
   UpvoteButtonProps,
   VoteFeedbackRootProps,
 } from '@/types';
+import { useDefaultFeedbackHandler } from '@/contexts/kelet.tsx';
 
 // Utility function to merge props with a child element (asChild pattern)
 const mergeProps = (
@@ -110,28 +112,30 @@ const VoteFeedbackRoot = ({
   const popoverId = useId();
   const triggerId = useId();
 
+  // Use default handler if no custom handler is provided
+  const defaultHandler = useDefaultFeedbackHandler();
+  const handler = onFeedback || defaultHandler;
+
   const handleUpvote = useCallback(async () => {
     setVote('upvote');
-    if (onFeedback) {
-      const data: FeedbackData = {
-        identifier,
-        type: 'upvote',
-        ...(extra_metadata && { extra_metadata }),
-      };
+    const data: FeedbackData = {
+      identifier,
+      type: 'upvote',
+      ...(extra_metadata && { extra_metadata }),
+    };
 
-      try {
-        setIsSubmitting(true);
-        await onFeedback(data);
-      } finally {
-        setIsSubmitting(false);
-      }
+    try {
+      setIsSubmitting(true);
+      await handler(data);
+    } finally {
+      setIsSubmitting(false);
     }
-  }, [onFeedback, identifier, extra_metadata]);
+  }, [identifier, extra_metadata]);
 
   const handleDownvote = useCallback(async () => {
     setVote('downvote');
     // First: Send feedback immediately (without explanation)
-    if (onFeedback) {
+    if (handler) {
       const data: FeedbackData = {
         identifier,
         type: 'downvote',
@@ -140,7 +144,7 @@ const VoteFeedbackRoot = ({
 
       try {
         setIsSubmitting(true);
-        await onFeedback(data);
+        await handler(data);
       } finally {
         setIsSubmitting(false);
       }
@@ -161,7 +165,7 @@ const VoteFeedbackRoot = ({
       document.body.appendChild(announcement);
       setTimeout(() => document.body.removeChild(announcement), 1000);
     }, 0);
-  }, [onFeedback, identifier, extra_metadata]);
+  }, [identifier, extra_metadata]);
 
   const handleTextareaChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -173,7 +177,7 @@ const VoteFeedbackRoot = ({
   const handleSubmit = useCallback(async () => {
     const hasText = feedbackText.trim().length > 0;
 
-    if (hasText && onFeedback) {
+    if (hasText) {
       // Submit with explanation
       const data: FeedbackData = {
         identifier,
@@ -184,7 +188,7 @@ const VoteFeedbackRoot = ({
 
       try {
         setIsSubmitting(true);
-        await onFeedback(data);
+        await handler(data);
       } finally {
         setIsSubmitting(false);
       }
@@ -205,17 +209,17 @@ const VoteFeedbackRoot = ({
       document.body.appendChild(announcement);
       setTimeout(() => document.body.removeChild(announcement), 1000);
     }
-  }, [onFeedback, feedbackText, defaultText, identifier, extra_metadata]);
+  }, [feedbackText, defaultText, identifier, extra_metadata]);
 
   const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
+    (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setShowPopover(false);
         setFeedbackText(defaultText);
         triggerRef.current?.focus();
       } else if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
         e.preventDefault();
-        handleSubmit();
+        handleSubmit().then(_ => {});
       } else if (e.key === 'Tab' && showPopover) {
         // Basic focus trapping - keep focus within popover
         const popoverElement = document.getElementById(popoverId);
@@ -242,7 +246,7 @@ const VoteFeedbackRoot = ({
   );
 
   const contextValue: VoteFeedbackContextValue = {
-    onFeedback,
+    onFeedback: handler,
     showPopover,
     setShowPopover,
     feedbackText,
