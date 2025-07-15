@@ -130,7 +130,7 @@ const VoteFeedbackRoot = ({
     } finally {
       setIsSubmitting(false);
     }
-  }, [identifier, extra_metadata]);
+  }, [handler, identifier, extra_metadata]);
 
   const handleDownvote = useCallback(async () => {
     setVote('downvote');
@@ -165,7 +165,7 @@ const VoteFeedbackRoot = ({
       document.body.appendChild(announcement);
       setTimeout(() => document.body.removeChild(announcement), 1000);
     }, 0);
-  }, [identifier, extra_metadata]);
+  }, [handler, identifier, extra_metadata]);
 
   const handleTextareaChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -209,7 +209,7 @@ const VoteFeedbackRoot = ({
       document.body.appendChild(announcement);
       setTimeout(() => document.body.removeChild(announcement), 1000);
     }
-  }, [feedbackText, defaultText, identifier, extra_metadata]);
+  }, [handler, feedbackText, defaultText, identifier, extra_metadata]);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
