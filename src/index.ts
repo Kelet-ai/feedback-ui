@@ -1,4 +1,4 @@
-export { VoteFeedback } from './components/vote-feedback';
+export { VoteFeedback } from '@/components/vote-feedback';
 export type {
   FeedbackData,
   VoteFeedbackRootProps,
@@ -7,15 +7,7 @@ export type {
   PopoverProps,
   TextareaProps,
   SubmitButtonProps,
-} from './types';
+} from '@/types';
 
 // Default handler and context
-export { createDefaultHandler, useDefaultHandler } from './handlers/default';
-export { KeletProvider, KeletContext } from './contexts/kelet';
-
-// Backward compatibility
-export { VoteFeedback as ApprovalFeedback } from './components/vote-feedback';
-
-// shadcn/ui styled components
-export { ShadcnVoteFeedback } from './ui/shadcn';
-export type { ShadcnVoteFeedbackProps } from './ui/shadcn';
+export { KeletProvider, KeletContext, useKelet, useDefaultFeedbackHandler } from '@/contexts/kelet';
