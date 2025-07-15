@@ -49,7 +49,8 @@
     "vite-plugin-dts": "^4.5.4",
     "vitest": "^3.2.4",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "eslint-plugin-storybook": "9.0.17"
   },
   "peerDependencies": {
     "react": "^19.1.0",
@@ -90,6 +91,5 @@
     "registry:build": "bun shadcn build"
   },
   "type": "module",
-  "types": "./dist/index.d.ts",
-  "dependencies": {}
+  "types": "./dist/index.d.ts"
 }
