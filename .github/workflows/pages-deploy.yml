@@ -2,7 +2,7 @@ name: Deploy Pages
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
     paths:
       - 'src/**'
       - 'registry.json'
@@ -17,6 +17,9 @@ jobs:
       id-token: write
 
     steps:
+      - name: Run tests and build storybook
+        uses: ./.github/workflows/tests.yml
+
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -25,18 +28,6 @@ jobs:
 
       - name: Install dependencies
         run: bun install
-
-      - name: Install Playwright
-        run: bunx playwright install
-
-      - name: Run tests
-        run: bun test:storybook --run
-
-      - name: Run linting
-        run: bun run lint
-
-      - name: Build Storybook
-        run: bun run build-storybook -o storybook-static
 
       - name: Build Shadcn registry
         run: bun run registry:build -o storybook-static/r
