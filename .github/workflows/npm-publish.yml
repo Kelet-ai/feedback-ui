@@ -25,10 +25,10 @@ jobs:
         run: bun install
 
       - name: Install Playwright
-        run: bunx playwright install --run
+        run: bunx playwright install
 
       - name: Run tests
-        run: bun test:storybook
+        run: bun test:storybook --run
 
       - name: Run linting
         run: bun run lint
