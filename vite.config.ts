@@ -34,4 +34,7 @@ export default defineConfig({
       },
     },
   },
+  optimizeDeps: {
+    include: ['markdown-to-jsx', 'react', 'react-dom'],
+  },
 });
