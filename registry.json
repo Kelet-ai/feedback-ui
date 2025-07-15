@@ -1,0 +1,24 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "feedback-ui",
+  "homepage": "https://github.com/kelet-ai/feedback-ui",
+  "items": [
+    {
+      "name": "vote-feedback",
+      "type": "registry:component",
+      "title": "Vote Feedback",
+      "description": "A feedback component with upvote/downvote functionality",
+      "registryDependencies": [
+        "button",
+        "popover",
+        "textarea"
+      ],
+      "files": [
+        {
+          "path": "src/ui/shadcn/vote-feedback.tsx",
+          "type": "registry:component"
+        }
+      ]
+    }
+  ]
+}

@@ -20,7 +20,7 @@ export default defineConfig({
   build: {
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
-      name: 'FeedbackUI',
+      name: '@kelet-ai/feedback-ui',
       formats: ['es', 'umd'],
       fileName: format => `feedback-ui.${format}.js`,
     },

@@ -1,9 +1,4 @@
-import type {
-  ButtonHTMLAttributes,
-  HTMLAttributes,
-  ReactNode,
-  TextareaHTMLAttributes,
-} from 'react';
+import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode, TextareaHTMLAttributes } from 'react';
 
 /**
  * Feedback data structure returned by the component
@@ -11,7 +6,7 @@ import type {
 export interface FeedbackData {
   identifier: string;
   extra_metadata?: Record<string, any>;
-  type: 'upvote' | 'downvote';
+  vote: 'upvote' | 'downvote';
   explanation?: string;
 }
 

@@ -12,7 +12,9 @@
       "WebFetch(domain:ui.shadcn.com)",
       "Bash(bunx:*)",
       "Bash(timeout:*)",
-      "Bash(true)"
+      "Bash(true)",
+      "mcp__context7__resolve-library-id",
+      "WebFetch(domain:github.com)"
     ],
     "deny": []
   }

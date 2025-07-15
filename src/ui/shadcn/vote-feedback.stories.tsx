@@ -40,6 +40,15 @@ const meta: Meta<typeof ShadcnVoteFeedback> = {
 
 A **beautiful, professional** vote feedback component using **real shadcn/ui components** with **Lucide icons**.
 
+## Quick Start
+To install the component, run the following command:
+\`\`\`bash
+npx shadcn add https://feedback-ui.kelet.ai/r/vote-feedback.json
+\`\`\`
+
+This will add the component to your project and install the necessary dependencies.
+
+
 ## Key Features:
 - 🎨 **Clean Design**: Compact thumbs up/down buttons with Lucide icons
 - 🎯 **shadcn Popover**: Uses actual shadcn Popover component for feedback form

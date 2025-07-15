@@ -120,7 +120,7 @@ const VoteFeedbackRoot = ({
     setVote('upvote');
     const data: FeedbackData = {
       identifier,
-      type: 'upvote',
+      vote: 'upvote',
       ...(extra_metadata && { extra_metadata }),
     };
 
@@ -138,7 +138,7 @@ const VoteFeedbackRoot = ({
     if (handler) {
       const data: FeedbackData = {
         identifier,
-        type: 'downvote',
+        vote: 'downvote',
         ...(extra_metadata && { extra_metadata }),
       };
 
@@ -181,7 +181,7 @@ const VoteFeedbackRoot = ({
       // Submit with explanation
       const data: FeedbackData = {
         identifier,
-        type: 'downvote',
+        vote: 'downvote',
         explanation: feedbackText,
         ...(extra_metadata && { extra_metadata }),
       };

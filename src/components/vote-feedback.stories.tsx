@@ -41,6 +41,11 @@ const meta: Meta<typeof VoteFeedback.Root> = {
 This is a **headless** component library - it provides the logic and behavior without any styling. 
 You have complete control over the appearance and can build your own design system on top of it.
 
+## Quick Start:
+1. Install the package: \`npm install @kelet-ai/feedback-ui\`
+2. Import the component: \`import { VoteFeedback } from '@kelet-ai/feedback-ui'\`
+3. Use the component: \`<VoteFeedback.Root onFeedback={handleFeedback} />\`
+
 ## Key Features:
 - 🎨 **Completely Unstyled**: No CSS included, you control the appearance
 - ♿ **Accessible**: Full keyboard navigation and ARIA support

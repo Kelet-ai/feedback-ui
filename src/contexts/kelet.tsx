@@ -11,13 +11,7 @@ interface KeletProviderProps {
   api_key?: string;
   project: string;
 }
-//        tx_id: str,
-//         source: FeedbackSource,
-//         trigger_name: Optional[str] = None,
-//         assessment: Optional[bool] = None,
-//         explanation: Optional[str] = None,
-//         selection: Optional[str] = None,
-//         correction: Optional[str] = None,
+
 interface FeedbackRequest {
   tx_id: string;
   source: 'IMPLICIT' | 'EXPLICIT';
@@ -75,7 +69,7 @@ export const KeletProvider: React.FC<
     const req: FeedbackRequest = {
       tx_id: data.identifier,
       source: 'EXPLICIT',
-      vote: data.type,
+      vote: data.vote,
       explanation: data.explanation,
     };
     const response = await fetch(url, {
