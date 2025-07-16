@@ -1,8 +1,8 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Markdown } from '@storybook/blocks';
 
 // Import README as raw text
-// @ts-ignore
+// @ts-expect-error ts(2307)
 import readmeContent from '../README.md?raw';
 
 const meta: Meta = {
