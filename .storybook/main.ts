@@ -20,6 +20,10 @@ const config: StorybookConfig = {
     reactDocgen: 'react-docgen-typescript',
   },
 
+  core: {
+    disableWhatsNewNotifications: true,
+  },
+
   async viteFinal(viteConfig) {
     viteConfig.optimizeDeps = {
       include: [

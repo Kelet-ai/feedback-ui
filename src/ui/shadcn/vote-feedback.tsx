@@ -37,6 +37,22 @@ const ShadcnVoteFeedback = React.forwardRef<
     },
     ref
   ) => {
+    let selectedVariant = variant;
+    let selectedBg = '';
+    switch (variant) {
+      case 'outline':
+        selectedBg = 'bg-secondary';
+        break;
+      case 'secondary':
+        selectedVariant = 'default';
+        break;
+      case 'ghost':
+        selectedBg = 'bg-secondary';
+        break;
+      case 'default':
+        selectedVariant = 'secondary';
+        break;
+    }
     return (
       <div ref={ref} className={cn('flex items-center gap-1', className)}>
         <VoteFeedback.Root {...props}>
@@ -44,9 +60,10 @@ const ShadcnVoteFeedback = React.forwardRef<
           <VoteFeedback.UpvoteButton asChild>
             {({ isSelected }) => (
               <Button
-                variant={isSelected ? 'secondary' : variant}
+                variant={isSelected ? selectedVariant : variant}
                 size={size}
-                className="h-8 w-8 p-0"
+                className={`h-8 w-8 p-0 ${isSelected ? `${selectedBg}` : ''}`}
+                data-selected={isSelected}
                 aria-label="Helpful"
               >
                 <ThumbsUp className="h-4 w-4" />
@@ -61,9 +78,10 @@ const ShadcnVoteFeedback = React.forwardRef<
               {({ isSelected }) => (
                 <PopoverTrigger asChild>
                   <Button
-                    variant={isSelected ? 'secondary' : variant}
+                    variant={isSelected ? selectedVariant : variant}
                     size={size}
-                    className="h-8 w-8 p-0"
+                    className={`h-8 w-8 p-0 ${isSelected ? `${selectedBg}` : ''}`}
+                    data-selected={isSelected}
                     aria-label="Not helpful"
                   >
                     <ThumbsDown className="h-4 w-4" />

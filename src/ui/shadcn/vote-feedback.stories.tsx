@@ -152,15 +152,15 @@ Professional and clean!
     const downvoteButton = canvas.getByRole('button', { name: /not helpful/i });
 
     // 1. Initial state: both buttons should have the 'outline' variant
-    await expect(upvoteButton).toHaveClass('bg-background');
-    await expect(downvoteButton).toHaveClass('bg-background');
+    await expect(upvoteButton).toHaveAttribute('data-selected', 'false');
+    await expect(downvoteButton).toHaveAttribute('data-selected', 'false');
 
     // 2. Click upvote
     await userEvent.click(upvoteButton);
 
-    // Assert upvote is selected (secondary variant) and downvote is not
-    await expect(upvoteButton).not.toHaveClass('bg-background');
-    await expect(downvoteButton).toHaveClass('bg-background');
+    // Assert upvote is selected (data-selected) and downvote is not
+    await expect(upvoteButton).toHaveAttribute('data-selected', 'true');
+    await expect(downvoteButton).toHaveAttribute('data-selected', 'false');
     await expect(args.onFeedback).toHaveBeenCalledWith({
       identifier: 'shadcn-default',
       vote: 'upvote',
@@ -170,8 +170,8 @@ Professional and clean!
     await userEvent.click(downvoteButton);
 
     // Assert downvote is selected and upvote is not
-    await expect(downvoteButton).not.toHaveClass('bg-background');
-    await expect(upvoteButton).toHaveClass('bg-background');
+    await expect(downvoteButton).toHaveAttribute('data-selected', 'true');
+    await expect(upvoteButton).toHaveAttribute('data-selected', 'false');
     await expect(args.onFeedback).toHaveBeenLastCalledWith({
       identifier: 'shadcn-default',
       vote: 'downvote',
