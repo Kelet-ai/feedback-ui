@@ -68,9 +68,12 @@ export const KeletProvider: React.FC<
     const url = `${KeletBaseUrl}/projects/${project}/feedback`;
     const req: FeedbackRequest = {
       tx_id: data.identifier,
-      source: 'EXPLICIT',
+      source: data.source || 'EXPLICIT',
       vote: data.vote,
       explanation: data.explanation,
+      correction: data.correction,
+      selection: data.selection,
+      // Include trigger_name if needed in the future
     };
     const response = await fetch(url, {
       method: 'POST',

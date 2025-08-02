@@ -14,8 +14,10 @@
       "Bash(timeout:*)",
       "Bash(true)",
       "mcp__context7__resolve-library-id",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Bash(bun install:*)"
     ],
     "deny": []
-  }
+  },
+  "$schema": "https://json.schemastore.org/claude-code-settings.json"
 }
