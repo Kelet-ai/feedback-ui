@@ -7,7 +7,14 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
-  { ignores: ['dist', 'src/components/ui/*.{ts,tsx}'] },
+  {
+    ignores: [
+      'dist',
+      'src/components/ui/*.{ts,tsx}',
+      '*.config.{ts,js}',
+      '.storybook/**/*',
+    ],
+  },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     files: ['**/*.{ts,tsx}'],
