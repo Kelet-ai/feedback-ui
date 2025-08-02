@@ -24,6 +24,15 @@ export default mergeConfig(
       globals: true,
       projects: [
         {
+          test: {
+            name: 'unit',
+            environment: 'jsdom',
+            globals: true,
+            include: ['**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+            exclude: ['**/*.stories.{js,ts,jsx,tsx}', '**/node_modules/**'],
+          },
+        },
+        {
           resolve: {
             alias: {
               '@': path.resolve(dirname, './src'),
