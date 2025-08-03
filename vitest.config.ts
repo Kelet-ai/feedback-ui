@@ -17,6 +17,7 @@ export default mergeConfig(
     resolve: {
       alias: {
         '@': path.resolve(dirname, './src'),
+        '@kelet-ai/feedback-ui': path.resolve(dirname, './src'),
       },
     },
     test: {
@@ -27,6 +28,7 @@ export default mergeConfig(
           resolve: {
             alias: {
               '@': path.resolve(dirname, './src'),
+              '@kelet-ai/feedback-ui': path.resolve(dirname, './src'),
             },
           },
           test: {

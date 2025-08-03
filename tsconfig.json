@@ -17,7 +17,9 @@
     // Path mapping for @ imports
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@kelet-ai/feedback-ui": ["./src/index.ts"],
+      "@kelet-ai/feedback-ui/*": ["./src/*"]
     },
 
     // Best practices

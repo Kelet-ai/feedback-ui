@@ -15,6 +15,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),
+      '@kelet-ai/feedback-ui': resolve(__dirname, './src'),
     },
   },
   build: {

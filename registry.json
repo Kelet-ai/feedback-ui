@@ -5,7 +5,7 @@
   "items": [
     {
       "name": "vote-feedback",
-      "type": "registry:component",
+      "type": "registry:ui",
       "title": "Vote Feedback",
       "description": "A feedback component with upvote/downvote functionality",
       "dependencies": ["@kelet-ai/feedback-ui"],
@@ -13,7 +13,7 @@
       "files": [
         {
           "path": "src/ui/shadcn/vote-feedback.tsx",
-          "type": "registry:component"
+          "type": "registry:ui"
         }
       ]
     }

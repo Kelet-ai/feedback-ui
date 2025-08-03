@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { VoteFeedback } from '@/components/vote-feedback';
-import type { VoteFeedbackRootProps } from '@/types';
+import { VoteFeedback } from '@kelet-ai/feedback-ui';
+import type { VoteFeedbackRootProps } from '@kelet-ai/feedback-ui/types';
 import { Button } from '@/components/ui/button';
 import {
   Popover,
