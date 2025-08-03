@@ -1,12 +1,11 @@
-// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
 import storybook from 'eslint-plugin-storybook';
-
 import js from '@eslint/js';
 import globals from 'globals';
 import reactHooks from 'eslint-plugin-react-hooks';
 import tseslint from 'typescript-eslint';
+import type { FlatConfig } from '@typescript-eslint/utils/ts-eslint';
 
-export default tseslint.config(
+const config: FlatConfig.ConfigArray = tseslint.config(
   {
     ignores: [
       'dist',
@@ -31,13 +30,9 @@ export default tseslint.config(
       '@typescript-eslint/no-unused-vars': [
         'error',
         {
-          // ignore all variables whose name starts with _
           varsIgnorePattern: '^_',
-          // ignore all function args whose name starts with _
           argsIgnorePattern: '^_',
-          // ignore catch-clause errors named _*
           caughtErrorsIgnorePattern: '^_',
-          // if you use rest/spread, ignore the leftover siblings
           ignoreRestSiblings: true,
         },
       ],
@@ -45,3 +40,5 @@ export default tseslint.config(
   },
   storybook.configs['flat/recommended']
 );
+
+export default config;
