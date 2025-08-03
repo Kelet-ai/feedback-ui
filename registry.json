@@ -8,6 +8,7 @@
       "type": "registry:component",
       "title": "Vote Feedback",
       "description": "A feedback component with upvote/downvote functionality",
+      "dependencies": ["@kelet-ai/feedback-ui"],
       "registryDependencies": ["button", "popover", "textarea"],
       "files": [
         {

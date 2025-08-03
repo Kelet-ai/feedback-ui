@@ -1,12 +1,9 @@
 ## [0.2.1](https://github.com/kelet-ai/feedback-ui/compare/v0.2.0...v0.2.1) (2025-08-01)
 
-
 ### Bug Fixes
 
-* change kelet api url ([41b54e0](https://github.com/kelet-ai/feedback-ui/commit/41b54e098ad34a5449560a5fc49695abb61316db))
-* selected variant ([65f2869](https://github.com/kelet-ai/feedback-ui/commit/65f286934caad5eb6428b69a4c056d0ce586a4e2))
-
-
+- change kelet api url ([41b54e0](https://github.com/kelet-ai/feedback-ui/commit/41b54e098ad34a5449560a5fc49695abb61316db))
+- selected variant ([65f2869](https://github.com/kelet-ai/feedback-ui/commit/65f286934caad5eb6428b69a4c056d0ce586a4e2))
 
 # [0.2.0](https://github.com/kelet-ai/feedback-ui/compare/c219406e4ac4af90fa80b93787cfaadba7484e59...v0.2.0) (2025-07-16)
 
