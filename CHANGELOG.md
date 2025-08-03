@@ -1,3 +1,13 @@
+## [0.2.3](https://github.com/kelet-ai/feedback-ui/compare/v0.2.2...v0.2.3) (2025-08-03)
+
+
+### Bug Fixes
+
+* building correctly ([c6d2a11](https://github.com/kelet-ai/feedback-ui/commit/c6d2a119d2c6e34a4eb2d7972b7f7b42a66883ff))
+* rename provider props to match react name convention ([c63651e](https://github.com/kelet-ai/feedback-ui/commit/c63651ec53e1a22cb9d9c4d5cc79957b7fc684e8))
+
+
+
 ## [0.2.2](https://github.com/kelet-ai/feedback-ui/compare/v0.2.1...v0.2.2) (2025-08-03)
 
 
