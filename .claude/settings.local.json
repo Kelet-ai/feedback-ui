@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "permissions": {
     "allow": [
       "Bash(bun add:*)",
@@ -14,7 +15,11 @@
       "Bash(timeout:*)",
       "Bash(true)",
       "mcp__context7__resolve-library-id",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Bash(bun install:*)",
+      "Bash(mv:*)",
+      "Bash(find:*)",
+      "Bash(bun:*)"
     ],
     "deny": []
   }

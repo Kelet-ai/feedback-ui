@@ -29,6 +29,20 @@ export default mergeConfig(
               '@': path.resolve(dirname, './src'),
             },
           },
+          test: {
+            name: 'unit',
+            environment: 'jsdom',
+            globals: true,
+            include: ['**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+            exclude: ['**/*.stories.{js,ts,jsx,tsx}', '**/node_modules/**'],
+          },
+        },
+        {
+          resolve: {
+            alias: {
+              '@': path.resolve(dirname, './src'),
+            },
+          },
           plugins: [
             // The plugin will run tests for the stories defined in your Storybook config
             // See options at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon#storybooktest

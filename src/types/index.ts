@@ -1,4 +1,9 @@
-import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode, TextareaHTMLAttributes } from 'react';
+import type {
+  ButtonHTMLAttributes,
+  HTMLAttributes,
+  ReactNode,
+  TextareaHTMLAttributes,
+} from 'react';
 
 /**
  * Feedback data structure returned by the component
@@ -8,6 +13,10 @@ export interface FeedbackData {
   extra_metadata?: Record<string, any>;
   vote: 'upvote' | 'downvote';
   explanation?: string;
+  source?: 'IMPLICIT' | 'EXPLICIT'; // Default is 'EXPLICIT'
+  correction?: string; // Used for diff data
+  selection?: string; // Optional selected text
+  trigger_name?: string; // Optional trigger name for categorizing feedback
 }
 
 /**
@@ -20,6 +29,7 @@ export interface VoteFeedbackRootProps {
   defaultText?: string;
   identifier: string;
   extra_metadata?: Record<string, any>;
+  trigger_name?: string; // Optional trigger name for categorizing feedback
 }
 
 /**
