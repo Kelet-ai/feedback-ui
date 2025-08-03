@@ -80,6 +80,7 @@
     "build": "vite build",
     "build-storybook": "storybook build",
     "test": "vitest",
+    "test:unit": "vitest --project=unit",
     "test:storybook": "vitest --project=storybook",
     "test:storybook:coverage": "vitest --project=storybook --coverage",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",

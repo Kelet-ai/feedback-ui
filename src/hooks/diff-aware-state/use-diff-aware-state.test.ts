@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'bun:test';
+import { describe, expect, it } from 'vitest';
 import { calculateDiffPercentage, formatDiff } from './diff-utils';
 
 // Simple tests for the diff utility functions

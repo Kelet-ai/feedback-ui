@@ -30,8 +30,8 @@ jobs:
       - name: Install Playwright
         run: bunx playwright install
 
-      - name: Run tests
-        run: bun test --run
+      - name: Run unit tests
+        run: bun test:unit --run
 
       - name: Run Storybook tests
         run: bun test:storybook --run
