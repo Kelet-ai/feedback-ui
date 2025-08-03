@@ -39,6 +39,9 @@ jobs:
       - name: Run linting
         run: bun run lint
 
+      - name: Run type checking
+        run: bun run typecheck
+
       - name: Conventional Changelog Action
         id: changelog
         uses: TriPSs/conventional-changelog-action@v6
@@ -50,6 +53,9 @@ jobs:
 
       - name: Build package
         run: bun run build
+
+      - name: Verify build output
+        run: bun run verify-build
 
       - name: Publish to NPM
         env:

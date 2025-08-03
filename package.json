@@ -91,7 +91,8 @@
     "prepublishOnly": "bun run build",
     "storybook": "NODE_NO_WARNINGS=1 storybook dev -p 6006",
     "registry:build": "bun shadcn build",
-    "typecheck": "tsc -b"
+    "typecheck": "tsc -b",
+    "verify-build": "bun test ./.github/build-verification.test.ts"
   },
   "type": "module",
   "types": "./dist/index.d.ts",
