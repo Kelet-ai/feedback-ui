@@ -36,7 +36,11 @@ export default mergeConfig(
             environment: 'jsdom',
             globals: true,
             include: ['**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
-            exclude: ['**/*.stories.{js,ts,jsx,tsx}', '**/node_modules/**', '.github/**'],
+            exclude: [
+              '**/*.stories.{js,ts,jsx,tsx}',
+              '**/node_modules/**',
+              '.github/**',
+            ],
           },
         },
         {
