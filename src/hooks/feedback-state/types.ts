@@ -3,9 +3,9 @@ import type { DiffType } from '@/hooks';
 import type { FeedbackData } from '@/types';
 
 /**
- * Options for the useDiffAwareState hook
+ * Options for the useFeedbackState hook
  */
-export interface DiffOptions<T> {
+export interface FeedbackStateOptions<T> {
   /**
    * Time to wait before sending feedback after state changes (ms)
    * @default 1500
@@ -52,15 +52,15 @@ export interface DiffOptions<T> {
 /**
  * Custom setState function that accepts an optional trigger_name parameter
  */
-export type DiffAwareStateSetter<T> = (
+export type FeedbackStateSetter<T> = (
   value: SetStateAction<T>,
   trigger_name?: string
 ) => void;
 
 /**
- * Return type of the useDiffAwareState hook - enhanced setState with trigger_name support
+ * Return type of the useFeedbackState hook - enhanced setState with trigger_name support
  */
-export type DiffAwareStateReturn<T> = [T, DiffAwareStateSetter<T>];
+export type FeedbackStateReturn<T> = [T, FeedbackStateSetter<T>];
 
 /**
  * Function to handle feedback submission

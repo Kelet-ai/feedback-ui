@@ -1,24 +1,24 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import React, { useState } from 'react';
-import { useDiffAwareState } from './use-diff-aware-state';
+import { useFeedbackState } from './use-feedback-state';
 import { KeletProvider } from '@/contexts/kelet';
 
 // Test component that wraps the hook for testing
-interface DiffAwareStateTestProps {
+interface FeedbackStateTestProps {
   initialState: any;
   identifier: string | ((state: any) => string);
   options?: any;
   onFeedback?: (data: any) => void;
 }
 
-const DiffAwareStateTest: React.FC<DiffAwareStateTestProps> = ({
+const FeedbackStateTest: React.FC<FeedbackStateTestProps> = ({
   initialState,
   identifier,
   options,
   onFeedback = () => {},
 }) => {
-  const [state, setState] = useDiffAwareState(initialState, identifier, {
+  const [state, setState] = useFeedbackState(initialState, identifier, {
     ...options,
     onFeedback,
   });
@@ -29,7 +29,7 @@ const DiffAwareStateTest: React.FC<DiffAwareStateTestProps> = ({
       <div
         style={{ fontFamily: 'sans-serif', padding: '20px', maxWidth: '600px' }}
       >
-        <h2>useDiffAwareState Test</h2>
+        <h2>useFeedbackState Test</h2>
 
         <div
           style={{
@@ -273,15 +273,15 @@ const DiffAwareStateTest: React.FC<DiffAwareStateTestProps> = ({
   );
 };
 
-const meta: Meta<typeof DiffAwareStateTest> = {
-  title: 'Hooks/useDiffAwareState',
-  component: DiffAwareStateTest,
+const meta: Meta<typeof FeedbackStateTest> = {
+  title: 'Hooks/useFeedbackState',
+  component: FeedbackStateTest,
   parameters: {
     layout: 'fullscreen',
     docs: {
       description: {
         component: `
-# useDiffAwareState Hook
+# useFeedbackState Hook
 
 A **drop-in replacement** for React's \`useState\` that automatically tracks state changes and sends implicit feedback through the Kelet system.
 
@@ -296,13 +296,13 @@ A **drop-in replacement** for React's \`useState\` that automatically tracks sta
 
 ## API:
 \`\`\`typescript
-function useDiffAwareState<T>(
+function useFeedbackState<T>(
   initialState: T, 
   identifier: string | ((state: T) => string), 
-  options?: DiffOptions<T>
+  options?: FeedbackStateOptions<T>
 ): [T, React.Dispatch<React.SetStateAction<T>>]
 
-interface DiffOptions<T> {
+interface FeedbackStateOptions<T> {
   debounceMs?: number;       // Default:  1500
   diffType?: 'git' | 'object' | 'json';  // Default: 'git'
   compareWith?: (a: T, b: T) => boolean;
@@ -520,7 +520,7 @@ Use the text input to set custom values like \`"hello"\`, \`123\`, or \`{"custom
       },
     },
   },
-  render: _args => <DiffAwareStateTest {..._args} />,
+  render: _args => <FeedbackStateTest {..._args} />,
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
 
@@ -591,7 +591,7 @@ This test simulates rapid user interactions and verifies that only ONE feedback 
       },
     },
   },
-  render: _args => <DiffAwareStateTest {..._args} />,
+  render: _args => <FeedbackStateTest {..._args} />,
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
 
@@ -672,7 +672,7 @@ export const CustomVoteLogic: Story = {
       },
     },
   },
-  render: _args => <DiffAwareStateTest {..._args} />,
+  render: _args => <FeedbackStateTest {..._args} />,
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
 
@@ -720,7 +720,7 @@ export const StaticVoteConfiguration: Story = {
       },
     },
   },
-  render: _args => <DiffAwareStateTest {..._args} />,
+  render: _args => <FeedbackStateTest {..._args} />,
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
 

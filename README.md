@@ -33,16 +33,16 @@ Perfect for collecting user feedback on:
 - **Documentation** - Learn what content helps users
 - **UI components** - Validate design decisions
 
-### 3. Automatic Feedback with useDiffAwareState
+### 3. Automatic Feedback with useFeedbackState
 
 Capture user behavior implicitly with our intelligent state hook:
 
 ```tsx
-import { useDiffAwareState } from '@kelet-ai/feedback-ui';
+import { useFeedbackState } from '@kelet-ai/feedback-ui';
 
 function ContentEditor() {
   // Drop-in useState replacement that tracks changes
-  const [content, setContent] = useDiffAwareState(
+  const [content, setContent] = useFeedbackState(
     'Start writing...',
     'content-editor'
   );
@@ -101,7 +101,7 @@ import { VoteFeedback } from '@kelet-ai/feedback-ui';
 - **TypeScript**: Complete type safety included
 - **Flexible**: Works with any styling solution
 - **Zero Dependencies**: Just React - no other dependencies
-- **Automatic Feedback**: `useDiffAwareState` hook captures implicit user behavior
+- **Automatic Feedback**: `useFeedbackState` hook captures implicit user behavior
 
 ## API Reference
 
@@ -129,9 +129,9 @@ import { VoteFeedback } from '@kelet-ai/feedback-ui';
 }
 ```
 
-## useDiffAwareState Hook
+## useFeedbackState Hook
 
-The `useDiffAwareState` hook is a **drop-in replacement for React's useState** that automatically tracks state changes
+The `useFeedbackState` hook is a **drop-in replacement for React's useState** that automatically tracks state changes
 and sends implicit feedback through the Kelet system. Perfect for capturing user behavior without explicit feedback
 prompts.
 
@@ -148,11 +148,11 @@ prompts.
 ### Basic Usage
 
 ```tsx
-import { useDiffAwareState } from '@kelet-ai/feedback-ui';
+import { useFeedbackState } from '@kelet-ai/feedback-ui';
 
 function MyComponent() {
   // Drop-in replacement for useState
-  const [count, setCount] = useDiffAwareState(0, 'counter-widget');
+  const [count, setCount] = useFeedbackState(0, 'counter-widget');
 
   return (
     <div>
@@ -166,10 +166,10 @@ function MyComponent() {
 ### Advanced Usage
 
 ```tsx
-import { useDiffAwareState } from '@kelet-ai/feedback-ui';
+import { useFeedbackState } from '@kelet-ai/feedback-ui';
 
 function UserProfile() {
-  const [profile, setProfile] = useDiffAwareState(
+  const [profile, setProfile] = useFeedbackState(
     { name: '', email: '', preferences: {} },
     state => `profile-${state.email}`, // Dynamic identifier
     {
@@ -205,13 +205,13 @@ function UserProfile() {
 
 ### Trigger Names for State Changes
 
-The `useDiffAwareState` hook supports **trigger names** to categorize and track different types of state changes. This
+The `useFeedbackState` hook supports **trigger names** to categorize and track different types of state changes. This
 powerful feature allows you to understand the context and cause of state changes in your feedback data.
 
 #### Basic Usage with Trigger Names
 
 ```tsx
-const [content, setContent] = useDiffAwareState(
+const [content, setContent] = useFeedbackState(
   'Initial content',
   'content-editor',
   {
@@ -232,7 +232,7 @@ setContent('Spell checker fixed this', 'spell_check');
 When you change trigger names, the hook **immediately flushes** the previous sequence and starts a new one:
 
 ```tsx
-const [draft, setDraft] = useDiffAwareState('', 'email-draft');
+const [draft, setDraft] = useFeedbackState('', 'email-draft');
 
 setDraft('Hello', 'manual_typing'); // Starts debouncing for 'manual_typing'
 setDraft('Hello world', 'manual_typing'); // Extends debounce (same trigger)
@@ -249,7 +249,7 @@ This creates two separate feedback entries:
 
 ```tsx
 // Content creation with different interaction types
-const [article, setArticle] = useDiffAwareState(
+const [article, setArticle] = useFeedbackState(
   { title: '', content: '', tags: [] },
   'article-editor',
   {
@@ -319,7 +319,7 @@ setArticle(
 
 ```tsx
 function SmartEditor() {
-  const [document, setDocument] = useDiffAwareState(
+  const [document, setDocument] = useFeedbackState(
     { content: '', metadata: {} },
     'smart-editor',
     { default_trigger_name: 'user_edit' }
@@ -375,7 +375,7 @@ With trigger names, you can analyze:
 ### API Reference
 
 ```tsx
-function useDiffAwareState<T>(
+function useFeedbackState<T>(
   initialState: T,
   identifier: string | ((state: T) => string),
   options?: DiffOptions<T>
@@ -466,12 +466,12 @@ Control how changes are classified with the `vote` option:
 
 ```tsx
 // Always upvote - useful for content creation tools
-const [content, setContent] = useDiffAwareState('Draft...', 'content-editor', {
+const [content, setContent] = useFeedbackState('Draft...', 'content-editor', {
   vote: 'upvote',
 });
 
 // Always downvote - useful for error tracking
-const [errors, setErrors] = useDiffAwareState([], 'error-log', {
+const [errors, setErrors] = useFeedbackState([], 'error-log', {
   vote: 'downvote',
 });
 ```
@@ -480,7 +480,7 @@ const [errors, setErrors] = useDiffAwareState([], 'error-log', {
 
 ```tsx
 // Business logic-based voting
-const [issue, setIssue] = useDiffAwareState(
+const [issue, setIssue] = useFeedbackState(
   { priority: 1, severity: 'low' },
   'issue-tracker',
   {
@@ -509,7 +509,7 @@ const [issue, setIssue] = useDiffAwareState(
 
 ```tsx
 // Content quality assessment
-const [article, setArticle] = useDiffAwareState(
+const [article, setArticle] = useFeedbackState(
   { title: '', content: '', tags: [] },
   'article-editor',
   {
@@ -529,7 +529,7 @@ const [article, setArticle] = useDiffAwareState(
 );
 
 // User experience tracking
-const [settings, setSettings] = useDiffAwareState(
+const [settings, setSettings] = useFeedbackState(
   { theme: 'light', notifications: true, autoSave: false },
   'user-preferences',
   {
@@ -552,26 +552,26 @@ const [settings, setSettings] = useDiffAwareState(
 
 ```tsx
 // ✅ Good: Static identifier for consistent tracking
-const [settings, setSettings] = useDiffAwareState(
+const [settings, setSettings] = useFeedbackState(
   defaultSettings,
   'user-settings'
 );
 
 // ✅ Good: Dynamic identifier that makes sense
-const [items, setItems] = useDiffAwareState(
+const [items, setItems] = useFeedbackState(
   [],
   items => `shopping-cart-${items.length}-items`
 );
 
 // ✅ Good: Appropriate debounce for use case
-const [searchQuery, setSearchQuery] = useDiffAwareState(
+const [searchQuery, setSearchQuery] = useFeedbackState(
   '',
   'search-input',
   { debounceMs: 800 } // Shorter for search
 );
 
 // ✅ Good: Custom vote logic for domain-specific scenarios
-const [formData, setFormData] = useDiffAwareState(initialForm, 'contact-form', {
+const [formData, setFormData] = useFeedbackState(initialForm, 'contact-form', {
   vote: (before, after, diffPercentage) => {
     // Form completion = positive signal
     const beforeFields = Object.values(before).filter(Boolean).length;
@@ -581,14 +581,14 @@ const [formData, setFormData] = useDiffAwareState(initialForm, 'contact-form', {
 });
 
 // ❌ Avoid: Very short debounce times
-const [text, setText] = useDiffAwareState(
+const [text, setText] = useFeedbackState(
   '',
   'editor',
   { debounceMs: 50 } // Too aggressive
 );
 
 // ❌ Avoid: Overly complex vote logic
-const [data, setData] = useDiffAwareState({}, 'complex-data', {
+const [data, setData] = useFeedbackState({}, 'complex-data', {
   vote: (before, after, diffPercentage) => {
     // Don't make it too complicated - keep it readable!
     // Complex business logic should be in separate functions

@@ -1,12 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, renderHook } from '@testing-library/react';
 import { calculateDiffPercentage, formatDiff } from './diff-utils';
-import { useDiffAwareState } from '@/hooks';
+import { useFeedbackState } from '@/hooks';
 
 // Simple tests for the diff utility functions
 // Hook tests are comprehensive in Storybook with full React environment
 
-describe('useDiffAwareState - Diff utilities', () => {
+describe('useFeedbackState - Diff utilities', () => {
   it('should calculate string diff percentage correctly', () => {
     expect(calculateDiffPercentage('hello', 'hello')).toBe(0);
     expect(calculateDiffPercentage('hello', 'world')).toBeGreaterThan(0);
@@ -57,7 +57,7 @@ describe('useDiffAwareState - Diff utilities', () => {
 });
 
 // Tests for trigger_name functionality
-describe('useDiffAwareState - trigger_name functionality', () => {
+describe('useFeedbackState - trigger_name functionality', () => {
   beforeEach(() => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
   });
@@ -70,7 +70,7 @@ describe('useDiffAwareState - trigger_name functionality', () => {
   it('uses default trigger_name when no default_trigger_name is specified', async () => {
     const mockHandler = vi.fn();
     const { result } = renderHook(() =>
-      useDiffAwareState('initial', 'test-id', {
+      useFeedbackState('initial', 'test-id', {
         debounceMs: 1000,
         onFeedback: mockHandler,
       })
@@ -95,7 +95,7 @@ describe('useDiffAwareState - trigger_name functionality', () => {
   it('uses custom default_trigger_name', async () => {
     const mockHandler = vi.fn();
     const { result } = renderHook(() =>
-      useDiffAwareState('initial', 'test-id', {
+      useFeedbackState('initial', 'test-id', {
         default_trigger_name: 'content_editing',
         debounceMs: 1000,
         onFeedback: mockHandler,
@@ -120,7 +120,7 @@ describe('useDiffAwareState - trigger_name functionality', () => {
   it('overrides default with setState trigger_name parameter', async () => {
     const mockHandler = vi.fn();
     const { result } = renderHook(() =>
-      useDiffAwareState('initial', 'test-id', {
+      useFeedbackState('initial', 'test-id', {
         default_trigger_name: 'default_trigger',
         debounceMs: 1000,
         onFeedback: mockHandler,
@@ -145,7 +145,7 @@ describe('useDiffAwareState - trigger_name functionality', () => {
   it('immediately flushes previous sequence when trigger changes', async () => {
     const mockHandler = vi.fn();
     const { result } = renderHook(() =>
-      useDiffAwareState('initial', 'test-id', {
+      useFeedbackState('initial', 'test-id', {
         debounceMs: 1000,
         onFeedback: mockHandler,
       })
@@ -187,7 +187,7 @@ describe('useDiffAwareState - trigger_name functionality', () => {
   it('same trigger extends debounce without flushing', async () => {
     const mockHandler = vi.fn();
     const { result } = renderHook(() =>
-      useDiffAwareState('initial', 'test-id', {
+      useFeedbackState('initial', 'test-id', {
         debounceMs: 500,
         onFeedback: mockHandler,
       })
@@ -222,7 +222,7 @@ describe('useDiffAwareState - trigger_name functionality', () => {
   it('handles rapid trigger switching correctly', async () => {
     const mockHandler = vi.fn();
     const { result } = renderHook(() =>
-      useDiffAwareState('start', 'test-id', {
+      useFeedbackState('start', 'test-id', {
         debounceMs: 200,
         onFeedback: mockHandler,
       })
@@ -272,7 +272,7 @@ describe('useDiffAwareState - trigger_name functionality', () => {
   it('state updates work correctly with trigger switching', () => {
     const mockHandler = vi.fn();
     const { result } = renderHook(() =>
-      useDiffAwareState('initial', 'test-id', {
+      useFeedbackState('initial', 'test-id', {
         debounceMs: 500,
         onFeedback: mockHandler,
       })
@@ -298,7 +298,7 @@ describe('useDiffAwareState - trigger_name functionality', () => {
   it('works with functional state updates and trigger names', async () => {
     const mockHandler = vi.fn();
     const { result } = renderHook(() =>
-      useDiffAwareState(0, 'counter', {
+      useFeedbackState(0, 'counter', {
         debounceMs: 500,
         onFeedback: mockHandler,
       })

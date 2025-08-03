@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDefaultFeedbackHandler } from '@/contexts/kelet';
 import { calculateDiffPercentage, formatDiff } from './diff-utils';
-import type { DiffAwareStateReturn, DiffOptions } from './types';
+import type { FeedbackStateReturn, FeedbackStateOptions } from './types';
 
 /**
  * A drop-in replacement for React's useState that tracks changes to state over time
@@ -14,10 +14,10 @@ import type { DiffAwareStateReturn, DiffOptions } from './types';
  *
  * @example
  * // Basic usage with required identifier
- * const [count, setCount] = useDiffAwareState(0, 'counter');
+ * const [count, setCount] = useFeedbackState(0, 'counter');
  *
  * // Using with static identifier and options
- * const [preferences, setPreferences] = useDiffAwareState(
+ * const [preferences, setPreferences] = useFeedbackState(
  *   {theme: 'light', notifications: true},
  *   'user-preferences',
  *   {
@@ -27,16 +27,16 @@ import type { DiffAwareStateReturn, DiffOptions } from './types';
  * );
  *
  * // With dynamic identifier derived from state
- * const [items, setItems] = useDiffAwareState(
+ * const [items, setItems] = useFeedbackState(
  *   [1, 2, 3],
  *   (items) => `items-${items.length}`
  * );
  */
-export function useDiffAwareState<T>(
+export function useFeedbackState<T>(
   initialState: T,
   identifier: string | ((state: T) => string),
-  options?: DiffOptions<T>
-): DiffAwareStateReturn<T> {
+  options?: FeedbackStateOptions<T>
+): FeedbackStateReturn<T> {
   // Initialize state with React's useState
   const [state, setStateInternal] = useState<T>(initialState);
 
@@ -100,7 +100,7 @@ export function useDiffAwareState<T>(
   );
 
   // Wrap setState to track changes with trigger_name support
-  const setState: DiffAwareStateReturn<T>[1] = (value, trigger_name) => {
+  const setState: FeedbackStateReturn<T>[1] = (value, trigger_name) => {
     const newTriggerName = trigger_name || defaultTriggerName;
 
     // If trigger name changed and we have a running timer, immediately flush the previous sequence
