@@ -25,7 +25,7 @@ const FeedbackStateTest: React.FC<FeedbackStateTestProps> = ({
   const [updateValue, setUpdateValue] = useState('');
 
   return (
-    <KeletProvider project="test-project" api_key="test-key">
+    <KeletProvider project="test-project" apiKey="test-key">
       <div
         style={{ fontFamily: 'sans-serif', padding: '20px', maxWidth: '600px' }}
       >

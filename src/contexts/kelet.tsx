@@ -8,7 +8,7 @@ interface KeletContextValue {
 }
 
 interface KeletProviderProps {
-  api_key?: string;
+  apiKey?: string;
   project: string;
 }
 
@@ -51,16 +51,16 @@ export const useDefaultFeedbackHandler = (): ((
 // The KeletProvider component
 export const KeletProvider: React.FC<
   React.PropsWithChildren<KeletProviderProps>
-> = ({ api_key, project, children }) => {
+> = ({ apiKey, project, children }) => {
   // Get the parent context (if any)
   const parentContext = useContext(KeletContext);
 
   // Determine the API key to use
-  const resolvedApiKey = api_key || parentContext?.api_key;
+  const resolvedApiKey = apiKey || parentContext?.api_key;
 
   if (!resolvedApiKey) {
     throw new Error(
-      'api_key is required either directly or from a parent KeletProvider'
+      'apiKey is required either directly or from a parent KeletProvider'
     );
   }
 
