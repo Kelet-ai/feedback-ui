@@ -38,6 +38,9 @@ jobs:
       - name: Run linting
         run: bun run lint
 
+      - name: Run type checking
+        run: bun run typecheck
+
       - name: Build Storybook
         run: bun run build-storybook -o storybook-static
 
