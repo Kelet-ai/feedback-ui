@@ -29,6 +29,7 @@ export interface VoteFeedbackRootProps {
   defaultText?: string;
   identifier: string;
   extra_metadata?: Record<string, any>;
+  trigger_name?: string; // Optional trigger name for categorizing feedback
 }
 
 /**

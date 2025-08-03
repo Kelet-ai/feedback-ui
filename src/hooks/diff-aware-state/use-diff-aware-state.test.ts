@@ -59,11 +59,11 @@ describe('useDiffAwareState - Diff utilities', () => {
 // Tests for trigger_name functionality
 describe('useDiffAwareState - trigger_name functionality', () => {
   beforeEach(() => {
-    vi.useFakeTimers();
+    vi.useFakeTimers({ shouldAdvanceTime: true });
   });
 
   afterEach(() => {
-    vi.clearAllTimers();
+    vi.restoreAllMocks();
     vi.useRealTimers();
   });
 

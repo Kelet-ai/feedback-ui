@@ -107,11 +107,12 @@ import { VoteFeedback } from '@kelet-ai/feedback-ui';
 
 ### VoteFeedback.Root
 
-| Prop             | Type       | Required | Description                         |
-| ---------------- | ---------- | -------- | ----------------------------------- |
-| `identifier`     | `string`   | ✓        | Unique identifier for tracking      |
-| `onFeedback`     | `function` | ✓        | Callback when feedback is submitted |
-| `extra_metadata` | `object`   |          | Additional metadata to include      |
+| Prop             | Type       | Required | Description                                     |
+| ---------------- | ---------- | -------- | ----------------------------------------------- |
+| `identifier`     | `string`   | ✓        | Unique identifier for tracking                  |
+| `onFeedback`     | `function` | ✓        | Callback when feedback is submitted             |
+| `extra_metadata` | `object`   |          | Additional metadata to include                  |
+| `trigger_name`   | `string`   |          | Optional trigger name for categorizing feedback |
 
 ### Feedback Object
 
@@ -626,6 +627,23 @@ const [data, setData] = useDiffAwareState({}, 'complex-data', {
 </VoteFeedback.Root>
 ```
 
+### With Trigger Name
+
+```tsx
+<VoteFeedback.Root
+  onFeedback={handleFeedback}
+  identifier="ai-response"
+  trigger_name="user_feedback"
+>
+  <VoteFeedback.UpvoteButton>👍 Helpful</VoteFeedback.UpvoteButton>
+  <VoteFeedback.DownvoteButton>👎 Not helpful</VoteFeedback.DownvoteButton>
+  <VoteFeedback.Popover>
+    <VoteFeedback.Textarea placeholder="How can we improve?" />
+    <VoteFeedback.SubmitButton>Send feedback</VoteFeedback.SubmitButton>
+  </VoteFeedback.Popover>
+</VoteFeedback.Root>
+```
+
 ### Using asChild Pattern
 
 ```tsx
@@ -649,7 +667,8 @@ const [data, setData] = useDiffAwareState({}, 'complex-data', {
 ```bash
 bun install
 bun dev  # Start Storybook
-bun test # Run tests
+bun run test:unit # Run unit tests
+bun run test:storybook # Run Storybook tests
 bun build # Build library
 ```
 

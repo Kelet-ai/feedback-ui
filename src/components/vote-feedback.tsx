@@ -77,6 +77,7 @@ interface VoteFeedbackContextValue {
   triggerId: string;
   identifier: string;
   extra_metadata?: Record<string, any>;
+  trigger_name?: string;
 }
 
 const VoteFeedbackContext = createContext<VoteFeedbackContextValue | null>(
@@ -100,6 +101,7 @@ const VoteFeedbackRoot = ({
   defaultText = '',
   identifier,
   extra_metadata,
+  trigger_name,
 }: VoteFeedbackRootProps) => {
   const [showPopover, setShowPopover] = useState(false);
   const [feedbackText, setFeedbackText] = useState(defaultText);
@@ -122,6 +124,7 @@ const VoteFeedbackRoot = ({
       identifier,
       vote: 'upvote',
       ...(extra_metadata && { extra_metadata }),
+      ...(trigger_name && { trigger_name }),
     };
 
     try {
@@ -130,7 +133,7 @@ const VoteFeedbackRoot = ({
     } finally {
       setIsSubmitting(false);
     }
-  }, [handler, identifier, extra_metadata]);
+  }, [handler, identifier, extra_metadata, trigger_name]);
 
   const handleDownvote = useCallback(async () => {
     setVote('downvote');
@@ -140,6 +143,7 @@ const VoteFeedbackRoot = ({
         identifier,
         vote: 'downvote',
         ...(extra_metadata && { extra_metadata }),
+        ...(trigger_name && { trigger_name }),
       };
 
       try {
@@ -165,7 +169,7 @@ const VoteFeedbackRoot = ({
       document.body.appendChild(announcement);
       setTimeout(() => document.body.removeChild(announcement), 1000);
     }, 0);
-  }, [handler, identifier, extra_metadata]);
+  }, [handler, identifier, extra_metadata, trigger_name]);
 
   const handleTextareaChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -184,6 +188,7 @@ const VoteFeedbackRoot = ({
         vote: 'downvote',
         explanation: feedbackText,
         ...(extra_metadata && { extra_metadata }),
+        ...(trigger_name && { trigger_name }),
       };
 
       try {
@@ -209,7 +214,14 @@ const VoteFeedbackRoot = ({
       document.body.appendChild(announcement);
       setTimeout(() => document.body.removeChild(announcement), 1000);
     }
-  }, [handler, feedbackText, defaultText, identifier, extra_metadata]);
+  }, [
+    handler,
+    feedbackText,
+    defaultText,
+    identifier,
+    extra_metadata,
+    trigger_name,
+  ]);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -265,6 +277,7 @@ const VoteFeedbackRoot = ({
     triggerId,
     identifier,
     extra_metadata,
+    trigger_name,
   };
 
   return (
