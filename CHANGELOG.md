@@ -1,3 +1,12 @@
+## [0.2.4](https://github.com/kelet-ai/feedback-ui/compare/v0.2.3...v0.2.4) (2025-08-03)
+
+
+### Bug Fixes
+
+* building... ([9e7b9b5](https://github.com/kelet-ai/feedback-ui/commit/9e7b9b55687a8af527e902b4535f79a8c38cc053))
+
+
+
 ## [0.2.3](https://github.com/kelet-ai/feedback-ui/compare/v0.2.2...v0.2.3) (2025-08-03)
 
 
