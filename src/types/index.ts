@@ -16,6 +16,7 @@ export interface FeedbackData {
   source?: 'IMPLICIT' | 'EXPLICIT'; // Default is 'EXPLICIT'
   correction?: string; // Used for diff data
   selection?: string; // Optional selected text
+  trigger_name?: string; // Optional trigger name for categorizing feedback
 }
 
 /**

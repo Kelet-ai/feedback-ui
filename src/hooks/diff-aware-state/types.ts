@@ -1,5 +1,5 @@
-import type { Dispatch, SetStateAction } from 'react';
-import type { DiffType } from './diff-utils';
+import type { SetStateAction } from 'react';
+import type { DiffType } from '@/hooks';
 import type { FeedbackData } from '@/types';
 
 /**
@@ -41,12 +41,26 @@ export interface DiffOptions<T> {
     | 'upvote'
     | 'downvote'
     | ((before: T, after: T, diffPercentage: number) => 'upvote' | 'downvote');
+
+  /**
+   * Default trigger name for state changes when no trigger_name is specified in setState
+   * @default 'auto_state_change'
+   */
+  default_trigger_name?: string;
 }
 
 /**
- * Return type of the useDiffAwareState hook - matches useState hook
+ * Custom setState function that accepts an optional trigger_name parameter
  */
-export type DiffAwareStateReturn<T> = [T, Dispatch<SetStateAction<T>>];
+export type DiffAwareStateSetter<T> = (
+  value: SetStateAction<T>,
+  trigger_name?: string
+) => void;
+
+/**
+ * Return type of the useDiffAwareState hook - enhanced setState with trigger_name support
+ */
+export type DiffAwareStateReturn<T> = [T, DiffAwareStateSetter<T>];
 
 /**
  * Function to handle feedback submission

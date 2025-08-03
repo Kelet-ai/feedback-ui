@@ -119,17 +119,20 @@ import { VoteFeedback } from '@kelet-ai/feedback-ui';
 {
     identifier: string;
     vote: 'upvote' | 'downvote';
-    explanation?: string;
-    extra_metadata?: object;
-    source?: 'IMPLICIT' | 'EXPLICIT';
-    correction?: string;
-    selection?: string;
+    explanation ? : string;
+    extra_metadata ? : object;
+    source ? : 'IMPLICIT' | 'EXPLICIT';
+    correction ? : string;
+    selection ? : string;
+    trigger_name ? : string; // Optional trigger name for categorizing feedback
 }
 ```
 
 ## useDiffAwareState Hook
 
-The `useDiffAwareState` hook is a **drop-in replacement for React's useState** that automatically tracks state changes and sends implicit feedback through the Kelet system. Perfect for capturing user behavior without explicit feedback prompts.
+The `useDiffAwareState` hook is a **drop-in replacement for React's useState** that automatically tracks state changes
+and sends implicit feedback through the Kelet system. Perfect for capturing user behavior without explicit feedback
+prompts.
 
 ### Key Features
 
@@ -199,6 +202,175 @@ function UserProfile() {
 }
 ```
 
+### Trigger Names for State Changes
+
+The `useDiffAwareState` hook supports **trigger names** to categorize and track different types of state changes. This
+powerful feature allows you to understand the context and cause of state changes in your feedback data.
+
+#### Basic Usage with Trigger Names
+
+```tsx
+const [content, setContent] = useDiffAwareState(
+  'Initial content',
+  'content-editor',
+  {
+    default_trigger_name: 'manual_edit', // Default for all changes
+  }
+);
+
+// Uses default trigger name
+setContent('User typed this');
+
+// Override with specific trigger name
+setContent('AI generated this', 'ai_assistance');
+setContent('Spell checker fixed this', 'spell_check');
+```
+
+#### Trigger Switching - Advanced Behavior
+
+When you change trigger names, the hook **immediately flushes** the previous sequence and starts a new one:
+
+```tsx
+const [draft, setDraft] = useDiffAwareState('', 'email-draft');
+
+setDraft('Hello', 'manual_typing'); // Starts debouncing for 'manual_typing'
+setDraft('Hello world', 'manual_typing'); // Extends debounce (same trigger)
+setDraft('Hello world!', 'ai_suggestion'); // IMMEDIATELY sends 'manual_typing' feedback
+// then starts new 'ai_suggestion' sequence
+```
+
+This creates two separate feedback entries:
+
+1. **manual_typing**: `'' → 'Hello world'`
+2. **ai_suggestion**: `'Hello world' → 'Hello world!'`
+
+#### Real-world Examples
+
+```tsx
+// Content creation with different interaction types
+const [article, setArticle] = useDiffAwareState(
+  { title: '', content: '', tags: [] },
+  'article-editor',
+  {
+    default_trigger_name: 'user_input',
+    debounceMs: 2000,
+  }
+);
+
+// User typing
+setArticle({ ...article, title: 'My Article' }, 'user_input');
+
+// AI assistance
+setArticle(
+  {
+    ...article,
+    content: 'AI generated introduction...',
+  },
+  'ai_generation'
+);
+
+// Grammar correction
+setArticle(
+  {
+    ...article,
+    content: 'AI-generated introduction...',
+  },
+  'grammar_fix'
+);
+
+// User refinement
+setArticle(
+  {
+    ...article,
+    content: 'AI-generated introduction with my changes...',
+  },
+  'user_refinement'
+);
+```
+
+#### Common Trigger Name Patterns
+
+```tsx
+// Content creation and editing
+{
+  default_trigger_name: 'manual_edit';
+}
+'user_typing' | 'copy_paste' | 'drag_drop';
+
+// AI interactions
+'ai_generation' | 'ai_completion' | 'ai_correction';
+'prompt_result' | 'ai_suggestion_accepted';
+
+// Automated changes
+'spell_check' | 'auto_format' | 'auto_save';
+'validation_fix' | 'import_data';
+
+// User interactions
+'voice_input' | 'gesture_input' | 'shortcut_key';
+'context_menu' | 'toolbar_action';
+
+// Workflow steps
+'draft' | 'review' | 'approval' | 'publication';
+'undo' | 'redo' | 'revert';
+```
+
+#### Advanced Pattern: Context-Aware Triggers
+
+```tsx
+function SmartEditor() {
+  const [document, setDocument] = useDiffAwareState(
+    { content: '', metadata: {} },
+    'smart-editor',
+    { default_trigger_name: 'user_edit' }
+  );
+
+  const handleUserInput = text => {
+    setDocument({ ...document, content: text }, 'user_typing');
+  };
+
+  const handleAIComplete = completion => {
+    setDocument(
+      {
+        ...document,
+        content: document.content + completion,
+      },
+      'ai_completion'
+    );
+  };
+
+  const handleSpellCheck = correctedText => {
+    setDocument(
+      {
+        ...document,
+        content: correctedText,
+      },
+      'spell_check'
+    );
+  };
+
+  const handleImport = importedData => {
+    setDocument(importedData, 'data_import');
+  };
+}
+```
+
+#### Benefits of Trigger Names
+
+1. **Categorize Feedback** - Group feedback by interaction type
+2. **Track User Behavior** - Understand how users interact with features
+3. **Measure AI Impact** - See how often AI suggestions are used vs manual input
+4. **Debug Issues** - Identify problematic interaction patterns
+5. **Optimize UX** - Focus improvements on frequently used triggers
+
+#### Analytics Insights
+
+With trigger names, you can analyze:
+
+- **User vs AI ratio**: How much content comes from AI vs manual input?
+- **Correction patterns**: Are users frequently fixing AI suggestions?
+- **Workflow efficiency**: Which triggers lead to the most refinements?
+- **Feature adoption**: Are new features being used as intended?
+
 ### API Reference
 
 ```tsx
@@ -206,7 +378,7 @@ function useDiffAwareState<T>(
   initialState: T,
   identifier: string | ((state: T) => string),
   options?: DiffOptions<T>
-): [T, React.Dispatch<React.SetStateAction<T>>];
+): [T, (value: SetStateAction<T>, trigger_name?: string) => void];
 ```
 
 #### Parameters
@@ -219,14 +391,15 @@ function useDiffAwareState<T>(
 
 #### DiffOptions
 
-| Option        | Type                                    | Default | Description                                      |
-| ------------- | --------------------------------------- | ------- | ------------------------------------------------ |
-| `debounceMs`  | `number`                                | `1500`  | Debounce time in milliseconds                    |
-| `diffType`    | `'git' \| 'object' \| 'json'`           | `'git'` | Format for diff output                           |
-| `compareWith` | `(a: T, b: T) => boolean`               |         | Custom equality comparison function              |
-| `metadata`    | `Record<string, any>`                   |         | Additional metadata to include                   |
-| `onFeedback`  | `(data: FeedbackData) => Promise<void>` |         | Custom feedback handler (for testing)            |
-| `vote`        | `'upvote' \| 'downvote' \| function`    |         | Static vote or custom function for determination |
+| Option                 | Type                                    | Default               | Description                                       |
+| ---------------------- | --------------------------------------- | --------------------- | ------------------------------------------------- |
+| `debounceMs`           | `number`                                | `1500`                | Debounce time in milliseconds                     |
+| `diffType`             | `'git' \| 'object' \| 'json'`           | `'git'`               | Format for diff output                            |
+| `compareWith`          | `(a: T, b: T) => boolean`               |                       | Custom equality comparison function               |
+| `metadata`             | `Record<string, any>`                   |                       | Additional metadata to include                    |
+| `onFeedback`           | `(data: FeedbackData) => Promise<void>` |                       | Custom feedback handler (for testing)             |
+| `vote`                 | `'upvote' \| 'downvote' \| function`    |                       | Static vote or custom function for determination  |
+| `default_trigger_name` | `string`                                | `'auto_state_change'` | Default trigger name when no trigger is specified |
 
 ### How It Works
 
@@ -267,8 +440,12 @@ function useDiffAwareState<T>(
 
 ```json
 {
-  "before": { "name": "John" },
-  "after": { "name": "John Doe" }
+  "before": {
+    "name": "John"
+  },
+  "after": {
+    "name": "John Doe"
+  }
 }
 ```
 
