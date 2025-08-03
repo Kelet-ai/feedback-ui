@@ -76,8 +76,15 @@ import { ShadcnVoteFeedback } from '@/components/ui/vote-feedback';
 
 ### 2. Go Headless for Full Control
 
-When you need complete design control, use the headless components:
+When you need complete design control, use the headless components.
 
+First, install the package:
+
+```console
+npm install @kelet-ai/feedback-ui
+```
+
+Then, import the headless components, and style them as you see fit:
 ```tsx
 import { VoteFeedback } from '@kelet-ai/feedback-ui';
 
