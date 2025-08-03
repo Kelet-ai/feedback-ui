@@ -45,6 +45,9 @@ jobs:
         with:
           github-token: ${{ secrets.github_token }}
 
+      - name: Prettier
+        run: bun run prettier:fix
+
       - name: Build package
         run: bun run build
 
