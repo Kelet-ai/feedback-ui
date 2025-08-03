@@ -13,7 +13,8 @@
       "files": [
         {
           "path": "src/ui/shadcn/vote-feedback.tsx",
-          "type": "registry:ui"
+          "type": "registry:ui",
+          "target": "components/ui/vote-feedback.tsx"
         }
       ]
     }
