@@ -43,6 +43,7 @@ export default mergeConfig(
           resolve: {
             alias: {
               '@': path.resolve(dirname, './src'),
+              '@kelet-ai/feedback-ui': path.resolve(dirname, './src'),
             },
           },
           plugins: [
