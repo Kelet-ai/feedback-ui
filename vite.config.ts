@@ -10,6 +10,7 @@ export default defineConfig({
     tailwindcss(),
     dts({
       insertTypesEntry: true,
+      entryRoot: 'src',
     }),
   ],
   resolve: {
