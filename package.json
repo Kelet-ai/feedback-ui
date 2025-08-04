@@ -92,7 +92,8 @@
     "storybook": "NODE_NO_WARNINGS=1 storybook dev -p 6006",
     "registry:build": "bun shadcn build",
     "typecheck": "tsc -b",
-    "verify-build": "bun test ./.github/build-verification.test.ts"
+    "verify-build": "bun test ./.github/build-verification.test.ts",
+    "checks": "bun run lint:fix && bun run prettier:fix && bun run typecheck && bun run test:unit --run && bun run test:storybook --run"
   },
   "type": "module",
   "types": "./dist/index.d.ts",
