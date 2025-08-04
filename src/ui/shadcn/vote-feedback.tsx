@@ -11,7 +11,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { ThumbsDown, ThumbsUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-interface ShadcnVoteFeedbackProps extends VoteFeedbackRootProps {
+interface ShadcnVoteFeedbackProps extends Omit<VoteFeedbackRootProps, 'children'> {
+  children?: React.ReactNode;
   variant?: 'default' | 'outline' | 'ghost' | 'secondary';
   size?: 'default' | 'sm' | 'lg' | 'icon';
   title?: string;
