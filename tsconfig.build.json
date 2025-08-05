@@ -13,6 +13,7 @@
     "src/**/*.test.ts",
     "src/**/*.stories.tsx",
     "src/**/*.stories.ts",
+    "src/components/ui/**",
     "src/ui/shadcn/**",
     "node_modules",
     "dist"

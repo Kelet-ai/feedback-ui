@@ -93,31 +93,27 @@ const ShadcnVoteFeedback = React.forwardRef<
               )}
             </VoteFeedback.DownvoteButton>
 
-            <VoteFeedback.Popover asChild>
-              <PopoverContent className="w-80 p-4" side="bottom" align="start">
-                <div className="space-y-3">
-                  <div className="space-y-1">
-                    <h4 className="font-medium leading-none">{title}</h4>
-                    <p className="text-sm text-muted-foreground">
-                      {description}
-                    </p>
-                  </div>
-
-                  <VoteFeedback.Textarea asChild>
-                    <Textarea
-                      placeholder={placeholder}
-                      className="min-h-[80px] resize-none"
-                    />
-                  </VoteFeedback.Textarea>
-
-                  <div className="flex justify-end gap-2">
-                    <VoteFeedback.SubmitButton asChild>
-                      <Button size="sm">Submit</Button>
-                    </VoteFeedback.SubmitButton>
-                  </div>
+            <PopoverContent className="w-80 p-4" side="bottom" align="start">
+              <div className="space-y-3">
+                <div className="space-y-1">
+                  <h4 className="font-medium leading-none">{title}</h4>
+                  <p className="text-sm text-muted-foreground">{description}</p>
                 </div>
-              </PopoverContent>
-            </VoteFeedback.Popover>
+
+                <VoteFeedback.Textarea asChild>
+                  <Textarea
+                    placeholder={placeholder}
+                    className="min-h-[80px] resize-none"
+                  />
+                </VoteFeedback.Textarea>
+
+                <div className="flex justify-end gap-2">
+                  <VoteFeedback.SubmitButton asChild>
+                    <Button size="sm">Submit</Button>
+                  </VoteFeedback.SubmitButton>
+                </div>
+              </div>
+            </PopoverContent>
           </Popover>
 
           {children}
