@@ -3,7 +3,7 @@ import type { DiffType } from '@/hooks';
 import type { FeedbackData } from '@/types';
 
 /**
- * Options for the useFeedbackState hook
+ * Options for the useFeedbackState and useFeedbackReducer hooks
  */
 export interface FeedbackStateOptions<T> {
   /**
@@ -43,7 +43,7 @@ export interface FeedbackStateOptions<T> {
     | ((before: T, after: T, diffPercentage: number) => 'upvote' | 'downvote');
 
   /**
-   * Default trigger name for state changes when no trigger_name is specified in setState
+   * Default trigger name for state changes when no trigger_name is specified in setState/dispatch
    * @default 'auto_state_change'
    */
   default_trigger_name?: string;
@@ -61,6 +61,16 @@ export type FeedbackStateSetter<T> = (
  * Return type of the useFeedbackState hook - enhanced setState with trigger_name support
  */
 export type FeedbackStateReturn<T> = [T, FeedbackStateSetter<T>];
+
+/**
+ * Custom dispatch function that accepts an optional trigger_name parameter
+ */
+export type FeedbackDispatch<A> = (action: A, trigger_name?: string) => void;
+
+/**
+ * Return type of the useFeedbackReducer hook - same as React's useReducer but with enhanced dispatch
+ */
+export type FeedbackReducerReturn<S, A> = [S, FeedbackDispatch<A>];
 
 /**
  * Function to handle feedback submission

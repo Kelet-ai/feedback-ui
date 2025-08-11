@@ -58,7 +58,29 @@ function ContentEditor() {
 }
 ```
 
-## Three Ways to Use
+### 4. Automatic Feedback with useFeedbackReducer
+
+For complex state management with automatic feedback tracking:
+
+```tsx
+import { useFeedbackReducer } from '@kelet-ai/feedback-ui';
+
+function TodoApp() {
+  // Drop-in useReducer replacement that tracks changes
+  const [todos, dispatch] = useFeedbackReducer(todoReducer, [], 'todo-app');
+
+  return (
+    <div>
+      <button onClick={() => dispatch({ type: 'ADD_TODO', text: 'New task' })}>
+        Add Todo
+      </button>
+      {/* 🎯 Automatically sends feedback with trigger name 'ADD_TODO'! */}
+    </div>
+  );
+}
+```
+
+## Four Ways to Use
 
 ### 1. Start Fast with shadcn/ui (Recommended)
 
@@ -109,7 +131,7 @@ import { VoteFeedback } from '@kelet-ai/feedback-ui';
 - **TypeScript**: Complete type safety included
 - **Flexible**: Works with any styling solution
 - **Zero Dependencies**: Just React - no other dependencies
-- **Automatic Feedback**: `useFeedbackState` hook captures implicit user behavior
+- **Automatic Feedback**: `useFeedbackState` and `useFeedbackReducer` hooks capture implicit user behavior
 
 ## API Reference
 
@@ -604,6 +626,49 @@ const [data, setData] = useFeedbackState({}, 'complex-data', {
   },
 });
 ```
+
+## useFeedbackReducer Hook
+
+The `useFeedbackReducer` hook is a **drop-in replacement for React's useReducer** that automatically tracks state changes and sends implicit feedback through the Kelet system. Perfect for complex state management with automatic trigger name extraction from action types.
+
+### Key Features
+
+- 🔄 **Drop-in useReducer replacement** - Same API signature and behavior
+- 🎯 **Automatic trigger name extraction** - Uses `action.type` as trigger_name automatically
+- ⏱️ **Smart debouncing** - Prevents feedback spam (default: 1500ms)
+- 📊 **Multiple diff formats** - Git, object, or JSON diff formats
+
+### Basic Usage
+
+```tsx
+import { useFeedbackReducer } from '@kelet-ai/feedback-ui';
+
+function Counter() {
+  const [state, dispatch] = useFeedbackReducer(
+    counterReducer,
+    { count: 0 },
+    'counter-widget'
+  );
+
+  return (
+    <div>
+      <p>Count: {state.count}</p>
+      <button onClick={() => dispatch({ type: 'increment' })}>Increment</button>
+      {/* 🎯 Automatically sends feedback with trigger_name: 'increment' */}
+    </div>
+  );
+}
+```
+
+### Automatic Trigger Names
+
+```tsx
+dispatch({ type: 'increment' }); // trigger_name: 'increment'
+dispatch({ type: 'add_todo', payload: {...} }); // trigger_name: 'add_todo'
+dispatch({ type: 'increment' }, 'custom_trigger'); // Override trigger name
+```
+
+**📚 See more examples and detailed documentation at [https://feedback-ui.kelet.ai/](https://feedback-ui.kelet.ai/)**
 
 ## Examples
 
