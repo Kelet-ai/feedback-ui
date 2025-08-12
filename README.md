@@ -28,7 +28,7 @@ import { ShadcnVoteFeedback } from '@/components/ui/vote-feedback';
 function App() {
   return (
     <ShadcnVoteFeedback
-      identifier="my-feature"
+      tx_id="my-feature"
       onFeedback={feedback => console.log(feedback)}
       variant="outline"
     />
@@ -91,7 +91,7 @@ Users explicitly vote and provide comments:
 ```tsx
 import { VoteFeedback } from '@kelet-ai/feedback-ui';
 
-<VoteFeedback.Root onFeedback={handleFeedback} identifier="ai-response">
+<VoteFeedback.Root onFeedback={handleFeedback} tx_id="ai-response">
   <VoteFeedback.UpvoteButton>👍 Helpful</VoteFeedback.UpvoteButton>
   <VoteFeedback.DownvoteButton>👎 Not helpful</VoteFeedback.DownvoteButton>
   <VoteFeedback.Popover>
@@ -158,14 +158,14 @@ Understanding these fundamental concepts will help you implement feedback collec
 **Best Practice**: Use traceable IDs from your logging system (session ID, trace ID, request ID)
 
 ```tsx
-// ✅ Good: Traceable identifier
-<VoteFeedback.Root identifier="session-abc123-ai-response-456"/>
+// ✅ Good: Traceable tx_id
+<VoteFeedback.Root tx_id="session-abc123-ai-response-456"/>
 
-// ✅ Good: Content-based identifier
-<VoteFeedback.Root identifier={`article-${articleId}-section-${sectionId}`}/>
+// ✅ Good: Content-based tx_id
+<VoteFeedback.Root tx_id={`article-${articleId}-section-${sectionId}`}/>
 
-// ❌ Poor: Generic identifier
-<VoteFeedback.Root identifier="feedback"/>
+// ❌ Poor: Generic tx_id
+<VoteFeedback.Root tx_id="feedback"/>
 ```
 
 ### **📊 Feedback Sources**
@@ -290,8 +290,8 @@ const [data, setData] = useFeedbackState(initial, 'tracker', {
 #### **Identifiers**
 
 ✅ Use traceable session/request IDs  
-✅ Include context in identifier structure  
-✅ Keep identifiers consistent across related actions
+✅ Include context in tx_id structure  
+✅ Keep tx_ids consistent across related actions
 
 #### **Feedback Sources**
 
@@ -321,7 +321,7 @@ Main container component that manages feedback state.
 
 ```tsx
 <VoteFeedback.Root
-  identifier="unique-id" // Required: Unique tracking ID
+  tx_id="unique-id" // Required: Unique tracking ID
   onFeedback={handleFeedback} // Required: Callback function
   trigger_name="user_feedback" // Optional: Categorization
   extra_metadata={{ page: 'home' }} // Optional: Additional data
@@ -370,7 +370,7 @@ const [count, setCount] = useFeedbackState(0, 'counter-widget');
 ```tsx
 const [profile, setProfile] = useFeedbackState(
   { name: '', email: '' },
-  state => `profile-${state.email}`, // Dynamic identifier
+  state => `profile-${state.email}`, // Dynamic tx_id
   {
     debounceMs: 2000, // Wait time before sending feedback
     diffType: 'object', // Format: 'git' | 'object' | 'json'
@@ -460,7 +460,7 @@ dispatch({ type: 'custom' }, 'override'); // Custom trigger name
 
 ```tsx
 <VoteFeedback.Root
-  identifier="ai-response-123"
+  tx_id="ai-response-123"
   onFeedback={handleFeedback}
   trigger_name="ai_evaluation"
   extra_metadata={{
@@ -486,7 +486,7 @@ dispatch({ type: 'custom' }, 'override'); // Custom trigger name
 
 ```typescript
 interface FeedbackData {
-  identifier: string; // Unique tracking ID
+  tx_id: string; // Unique tracking ID
   vote: 'upvote' | 'downvote'; // User's vote
   explanation?: string; // Optional user comment
   extra_metadata?: Record<string, any>; // Additional context data
@@ -501,7 +501,7 @@ interface FeedbackData {
 
 | Prop             | Type                           | Required | Description                         |
 | ---------------- | ------------------------------ | -------- | ----------------------------------- |
-| `identifier`     | `string`                       | ✅       | Unique identifier for tracking      |
+| `tx_id`          | `string`                       | ✅       | Unique transaction ID for tracking  |
 | `onFeedback`     | `(data: FeedbackData) => void` | ✅       | Callback when feedback is submitted |
 | `trigger_name`   | `string`                       | ❌       | Optional categorization tag         |
 | `extra_metadata` | `object`                       | ❌       | Additional context data             |
@@ -586,9 +586,9 @@ bun run checks      # Run all quality checks (lint, format, typecheck, tests)
     <VoteFeedback.UpvoteButton>👍</VoteFeedback.UpvoteButton>
 </VoteFeedback.Root>
 
-// ✅ Include required identifier and onFeedback
+// ✅ Include required tx_id and onFeedback
 <VoteFeedback.Root
-    identifier="my-feature"
+    tx_id="my-feature"
     onFeedback={handleFeedback}
 >
     <VoteFeedback.UpvoteButton>👍</VoteFeedback.UpvoteButton>
@@ -624,14 +624,14 @@ const [value, setValue] = useFeedbackState('initial', 'test', {
 
 ### **Best Practices**
 
-✅ **Use unique identifiers** for each feedback instance - the identifier should be traceable back to the session's log
+✅ **Use unique tx_ids** for each feedback instance - the tx_id should be traceable back to the session's log
 and allow us to understand the context of the feedback.
 ✅ **Handle feedback data asynchronously** in your callback  
 ✅ **Test keyboard navigation** in your implementation  
 ✅ **Provide meaningful trigger names** for categorization  
 ✅ **Include relevant metadata** for context
 
-❌ **Don't use the same identifier** for multiple components. An identifier should be traced back to the session's log -
+❌ **Don't use the same tx_id** for multiple components. A tx_id should be traced back to the session's log -
 allows us to understand the context of the feedback.
 
 ---

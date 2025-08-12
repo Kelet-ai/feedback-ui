@@ -9,7 +9,7 @@ import type {
  * Feedback data structure returned by the component
  */
 export interface FeedbackData {
-  identifier: string;
+  tx_id: string;
   extra_metadata?: Record<string, any>;
   vote: 'upvote' | 'downvote';
   explanation?: string;
@@ -27,7 +27,7 @@ export interface VoteFeedbackRootProps {
   children: ReactNode;
   onFeedback?: (data: FeedbackData) => void | Promise<void>;
   defaultText?: string;
-  identifier: string;
+  tx_id: string;
   extra_metadata?: Record<string, any>;
   trigger_name?: string; // Optional trigger name for categorizing feedback
 }

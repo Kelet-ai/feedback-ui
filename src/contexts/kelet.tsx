@@ -67,7 +67,7 @@ export const KeletProvider: React.FC<
   const feedback = async (data: FeedbackData) => {
     const url = `${KeletBaseUrl}/projects/${project}/feedback`;
     const req: FeedbackRequest = {
-      tx_id: data.identifier,
+      tx_id: data.tx_id,
       source: data.source || 'EXPLICIT',
       vote: data.vote,
       explanation: data.explanation,

@@ -20,7 +20,7 @@ Build a headless React component library for thumbs up/down feedback collection 
 ```typescript
 // src/types/index.ts
 export interface FeedbackData {
-  identifier: string;
+  tx_id: string;
   extra_metadata?: Record<string, any>;
   type: 'upvote' | 'downvote';
   explanation?: string;
@@ -30,7 +30,7 @@ export interface VoteFeedbackRootProps {
   children: ReactNode;
   onFeedback?: (data: FeedbackData) => void | Promise<void>;
   defaultText?: string;
-  identifier: string;
+  tx_id: string;
   extra_metadata?: Record<string, any>;
 }
 
@@ -61,7 +61,7 @@ const useVoteFeedbackContext = () => { /* ... */ };
 
 #### Step 3.2: Root Component
 ```typescript
-const VoteFeedbackRoot = ({ children, onFeedback, defaultText, identifier, extra_metadata }) => {
+const VoteFeedbackRoot = ({ children, onFeedback, defaultText, tx_id, extra_metadata }) => {
   // State management
   // Context provider
   // Return JSX
@@ -253,7 +253,7 @@ src/
 ### 6. Usage Examples
 ```typescript
 // Headless usage
-<VoteFeedback.Root identifier="feedback-123" onFeedback={handleFeedback}>
+<VoteFeedback.Root tx_id="feedback-123" onFeedback={handleFeedback}>
   <VoteFeedback.UpvoteButton>👍</VoteFeedback.UpvoteButton>
   <VoteFeedback.DownvoteButton>👎</VoteFeedback.DownvoteButton>
   <VoteFeedback.Popover>
@@ -264,7 +264,7 @@ src/
 
 // With metadata
 <VoteFeedback.Root 
-  identifier="feedback-123"
+  tx_id="feedback-123"
   extra_metadata={{ userId: 'user-456', sessionId: 'session-789' }}
   onFeedback={handleFeedback}
 >

@@ -8,7 +8,7 @@ import { KeletProvider } from '@/contexts/kelet';
 interface FeedbackReducerTestProps {
   reducer: (state: any, action: any) => any;
   initialState: any;
-  identifier: string | ((state: any) => string);
+  tx_id: string | ((state: any) => string);
   options?: any;
   onFeedback?: (data: any) => void;
   initializer?: (init: any) => any;
@@ -17,7 +17,7 @@ interface FeedbackReducerTestProps {
 const FeedbackReducerTest: React.FC<FeedbackReducerTestProps> = ({
   reducer,
   initialState,
-  identifier,
+  tx_id,
   options,
   onFeedback = () => {},
   initializer,
@@ -25,7 +25,7 @@ const FeedbackReducerTest: React.FC<FeedbackReducerTestProps> = ({
   const [state, dispatch] = useFeedbackReducer(
     reducer,
     initialState,
-    identifier,
+    tx_id,
     {
       ...options,
       onFeedback,
@@ -244,7 +244,7 @@ const FeedbackReducerTest: React.FC<FeedbackReducerTestProps> = ({
           <h4>Test Info:</h4>
           <p>
             <strong>Identifier:</strong>{' '}
-            {typeof identifier === 'function' ? identifier(state) : identifier}
+            {typeof tx_id === 'function' ? tx_id(state) : tx_id}
           </p>
           <p>
             <strong>Options:</strong> {JSON.stringify(options || {})}
@@ -351,7 +351,7 @@ A **drop-in replacement** for React's \`useReducer\` that automatically tracks s
 - 🎯 **Automatic trigger name extraction** - Uses action.type as trigger_name automatically
 - ⏱️ **Debounced updates** - Prevents feedback spam (default: 1500ms)
 - 📊 **Multiple diff formats** - Git, object, or JSON diff formats
-- 🎭 **Dynamic identifiers** - Can derive identifier from state
+- 🎭 **Dynamic tx_ids** - Can derive tx_id from state
 - 🎚️ **Vote determination** - Automatic upvote/downvote based on change size
 - 🔍 **Custom comparison** - Support for custom equality functions
 
@@ -360,7 +360,7 @@ A **drop-in replacement** for React's \`useReducer\` that automatically tracks s
 function useFeedbackReducer<S, A>(
   reducer: (state: S, action: A) => S,
   initialState: S,
-  identifier: string | ((state: S) => string),
+  tx_id: string | ((state: S) => string),
   options?: FeedbackStateOptions<S>,
   initializer?: (arg: S) => S
 ): [S, (action: A, trigger_name?: string) => void]
@@ -396,7 +396,7 @@ Perfect for automatically capturing user interactions as implicit feedback in re
       control: 'object',
       description: 'Initial state value',
     },
-    identifier: {
+    tx_id: {
       control: 'text',
       description: 'Identifier for tracking (string or function)',
     },
@@ -427,7 +427,7 @@ export const CounterExample: Story = {
   args: {
     reducer: counterReducer,
     initialState: { count: 0 },
-    identifier: 'counter-demo',
+    tx_id: 'counter-demo',
     options: { debounceMs: 1000 },
   },
   parameters: {
@@ -440,7 +440,7 @@ export const CounterExample: Story = {
 - Counter state management with increment/decrement/add/set actions
 - Automatic trigger name extraction from action.type ('increment', 'decrement', etc.)
 - Default options (git diff, 1000ms debounce for demo)
-- Static string identifier
+- Static string tx_id
 
 Try clicking the buttons and watch the console for feedback logs with extracted trigger names!
         `,
@@ -469,7 +469,7 @@ Try clicking the buttons and watch the console for feedback logs with extracted 
 
     // Get the actual call and verify the essential properties
     const feedbackCall = (args.onFeedback as any)?.mock?.calls?.[0]?.[0];
-    await expect(feedbackCall.identifier).toBe('counter-demo');
+    await expect(feedbackCall.tx_id).toBe('counter-demo');
     await expect(feedbackCall.source).toBe('IMPLICIT');
     await expect(feedbackCall.trigger_name).toBe('increment'); // Extracted from action.type
     await expect(feedbackCall.correction).toBeTruthy();
@@ -497,18 +497,18 @@ export const TodoListExample: Story = {
   args: {
     reducer: todoReducer,
     initialState: { todos: [] },
-    identifier: state => `todos-${state.todos.length}`,
+    tx_id: state => `todos-${state.todos.length}`,
     options: { diffType: 'object', debounceMs: 800 },
   },
   parameters: {
     docs: {
       description: {
         story: `
-**Todo List Example** - Complex state with dynamic identifier.
+**Todo List Example** - Complex state with dynamic tx_id.
 
 **Features:**
 - Todo list state management with add/toggle/remove actions
-- Dynamic identifier based on todos count (\`todos-0\`, \`todos-1\`, etc.)
+- Dynamic tx_id based on todos count (\`todos-0\`, \`todos-1\`, etc.)
 - Object diff format
 - 800ms debounce
 - Multiple action types with different trigger names
@@ -524,7 +524,7 @@ export const TriggerNameExamples: Story = {
   args: {
     reducer: counterReducer,
     initialState: { count: 0 },
-    identifier: 'trigger-demo',
+    tx_id: 'trigger-demo',
     options: { debounceMs: 500 },
   },
   parameters: {
@@ -600,7 +600,7 @@ export const RapidActions: Story = {
   args: {
     reducer: counterReducer,
     initialState: { count: 0 },
-    identifier: 'rapid-demo',
+    tx_id: 'rapid-demo',
     options: { debounceMs: 300 },
   },
   parameters: {
@@ -662,7 +662,7 @@ export const WithInitializer: Story = {
   args: {
     reducer: counterReducer,
     initialState: 5,
-    identifier: 'counter-with-init',
+    tx_id: 'counter-with-init',
     options: { debounceMs: 500 },
     initializer: (init: number) => ({ count: init * 2 }),
   },

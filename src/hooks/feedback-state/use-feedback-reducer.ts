@@ -12,16 +12,16 @@ import type {
  *
  * @param reducer The reducer function - same as React's useReducer
  * @param initialState The initial state value
- * @param identifier A unique identifier for the state (string or function that derives from state)
+ * @param tx_id A unique transaction ID for the state (string or function that derives from state)
  * @param options Optional configuration options
  * @param initializer Optional initializer function - same as React's useReducer
  * @returns A tuple of [state, dispatch] just like React's useReducer
  *
  * @example
- * // Basic usage with required identifier
+ * // Basic usage with required tx_id
  * const [state, dispatch] = useFeedbackReducer(reducer, initialState, 'counter');
  *
- * // Using with options and dynamic identifier
+ * // Using with options and dynamic tx_id
  * const [items, dispatch] = useFeedbackReducer(
  *   itemsReducer,
  *   [],
@@ -41,7 +41,7 @@ import type {
 export function useFeedbackReducer<S, A>(
   reducer: (state: S, action: A) => S,
   initialState: S,
-  identifier: string | ((state: S) => string),
+  tx_id: string | ((state: S) => string),
   options?: FeedbackStateOptions<S>,
   initializer?: (arg: S) => S
 ): FeedbackReducerReturn<S, A> {
@@ -53,7 +53,7 @@ export function useFeedbackReducer<S, A>(
   );
 
   // Use the shared state change tracking logic
-  const { notifyChange } = useStateChangeTracking(state, identifier, options);
+  const { notifyChange } = useStateChangeTracking(state, tx_id, options);
 
   // Wrap dispatch to track changes with trigger_name support
   const dispatch: FeedbackDispatch<A> = useCallback(

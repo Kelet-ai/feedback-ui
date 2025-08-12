@@ -75,7 +75,7 @@ interface VoteFeedbackContextValue {
   triggerRef: React.RefObject<HTMLButtonElement | null>;
   popoverId: string;
   triggerId: string;
-  identifier: string;
+  tx_id: string;
   extra_metadata?: Record<string, any>;
   trigger_name?: string;
 }
@@ -99,7 +99,7 @@ const VoteFeedbackRoot = ({
   children,
   onFeedback,
   defaultText = '',
-  identifier,
+  tx_id,
   extra_metadata,
   trigger_name,
 }: VoteFeedbackRootProps) => {
@@ -121,7 +121,7 @@ const VoteFeedbackRoot = ({
   const handleUpvote = useCallback(async () => {
     setVote('upvote');
     const data: FeedbackData = {
-      identifier,
+      tx_id,
       vote: 'upvote',
       ...(extra_metadata && { extra_metadata }),
       ...(trigger_name && { trigger_name }),
@@ -133,14 +133,14 @@ const VoteFeedbackRoot = ({
     } finally {
       setIsSubmitting(false);
     }
-  }, [handler, identifier, extra_metadata, trigger_name]);
+  }, [handler, tx_id, extra_metadata, trigger_name]);
 
   const handleDownvote = useCallback(async () => {
     setVote('downvote');
     // First: Send feedback immediately (without explanation)
     if (handler) {
       const data: FeedbackData = {
-        identifier,
+        tx_id,
         vote: 'downvote',
         ...(extra_metadata && { extra_metadata }),
         ...(trigger_name && { trigger_name }),
@@ -169,7 +169,7 @@ const VoteFeedbackRoot = ({
       document.body.appendChild(announcement);
       setTimeout(() => document.body.removeChild(announcement), 1000);
     }, 0);
-  }, [handler, identifier, extra_metadata, trigger_name]);
+  }, [handler, tx_id, extra_metadata, trigger_name]);
 
   const handleTextareaChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -184,7 +184,7 @@ const VoteFeedbackRoot = ({
     if (hasText) {
       // Submit with explanation
       const data: FeedbackData = {
-        identifier,
+        tx_id,
         vote: 'downvote',
         explanation: feedbackText,
         ...(extra_metadata && { extra_metadata }),
@@ -214,14 +214,7 @@ const VoteFeedbackRoot = ({
       document.body.appendChild(announcement);
       setTimeout(() => document.body.removeChild(announcement), 1000);
     }
-  }, [
-    handler,
-    feedbackText,
-    defaultText,
-    identifier,
-    extra_metadata,
-    trigger_name,
-  ]);
+  }, [handler, feedbackText, defaultText, tx_id, extra_metadata, trigger_name]);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -275,7 +268,7 @@ const VoteFeedbackRoot = ({
     triggerRef,
     popoverId,
     triggerId,
-    identifier,
+    tx_id,
     extra_metadata,
     trigger_name,
   };

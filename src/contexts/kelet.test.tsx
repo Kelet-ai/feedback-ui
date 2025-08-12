@@ -64,7 +64,7 @@ describe('KeletProvider', () => {
       const { result } = renderHook(() => useKelet(), { wrapper });
 
       await result.current.feedback({
-        identifier: 'test-id',
+        tx_id: 'test-id',
         vote: 'upvote',
         explanation: 'Great feature!',
       });
@@ -103,7 +103,7 @@ describe('KeletProvider', () => {
 
       await expect(
         result.current.feedback({
-          identifier: 'test-id',
+          tx_id: 'test-id',
           vote: 'upvote',
         })
       ).rejects.toThrow('Failed to submit feedback: Unauthorized');
@@ -137,7 +137,7 @@ describe('KeletProvider', () => {
       expect(result.current.project).toBe('feedback');
 
       await result.current.feedback({
-        identifier: 'nested-test',
+        tx_id: 'nested-test',
         vote: 'downvote',
       });
 
@@ -205,7 +205,7 @@ describe('KeletProvider', () => {
   describe('Feedback data handling', () => {
     it('should include all feedback properties in API call', async () => {
       const feedbackData: FeedbackData = {
-        identifier: 'complex-test',
+        tx_id: 'complex-test',
         vote: 'downvote',
         explanation: 'Could be better',
         correction: 'Try this instead',
@@ -248,7 +248,7 @@ describe('KeletProvider', () => {
       const { result } = renderHook(() => useKelet(), { wrapper });
 
       await result.current.feedback({
-        identifier: 'default-source-test',
+        tx_id: 'default-source-test',
         vote: 'upvote',
       });
 
@@ -309,7 +309,7 @@ describe('useDefaultFeedbackHandler hook', () => {
     // Should not throw when called
     await expect(
       result.current({
-        identifier: 'test',
+        tx_id: 'test',
         vote: 'upvote',
       })
     ).resolves.not.toThrow();
@@ -344,7 +344,7 @@ describe('useDefaultFeedbackHandler hook', () => {
     });
 
     await result.current({
-      identifier: 'default-handler-test',
+      tx_id: 'default-handler-test',
       vote: 'upvote',
       explanation: 'Using default handler',
     });

@@ -91,7 +91,7 @@ describe('useFeedbackReducer', () => {
     expect(result.current[0]).toEqual({ count: 10 }); // 5 * 2
   });
 
-  it('should work with complex state objects and dynamic identifiers', () => {
+  it('should work with complex state objects and dynamic tx_ids', () => {
     interface TodoState {
       todos: { id: number; text: string; completed: boolean }[];
     }
@@ -135,7 +135,7 @@ describe('useFeedbackReducer', () => {
       useFeedbackReducer(
         todoReducer,
         { todos: [] },
-        state => `todos-${state.todos.length}` // Dynamic identifier
+        state => `todos-${state.todos.length}` // Dynamic tx_id
       )
     );
 

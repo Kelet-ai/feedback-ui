@@ -87,7 +87,7 @@ describe('useFeedbackState - trigger_name functionality', () => {
     expect(mockHandler).toHaveBeenCalledWith(
       expect.objectContaining({
         trigger_name: 'auto_state_change',
-        identifier: 'test-id',
+        tx_id: 'test-id',
       })
     );
   });

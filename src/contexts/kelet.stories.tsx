@@ -77,7 +77,7 @@ function YourComponent() {
   
   const handleFeedback = async () => {
     await feedback({
-      identifier: 'unique-id',
+      tx_id: 'unique-id',
       vote: 'upvote',
       explanation: 'Great feature!'
     });
@@ -143,7 +143,7 @@ function ReusableButton() {
   const handleClick = async () => {
     // Works with or without provider - no-op if no provider
     await feedback({
-      identifier: 'button-click',
+      tx_id: 'button-click',
       vote: 'upvote'
     });
   };
@@ -168,7 +168,7 @@ The provider automatically handles common scenarios:
 
 \`\`\`tsx
 try {
-  await feedback({ identifier: 'test', vote: 'upvote' });
+  await feedback({ tx_id: 'test', vote: 'upvote' });
 } catch (error) {
   console.error('Feedback failed:', error.message);
   // Handle error appropriately
@@ -244,7 +244,7 @@ export const BasicProvider: Story = {
         setIsSubmitting(true);
         try {
           await feedback({
-            identifier: `demo-${Date.now()}`,
+            tx_id: `demo-${Date.now()}`,
             vote: 'upvote',
             explanation: feedbackText || undefined,
           });
@@ -357,7 +357,7 @@ This is useful when you have:
         setStatus('Submitting...');
         try {
           await feedback({
-            identifier: `${project}-demo-${Date.now()}`,
+            tx_id: `${project}-demo-${Date.now()}`,
             vote,
             explanation: `Feedback for ${project} project`,
           });
@@ -559,7 +559,7 @@ Key behaviors:
         try {
           // This will be mocked to fail in the test
           await feedback({
-            identifier: 'error-test',
+            tx_id: 'error-test',
             vote: 'upvote',
           });
           setStatus('Success (unexpected!)');
@@ -617,7 +617,7 @@ Key behaviors:
         try {
           // This should work silently (no-op when no provider)
           await defaultHandler({
-            identifier: 'no-provider-test',
+            tx_id: 'no-provider-test',
             vote: 'upvote',
           });
           setStatus('Default handler worked (no-op)');
@@ -771,7 +771,7 @@ Shows:
       const handleQuickFeedback = async (vote: 'upvote' | 'downvote') => {
         try {
           await feedback({
-            identifier: `quick-${Date.now()}`,
+            tx_id: `quick-${Date.now()}`,
             vote,
             explanation: `Quick ${vote} from useKelet hook`,
           });
@@ -862,7 +862,7 @@ Shows:
         setStatus('Submitting...');
         try {
           await feedbackHandler({
-            identifier: `default-handler-${Date.now()}`,
+            tx_id: `default-handler-${Date.now()}`,
             vote: 'upvote',
             explanation: 'Using default feedback handler',
           });

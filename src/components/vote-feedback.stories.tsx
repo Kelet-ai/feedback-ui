@@ -73,9 +73,9 @@ The headless approach separates the "brain" (logic) from the "looks" (styling). 
       action: 'feedback-received',
       description: 'Callback when user provides feedback',
     },
-    identifier: {
+    tx_id: {
       control: 'text',
-      description: 'Required identifier for tracking feedback',
+      description: 'Required transaction ID for tracking feedback',
     },
     extra_metadata: {
       control: 'object',
@@ -83,7 +83,7 @@ The headless approach separates the "brain" (logic) from the "looks" (styling). 
     },
   },
   args: {
-    identifier: 'story-demo',
+    tx_id: 'story-demo',
     onFeedback: fn(args => {
       console.log('Feedback received:', args, 'type:', typeof args);
     }),
@@ -112,7 +112,7 @@ export const HeadlessBasic: Story = {
     await expect(upvoteButton).toHaveTextContent('(Selected)');
     await expect(downvoteButton).not.toHaveTextContent('(Selected)');
     await expect(args.onFeedback).toHaveBeenCalledWith({
-      identifier: 'story-demo',
+      tx_id: 'story-demo',
       vote: 'upvote',
     });
 
@@ -123,7 +123,7 @@ export const HeadlessBasic: Story = {
     await expect(downvoteButton).toHaveTextContent('(Selected)');
     await expect(upvoteButton).not.toHaveTextContent('(Selected)');
     await expect(args.onFeedback).toHaveBeenCalledWith({
-      identifier: 'story-demo',
+      tx_id: 'story-demo',
       vote: 'downvote',
     });
   },
@@ -244,7 +244,7 @@ export const HeadlessCustomStyling: Story = {
     await userEvent.click(submitButton);
 
     await expect(args.onFeedback).toHaveBeenCalledWith({
-      identifier: 'story-demo',
+      tx_id: 'story-demo',
       vote: 'downvote',
       explanation: 'Could be improved',
     });
@@ -363,7 +363,7 @@ export const HeadlessMinimal: Story = {
     await userEvent.click(sendButton);
 
     await expect(args.onFeedback).toHaveBeenCalledWith({
-      identifier: 'story-demo',
+      tx_id: 'story-demo',
       vote: 'downvote',
     });
   },
@@ -449,7 +449,7 @@ export const HeadlessMinimal: Story = {
 };
 export const AsChildPattern: Story = {
   args: {
-    identifier: 'as-child-demo',
+    tx_id: 'as-child-demo',
     extra_metadata: {
       testId: 'as-child-pattern',
     },
@@ -479,7 +479,7 @@ The \`asChild\` pattern is inspired by Radix UI and allows maximum flexibility w
     await userEvent.click(customUpvote);
 
     await expect(args.onFeedback).toHaveBeenCalledWith({
-      identifier: 'as-child-demo',
+      tx_id: 'as-child-demo',
       extra_metadata: {
         testId: 'as-child-pattern',
       },
@@ -491,7 +491,7 @@ The \`asChild\` pattern is inspired by Radix UI and allows maximum flexibility w
     await userEvent.click(customDownvote);
 
     await expect(args.onFeedback).toHaveBeenLastCalledWith({
-      identifier: 'as-child-demo',
+      tx_id: 'as-child-demo',
       extra_metadata: {
         testId: 'as-child-pattern',
       },
@@ -507,7 +507,7 @@ The \`asChild\` pattern is inspired by Radix UI and allows maximum flexibility w
     await userEvent.click(customSubmit);
 
     await expect(args.onFeedback).toHaveBeenLastCalledWith({
-      identifier: 'as-child-demo',
+      tx_id: 'as-child-demo',
       extra_metadata: {
         testId: 'as-child-pattern',
       },
@@ -687,7 +687,7 @@ The \`asChild\` pattern is inspired by Radix UI and allows maximum flexibility w
 
 export const CompleteWorkflow: Story = {
   args: {
-    identifier: 'workflow-test',
+    tx_id: 'workflow-test',
     extra_metadata: {
       userId: 'user-123',
       sessionId: 'session-456',
@@ -702,7 +702,7 @@ export const CompleteWorkflow: Story = {
 1. **Upvote flow** - Click thumbs up and see action logged
 2. **Downvote with text** - Open popover, type feedback, submit
 3. **Empty submit** - Submit without text just closes popover
-4. **Metadata inclusion** - All callbacks include identifier and extra_metadata
+4. **Metadata inclusion** - All callbacks include tx_id and extra_metadata
 
 Watch the **Interactions** panel to see automated testing, and **Actions** panel for callback data!
         `,
@@ -717,7 +717,7 @@ Watch the **Interactions** panel to see automated testing, and **Actions** panel
     await userEvent.click(upvoteButton);
 
     await expect(args.onFeedback).toHaveBeenCalledWith({
-      identifier: 'workflow-test',
+      tx_id: 'workflow-test',
       extra_metadata: {
         userId: 'user-123',
         sessionId: 'session-456',
@@ -731,7 +731,7 @@ Watch the **Interactions** panel to see automated testing, and **Actions** panel
 
     // Should immediately send feedback (no explanation)
     await expect(args.onFeedback).toHaveBeenLastCalledWith({
-      identifier: 'workflow-test',
+      tx_id: 'workflow-test',
       extra_metadata: {
         userId: 'user-123',
         sessionId: 'session-456',
@@ -745,7 +745,7 @@ Watch the **Interactions** panel to see automated testing, and **Actions** panel
     await userEvent.click(canvas.getByText('Send'));
 
     await expect(args.onFeedback).toHaveBeenLastCalledWith({
-      identifier: 'workflow-test',
+      tx_id: 'workflow-test',
       extra_metadata: {
         userId: 'user-123',
         sessionId: 'session-456',
@@ -759,7 +759,7 @@ Watch the **Interactions** panel to see automated testing, and **Actions** panel
 
     // This should send feedback immediately
     await expect(args.onFeedback).toHaveBeenLastCalledWith({
-      identifier: 'workflow-test',
+      tx_id: 'workflow-test',
       extra_metadata: {
         userId: 'user-123',
         sessionId: 'session-456',

@@ -8,13 +8,13 @@ import type { FeedbackStateOptions } from './types';
  * This contains all the shared logic between useFeedbackState and useFeedbackReducer.
  *
  * @param currentState The current state to track changes for
- * @param identifier A unique identifier for the state (string or function that derives from state)
+ * @param tx_id A unique transaction ID for the state (string or function that derives from state)
  * @param options Optional configuration options
  * @returns Object with notifyChange function to notify of impending state changes
  */
 export function useStateChangeTracking<T>(
   currentState: T,
-  identifier: string | ((state: T) => string),
+  tx_id: string | ((state: T) => string),
   options?: FeedbackStateOptions<T>
 ) {
   // Get the feedback handler (custom or default from Kelet context)
@@ -60,11 +60,10 @@ export function useStateChangeTracking<T>(
         vote = diffPercentage > 0.5 ? 'downvote' : 'upvote';
       }
 
-      const idString =
-        typeof identifier === 'function' ? identifier(endState) : identifier;
+      const idString = typeof tx_id === 'function' ? tx_id(endState) : tx_id;
 
       feedbackHandler({
-        identifier: idString,
+        tx_id: idString,
         vote,
         explanation: `State change with diff percentage: ${(diffPercentage * 100).toFixed(1)}%`,
         correction: diffString,
@@ -73,7 +72,7 @@ export function useStateChangeTracking<T>(
         trigger_name: triggerName,
       });
     },
-    [options, identifier, diffType, feedbackHandler]
+    [options, tx_id, diffType, feedbackHandler]
   );
 
   // Function to notify of impending state changes with trigger name support
@@ -167,7 +166,7 @@ export function useStateChangeTracking<T>(
     };
   }, [
     currentState,
-    identifier,
+    tx_id,
     options,
     feedbackHandler,
     diffType,
