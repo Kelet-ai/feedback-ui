@@ -21,5 +21,8 @@ export {
 export { useFeedbackState } from '@/hooks/feedback-state';
 export type { FeedbackStateOptions, DiffType } from '@/hooks/feedback-state';
 
+// OpenTelemetry integration
+export { getOtelTraceId } from '@/lib/otel-trace';
+
 // Note: src/lib/utils.ts is excluded from npm package (shadcn-specific)
 // Note: src/ui/ is excluded from npm package (styled components available via shadcn registry)

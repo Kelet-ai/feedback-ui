@@ -99,10 +99,12 @@ const VoteFeedbackRoot = ({
   children,
   onFeedback,
   defaultText = '',
-  tx_id,
+  tx_id: txIdProp,
   extra_metadata,
   trigger_name,
 }: VoteFeedbackRootProps) => {
+  // Resolve tx_id (support both string and function)
+  const tx_id = typeof txIdProp === 'function' ? txIdProp() : txIdProp;
   const [showPopover, setShowPopover] = useState(false);
   const [feedbackText, setFeedbackText] = useState(defaultText);
   const [isSubmitting, setIsSubmitting] = useState(false);

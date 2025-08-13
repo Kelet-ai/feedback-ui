@@ -14,6 +14,7 @@
     "src/**/*.stories.tsx",
     "src/**/*.stories.ts",
     "src/components/ui/**",
+    "src/lib/utils.ts",
     "src/ui/shadcn/**",
     "node_modules",
     "dist"

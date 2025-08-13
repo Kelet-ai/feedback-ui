@@ -313,6 +313,23 @@ const [data, setData] = useFeedbackState(initial, 'tracker', {
 
 ---
 
+## 🔗 OpenTelemetry Integration
+
+Automatically extract trace IDs to correlate feedback with distributed traces:
+
+```tsx
+import { VoteFeedback, getOtelTraceId } from '@kelet-ai/feedback-ui';
+
+<VoteFeedback.Root tx_id={getOtelTraceId} onFeedback={handleFeedback}>
+  <VoteFeedback.UpvoteButton>👍</VoteFeedback.UpvoteButton>
+  <VoteFeedback.DownvoteButton>👎</VoteFeedback.DownvoteButton>
+</VoteFeedback.Root>
+```
+
+Requires `@opentelemetry/api` and active Span to collect the trace_id from.
+
+---
+
 ## 🔧 Core Components
 
 ### **VoteFeedback.Root**

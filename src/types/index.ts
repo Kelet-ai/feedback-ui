@@ -27,7 +27,7 @@ export interface VoteFeedbackRootProps {
   children: ReactNode;
   onFeedback?: (data: FeedbackData) => void | Promise<void>;
   defaultText?: string;
-  tx_id: string;
+  tx_id: string | (() => string);
   extra_metadata?: Record<string, any>;
   trigger_name?: string; // Optional trigger name for categorizing feedback
 }
