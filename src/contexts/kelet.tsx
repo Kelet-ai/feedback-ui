@@ -25,7 +25,7 @@ interface FeedbackRequest {
 // Create the context
 export const KeletContext = createContext<KeletContextValue | null>(null);
 
-const KeletBaseUrl = 'https://api.kelet.ai/';
+const KeletBaseUrl = 'https://api.kelet.ai';
 
 // Custom hook to use the Kelet context
 // noinspection JSUnusedGlobalSymbols
