@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import React, { useState } from 'react';
-import { KeletProvider, useKelet, useDefaultFeedbackHandler } from './kelet';
+import { KeletProvider, useDefaultFeedbackHandler, useKelet } from './kelet';
 import type { FeedbackData } from '@/types';
 
 const meta: Meta<typeof KeletProvider> = {
@@ -125,9 +125,9 @@ function MultiProjectApp() {
 }
 
 // Each component sends feedback to its specific project:
-// Analytics → https://api.kelet.ai/projects/analytics/feedback
-// Feedback → https://api.kelet.ai/projects/user-feedback/feedback  
-// Support → https://api.kelet.ai/projects/customer-support/feedback
+// Analytics → https://api.kelet.ai/api/projects/analytics/feedback
+// Feedback → https://api.kelet.ai/api/projects/user-feedback/feedback  
+// Support → https://api.kelet.ai/api/projects/customer-support/feedback
 \`\`\`
 
 ## Safe Hook Usage
@@ -155,7 +155,7 @@ function ReusableButton() {
 ## API Endpoints
 
 Based on your provider configuration, feedback is sent to:
-- **URL Pattern:** \`https://api.kelet.ai/projects/{project}/feedback\`
+- **URL Pattern:** \`https://api.kelet.ai/api/projects/{project}/feedback\`
 - **Headers:** \`Authorization: Bearer {apiKey}\`
 - **Method:** POST
 

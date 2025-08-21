@@ -1,8 +1,8 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import React from 'react';
 import type { FeedbackData } from '@/types';
-import { KeletProvider, useKelet, useDefaultFeedbackHandler } from './kelet';
+import { KeletProvider, useDefaultFeedbackHandler, useKelet } from './kelet';
 
 // Mock fetch globally
 const mockFetch = vi.fn();
@@ -70,7 +70,7 @@ describe('KeletProvider', () => {
       });
 
       expect(mockFetch).toHaveBeenCalledWith(
-        'https://api.kelet.ai//projects/test-project/feedback',
+        'https://api.kelet.ai/api/projects/test-project/feedback',
         expect.objectContaining({
           method: 'POST',
           headers: {
@@ -142,7 +142,7 @@ describe('KeletProvider', () => {
       });
 
       expect(mockFetch).toHaveBeenCalledWith(
-        'https://api.kelet.ai//projects/feedback/feedback',
+        'https://api.kelet.ai/api/projects/feedback/feedback',
         expect.objectContaining({
           headers: expect.objectContaining({
             Authorization: 'Bearer parent-key',
@@ -224,7 +224,7 @@ describe('KeletProvider', () => {
       await result.current.feedback(feedbackData);
 
       expect(mockFetch).toHaveBeenCalledWith(
-        'https://api.kelet.ai//projects/test/feedback',
+        'https://api.kelet.ai/api/projects/test/feedback',
         expect.objectContaining({
           body: JSON.stringify({
             tx_id: 'complex-test',
@@ -350,7 +350,7 @@ describe('useDefaultFeedbackHandler hook', () => {
     });
 
     expect(mockFetch).toHaveBeenCalledWith(
-      'https://api.kelet.ai//projects/test-project/feedback',
+      'https://api.kelet.ai/api/projects/test-project/feedback',
       expect.objectContaining({
         body: JSON.stringify({
           tx_id: 'default-handler-test',
