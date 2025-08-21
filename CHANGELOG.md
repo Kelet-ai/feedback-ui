@@ -1,3 +1,12 @@
+## [0.4.1](https://github.com/kelet-ai/feedback-ui/compare/v0.4.0...v0.4.1) (2025-08-21)
+
+
+### Bug Fixes
+
+* wrong base_url ([8da3afa](https://github.com/kelet-ai/feedback-ui/commit/8da3afaa09384e5745d97c458da3608b835f9635))
+
+
+
 # [0.4.0](https://github.com/kelet-ai/feedback-ui/compare/v0.3.0...v0.4.0) (2025-08-13)
 
 
@@ -41,15 +50,6 @@
 
 * building correctly ([c6d2a11](https://github.com/kelet-ai/feedback-ui/commit/c6d2a119d2c6e34a4eb2d7972b7f7b42a66883ff))
 * rename provider props to match react name convention ([c63651e](https://github.com/kelet-ai/feedback-ui/commit/c63651ec53e1a22cb9d9c4d5cc79957b7fc684e8))
-
-
-
-## [0.2.2](https://github.com/kelet-ai/feedback-ui/compare/v0.2.1...v0.2.2) (2025-08-03)
-
-
-### Bug Fixes
-
-* add @kelet-ai/feedback-ui to shadcn library ([82d02c7](https://github.com/kelet-ai/feedback-ui/commit/82d02c70c60611e39067ec539a80989d0697e76c))
 
 
 
