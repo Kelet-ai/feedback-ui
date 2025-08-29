@@ -323,7 +323,7 @@ import { VoteFeedback, getOtelTraceId } from '@kelet-ai/feedback-ui';
 <VoteFeedback.Root tx_id={getOtelTraceId} onFeedback={handleFeedback}>
   <VoteFeedback.UpvoteButton>👍</VoteFeedback.UpvoteButton>
   <VoteFeedback.DownvoteButton>👎</VoteFeedback.DownvoteButton>
-</VoteFeedback.Root>
+</VoteFeedback.Root>;
 ```
 
 Requires `@opentelemetry/api` and active Span to collect the trace_id from.

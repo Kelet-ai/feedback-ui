@@ -5,6 +5,7 @@ import {
   type KeyboardEvent,
   useCallback,
   useContext,
+  useEffect,
   useId,
   useRef,
   useState,
@@ -119,6 +120,17 @@ const VoteFeedbackRoot = ({
   // Use default handler if no custom handler is provided
   const defaultHandler = useDefaultFeedbackHandler();
   const handler = onFeedback || defaultHandler;
+
+  // Reset component state when tx_id changes
+  useEffect(() => {
+    setShowPopover(false);
+    setFeedbackText(defaultText);
+    setIsSubmitting(false);
+    setVote(null);
+
+    // Return focus to trigger button for accessibility
+    setTimeout(() => triggerRef.current?.focus(), 0);
+  }, [tx_id, defaultText]);
 
   const handleUpvote = useCallback(async () => {
     setVote('upvote');
