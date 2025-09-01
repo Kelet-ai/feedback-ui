@@ -1,3 +1,12 @@
+# [0.6.0](https://github.com/kelet-ai/feedback-ui/compare/v0.5.1...v0.6.0) (2025-09-01)
+
+
+### Features
+
+* enable source content in source maps for better OSS debugging ([22cc5d8](https://github.com/kelet-ai/feedback-ui/commit/22cc5d85f92f005f1dcf714dcdd4c94c67b28c4a))
+
+
+
 ## [0.5.1](https://github.com/kelet-ai/feedback-ui/compare/v0.5.0...v0.5.1) (2025-09-01)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * wrong base_url ([8da3afa](https://github.com/kelet-ai/feedback-ui/commit/8da3afaa09384e5745d97c458da3608b835f9635))
-
-
-
-# [0.4.0](https://github.com/kelet-ai/feedback-ui/compare/v0.3.0...v0.4.0) (2025-08-13)
-
-
-### Features
-
-* add OpenTelemetry trace ID integration ([4fe9e01](https://github.com/kelet-ai/feedback-ui/commit/4fe9e0114ea15a9c92dfbc07ba79c53d6396fc3d))
 
 
 
