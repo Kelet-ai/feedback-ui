@@ -42,6 +42,11 @@ export const useDefaultFeedbackHandler = (): ((
 ) => Promise<void>) => {
   const context = useContext(KeletContext);
   if (!context) {
+    console.warn(
+      'No FeedbackHandler found: defaultFeedbackHandler is not ' +
+        "possible since there's no KeletProvider wrapping this " +
+        'call, and handler not provided'
+    );
     return async () => {};
   } else {
     return context.feedback;
