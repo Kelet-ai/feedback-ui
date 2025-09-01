@@ -40,6 +40,7 @@ export default defineConfig(({ mode }) => ({
           react: 'React',
           'react-dom': 'ReactDOM',
         },
+        sourcemapExcludeSources: false,  // Include source content for OSS
       },
     },
   },

@@ -56,6 +56,11 @@ describe('Build verification', () => {
       const mapFile = await Bun.file(mapPath);
       const mapExists = await mapFile.exists();
       expect(mapExists).toBe(true);
+      
+      // Verify source maps include source content for OSS debugging
+      const mapContent = await mapFile.json();
+      expect(mapContent.sourcesContent).toBeDefined();
+      expect(mapContent.sourcesContent.length).toBeGreaterThan(0);
     }
   });
 
