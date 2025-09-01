@@ -193,6 +193,7 @@ Controls how feedback is collected and what data is captured:
 - **When to use**: Content editing, user interactions, workflow analysis
 - **Data captured**: State diffs, interaction patterns, timing data
 - **User experience**: Seamless, no interruption
+- **Smart filtering**: Ignores common loading patterns (null → data) by default
 
 ```tsx
 // Implicit feedback - tracks changes automatically
@@ -201,6 +202,11 @@ const [content, setContent] = useFeedbackState(
   'content-editor'
 );
 // Sends feedback when user stops editing
+
+// Loading pattern - no noise generated
+const [user, setUser] = useFeedbackState(null, 'user-data');
+setUser(userData); // ❌ No feedback sent (ignoreInitialNullish: true)
+setUser(updatedUser); // ✅ Feedback sent for real changes
 ```
 
 ### **🏷️ Trigger Names**
@@ -527,14 +533,15 @@ interface FeedbackData {
 
 #### **useFeedbackState Options**
 
-| Option                 | Type                                 | Default               | Description                   |
-| ---------------------- | ------------------------------------ | --------------------- | ----------------------------- |
-| `debounceMs`           | `number`                             | `1500`                | Debounce time in milliseconds |
-| `diffType`             | `'git' \| 'object' \| 'json'`        | `'git'`               | Diff output format            |
-| `compareWith`          | `(a: T, b: T) => boolean`            | `undefined`           | Custom equality function      |
-| `metadata`             | `Record<string, any>`                | `{}`                  | Additional metadata           |
-| `vote`                 | `'upvote' \| 'downvote' \| function` | `auto`                | Vote determination logic      |
-| `default_trigger_name` | `string`                             | `'auto_state_change'` | Default trigger name          |
+| Option                 | Type                                 | Default               | Description                            |
+| ---------------------- | ------------------------------------ | --------------------- | -------------------------------------- |
+| `debounceMs`           | `number`                             | `1500`                | Debounce time in milliseconds          |
+| `diffType`             | `'git' \| 'object' \| 'json'`        | `'git'`               | Diff output format                     |
+| `compareWith`          | `(a: T, b: T) => boolean`            | `undefined`           | Custom equality function               |
+| `metadata`             | `Record<string, any>`                | `{}`                  | Additional metadata                    |
+| `vote`                 | `'upvote' \| 'downvote' \| function` | `auto`                | Vote determination logic               |
+| `default_trigger_name` | `string`                             | `'auto_state_change'` | Default trigger name                   |
+| `ignoreInitialNullish` | `boolean`                            | `true`                | Skip null/undefined → data transitions |
 
 ---
 

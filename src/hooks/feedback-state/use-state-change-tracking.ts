@@ -27,6 +27,7 @@ export function useStateChangeTracking<T>(
   const compareWith = options?.compareWith;
   const defaultTriggerName =
     options?.default_trigger_name ?? 'auto_state_change';
+  const ignoreInitialNullish = options?.ignoreInitialNullish ?? true;
 
   // Keep track of previous state for comparison
   const prevStateRef = useRef<T>(currentState);
@@ -36,6 +37,14 @@ export function useStateChangeTracking<T>(
 
   // Track if this is the first render
   const isFirstRenderRef = useRef<boolean>(true);
+
+  // Track the initial state to detect nullish→value transitions
+  const initialStateRef = useRef<T>(currentState);
+
+  // Track if we've had any non-nullish state yet
+  const hasHadNonNullishStateRef = useRef<boolean>(
+    currentState != null // != null catches both null and undefined
+  );
 
   // Store timeout ID for debounce cleanup
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -126,6 +135,25 @@ export function useStateChangeTracking<T>(
       : JSON.stringify(prevState) === JSON.stringify(currentState);
 
     if (!isEqual) {
+      // Check if we should ignore this change due to initial nullish transition
+      const shouldIgnoreChange =
+        ignoreInitialNullish &&
+        initialStateRef.current == null && // Initial state was nullish
+        !hasHadNonNullishStateRef.current && // We haven't had non-nullish state before
+        currentState != null; // Current state is non-nullish
+
+      // Update hasHadNonNullishStateRef if current state is non-nullish
+      if (currentState != null) {
+        hasHadNonNullishStateRef.current = true;
+      }
+
+      if (shouldIgnoreChange) {
+        // Update refs but don't send feedback for this transition
+        prevStateRef.current = currentState;
+        changeStartStateRef.current = currentState;
+        return;
+      }
+
       // If no timer is running, this is the start of a change sequence
       if (!timeoutRef.current) {
         changeStartStateRef.current = prevState;
@@ -173,6 +201,7 @@ export function useStateChangeTracking<T>(
     debounceMs,
     compareWith,
     defaultTriggerName,
+    ignoreInitialNullish,
     sendFeedback,
   ]);
 

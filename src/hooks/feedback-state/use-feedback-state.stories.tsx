@@ -293,6 +293,7 @@ A **drop-in replacement** for React's \`useState\` that automatically tracks sta
 - 🎭 **Dynamic tx_ids** - Can derive tx_id from state
 - 🎚️ **Vote determination** - Automatic upvote/downvote based on change size
 - 🔍 **Custom comparison** - Support for custom equality functions
+- 🚫 **Smart nullish handling** - Ignores null/undefined → data transitions by default
 
 ## API:
 \`\`\`typescript
@@ -748,5 +749,388 @@ export const StaticVoteConfiguration: Story = {
     await expect(args.onFeedback).toHaveBeenCalledTimes(2);
     const secondCall = (args.onFeedback as any)?.mock?.calls?.[1]?.[0];
     await expect(secondCall.vote).toBe('upvote'); // Still upvote
+  },
+};
+
+// New component for demonstrating ignoreInitialNullish with loading simulation
+const LoadingStateTest: React.FC<FeedbackStateTestProps> = ({
+  initialState,
+  tx_id,
+  options,
+  onFeedback = () => {},
+}) => {
+  const [state, setState] = useFeedbackState(initialState, tx_id, {
+    ...options,
+    onFeedback,
+  });
+  const [isLoading, setIsLoading] = useState(false);
+
+  const simulateDataLoad = async () => {
+    setIsLoading(true);
+    // Simulate XHR delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    setState({ id: 1, name: 'John Doe', email: 'john@example.com' });
+    setIsLoading(false);
+  };
+
+  const simulateUserUpdate = () => {
+    setState((prevState: any) => ({
+      ...prevState,
+      name: 'Jane Doe',
+      lastUpdated: new Date().toISOString(),
+    }));
+  };
+
+  return (
+    <KeletProvider project="test-project" apiKey="test-key">
+      <div
+        style={{ fontFamily: 'sans-serif', padding: '20px', maxWidth: '600px' }}
+      >
+        <h2>Nullish Initial State Demo</h2>
+
+        <div
+          style={{
+            marginBottom: '20px',
+            padding: '15px',
+            border: '1px solid #ddd',
+            borderRadius: '8px',
+          }}
+        >
+          <h3>Current State:</h3>
+          <pre
+            style={{
+              backgroundColor: '#f5f5f5',
+              padding: '10px',
+              borderRadius: '4px',
+              fontSize: '14px',
+              minHeight: '50px',
+            }}
+          >
+            {JSON.stringify(state, null, 2)}
+          </pre>
+        </div>
+
+        <div style={{ marginBottom: '20px' }}>
+          <h3>Actions:</h3>
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+            <button
+              onClick={simulateDataLoad}
+              disabled={isLoading}
+              style={{
+                padding: '10px 20px',
+                backgroundColor: isLoading ? '#6c757d' : '#007bff',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: isLoading ? 'not-allowed' : 'pointer',
+              }}
+            >
+              {isLoading ? 'Loading...' : 'Simulate Data Load (XHR)'}
+            </button>
+
+            <button
+              onClick={simulateUserUpdate}
+              disabled={state == null}
+              style={{
+                padding: '10px 20px',
+                backgroundColor: state == null ? '#6c757d' : '#28a745',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: state == null ? 'not-allowed' : 'pointer',
+              }}
+            >
+              Update User Data
+            </button>
+
+            <button
+              onClick={() => setState(null)}
+              style={{
+                padding: '10px 20px',
+                backgroundColor: '#dc3545',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+              }}
+            >
+              Reset to Null
+            </button>
+          </div>
+        </div>
+
+        <div
+          style={{
+            padding: '15px',
+            backgroundColor: '#f8f9fa',
+            borderRadius: '8px',
+          }}
+        >
+          <h4>Test Info:</h4>
+          <p>
+            <strong>Identifier:</strong>{' '}
+            {typeof tx_id === 'function' ? tx_id(state) : tx_id}
+          </p>
+          <p>
+            <strong>ignoreInitialNullish:</strong>{' '}
+            {options?.ignoreInitialNullish ?? 'true (default)'}
+          </p>
+          <p>
+            <strong>Debounce:</strong> {options?.debounceMs ?? 1500}ms
+          </p>
+          <p>
+            <em>
+              With ignoreInitialNullish enabled (default), the first transition
+              from null/undefined to data should NOT send feedback. Subsequent
+              updates should send feedback normally.
+            </em>
+          </p>
+        </div>
+      </div>
+    </KeletProvider>
+  );
+};
+
+export const IgnoreInitialNullishEnabled: Story = {
+  args: {
+    initialState: null,
+    tx_id: 'user-data-with-ignore',
+    options: {
+      debounceMs: 500,
+      ignoreInitialNullish: true, // Explicitly enabled (default)
+    },
+    onFeedback: fn(),
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: `
+**Ignore Initial Nullish (Enabled)** - Default behavior that ignores the first transition from null/undefined.
+
+**Features:**
+- \`ignoreInitialNullish: true\` (default behavior)
+- Initial state: \`null\`
+- First transition: \`null → data\` ❌ **No feedback sent**
+- Subsequent changes: \`data → updated data\` ✅ **Feedback sent**
+
+**Common Use Case:** Loading patterns where initial state is null/undefined and real data comes from XHR/API calls.
+
+**Test Steps:**
+1. Click "Simulate Data Load" - should NOT send feedback
+2. Click "Update User Data" - should send feedback
+3. Check console for feedback logs
+
+This prevents noise from the common \`useState(null)\` → API load → \`setState(data)\` pattern.
+        `,
+      },
+    },
+  },
+  render: _args => <LoadingStateTest {..._args} />,
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+
+    // Initial state should be null (find the pre element specifically)
+    const stateDisplay = canvas.getByText((content, element) => {
+      return element?.tagName?.toLowerCase() === 'pre' && content === 'null';
+    });
+    await expect(stateDisplay).toBeInTheDocument();
+
+    // Simulate the common loading pattern: null -> data
+    const loadButton = canvas.getByText('Simulate Data Load (XHR)');
+    await userEvent.click(loadButton);
+
+    // Wait for the simulated XHR delay
+    await new Promise(resolve => setTimeout(resolve, 1200));
+
+    // State should now have data
+    const dataState = canvas.getByText(/"name": "John Doe"/);
+    await expect(dataState).toBeInTheDocument();
+
+    // Wait for debounce
+    await new Promise(resolve => setTimeout(resolve, 600));
+
+    // Should NOT have sent feedback for null -> data transition
+    await expect(args.onFeedback).toHaveBeenCalledTimes(0);
+
+    // Now make a user update - this SHOULD send feedback
+    const updateButton = canvas.getByText('Update User Data');
+    await userEvent.click(updateButton);
+
+    // Wait for debounce
+    await new Promise(resolve => setTimeout(resolve, 600));
+
+    // This should have triggered feedback
+    await expect(args.onFeedback).toHaveBeenCalledTimes(1);
+
+    const feedbackCall = (args.onFeedback as any)?.mock?.calls?.[0]?.[0];
+    await expect(feedbackCall.tx_id).toBe('user-data-with-ignore');
+    await expect(feedbackCall.source).toBe('IMPLICIT');
+  },
+};
+
+export const IgnoreInitialNullishDisabled: Story = {
+  args: {
+    initialState: null,
+    tx_id: 'user-data-track-all',
+    options: {
+      debounceMs: 500,
+      ignoreInitialNullish: false, // Explicitly disabled
+    },
+    onFeedback: fn(),
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: `
+**Ignore Initial Nullish (Disabled)** - Tracks ALL state changes including null/undefined transitions.
+
+**Features:**
+- \`ignoreInitialNullish: false\` (opt-out of default behavior)
+- Initial state: \`null\`
+- First transition: \`null → data\` ✅ **Feedback sent**
+- Subsequent changes: \`data → updated data\` ✅ **Feedback sent**
+
+**Use Case:** When you want to track everything, including initial loading patterns.
+
+**Test Steps:**
+1. Click "Simulate Data Load" - **should send feedback**
+2. Click "Update User Data" - should send feedback again
+3. Both changes tracked in console
+
+This is the traditional behavior where every state change is tracked.
+        `,
+      },
+    },
+  },
+  render: _args => <LoadingStateTest {..._args} />,
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+
+    // Simulate loading: null -> data (should send feedback when disabled)
+    const loadButton = canvas.getByText('Simulate Data Load (XHR)');
+    await userEvent.click(loadButton);
+
+    // Wait for XHR simulation
+    await new Promise(resolve => setTimeout(resolve, 1200));
+
+    // Wait for debounce
+    await new Promise(resolve => setTimeout(resolve, 600));
+
+    // Should have sent feedback for null -> data transition
+    await expect(args.onFeedback).toHaveBeenCalledTimes(1);
+
+    const firstCall = (args.onFeedback as any)?.mock?.calls?.[0]?.[0];
+    await expect(firstCall.tx_id).toBe('user-data-track-all');
+
+    // Make another update
+    const updateButton = canvas.getByText('Update User Data');
+    await userEvent.click(updateButton);
+
+    // Wait for debounce
+    await new Promise(resolve => setTimeout(resolve, 600));
+
+    // Should have sent second feedback
+    await expect(args.onFeedback).toHaveBeenCalledTimes(2);
+  },
+};
+
+export const UndefinedInitialState: Story = {
+  args: {
+    initialState: undefined,
+    tx_id: 'undefined-demo',
+    options: {
+      debounceMs: 300,
+      ignoreInitialNullish: true, // Default
+    },
+    onFeedback: fn(),
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: `
+**Undefined Initial State** - Demonstrates ignoreInitialNullish with undefined initial state.
+
+**Features:**
+- Initial state: \`undefined\`
+- ignoreInitialNullish handles both \`null\` and \`undefined\`
+- First transition: \`undefined → data\` ❌ **No feedback sent**
+- Subsequent changes: \`data → updated data\` ✅ **Feedback sent**
+
+**Use Case:** Components that start with undefined state before data loads.
+
+Shows that ignoreInitialNullish works with both null and undefined initial values.
+        `,
+      },
+    },
+  },
+  render: _args => <LoadingStateTest {..._args} />,
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+
+    // Load data from undefined
+    const loadButton = canvas.getByText('Simulate Data Load (XHR)');
+    await userEvent.click(loadButton);
+
+    await new Promise(resolve => setTimeout(resolve, 1200));
+    await new Promise(resolve => setTimeout(resolve, 400));
+
+    // Should NOT send feedback for undefined -> data
+    await expect(args.onFeedback).toHaveBeenCalledTimes(0);
+
+    // Update should send feedback
+    const updateButton = canvas.getByText('Update User Data');
+    await userEvent.click(updateButton);
+
+    await new Promise(resolve => setTimeout(resolve, 400));
+
+    await expect(args.onFeedback).toHaveBeenCalledTimes(1);
+  },
+};
+
+export const ComplexObjectWithNullFields: Story = {
+  args: {
+    initialState: { user: null, loading: true, errors: [] },
+    tx_id: 'complex-object-demo',
+    options: {
+      debounceMs: 300,
+      ignoreInitialNullish: true,
+    },
+    onFeedback: fn(),
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: `
+**Complex Object with Null Fields** - Initial state is an object, not null/undefined.
+
+**Key Point:** ignoreInitialNullish only applies when the **root initial state** is null/undefined.
+
+**Features:**
+- Initial state: \`{ user: null, loading: true, errors: [] }\` (object, not null)
+- All changes tracked because root state is not nullish
+- Shows that ignoreInitialNullish is about the root state, not individual fields
+
+**Result:** All state changes send feedback because the initial state is an object, not null/undefined.
+        `,
+      },
+    },
+  },
+  render: _args => <LoadingStateTest {..._args} />,
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+
+    // Even though user field is null, the root state is an object
+    // So this should send feedback
+    const loadButton = canvas.getByText('Simulate Data Load (XHR)');
+    await userEvent.click(loadButton);
+
+    await new Promise(resolve => setTimeout(resolve, 1200));
+    await new Promise(resolve => setTimeout(resolve, 400));
+
+    // Should send feedback because root state is not nullish
+    await expect(args.onFeedback).toHaveBeenCalledTimes(1);
+
+    const feedbackCall = (args.onFeedback as any)?.mock?.calls?.[0]?.[0];
+    await expect(feedbackCall.tx_id).toBe('complex-object-demo');
   },
 };

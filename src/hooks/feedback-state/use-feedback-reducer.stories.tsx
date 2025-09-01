@@ -354,6 +354,7 @@ A **drop-in replacement** for React's \`useReducer\` that automatically tracks s
 - 🎭 **Dynamic tx_ids** - Can derive tx_id from state
 - 🎚️ **Vote determination** - Automatic upvote/downvote based on change size
 - 🔍 **Custom comparison** - Support for custom equality functions
+- 🚫 **Smart nullish handling** - Ignores null/undefined → data transitions by default
 
 ## API:
 \`\`\`typescript
@@ -689,5 +690,192 @@ The initializer function doubles the initial value, so count starts at 10 instea
     // Should start with count: 10 (5 * 2 from initializer)
     const initialStateDisplay = canvas.getByText(/"count": 10/);
     await expect(initialStateDisplay).toBeInTheDocument();
+  },
+};
+
+// Data loading reducer for demonstrating ignoreInitialNullish
+interface DataState {
+  data: any;
+  loading: boolean;
+  error: string | null;
+}
+
+type DataAction =
+  | { type: 'load_start' }
+  | { type: 'load_success'; payload: any }
+  | { type: 'load_error'; payload: string }
+  | { type: 'update_data'; payload: any }
+  | { type: 'reset' };
+
+const dataReducer = (state: DataState, action: DataAction): DataState => {
+  switch (action.type) {
+    case 'load_start':
+      return { ...state, loading: true, error: null };
+    case 'load_success':
+      return { data: action.payload, loading: false, error: null };
+    case 'load_error':
+      return { ...state, loading: false, error: action.payload };
+    case 'update_data':
+      return { ...state, data: action.payload };
+    case 'reset':
+      return { data: null, loading: false, error: null };
+    default:
+      return state;
+  }
+};
+
+export const IgnoreInitialNullishReducer: Story = {
+  args: {
+    reducer: dataReducer,
+    initialState: { data: null, loading: false, error: null },
+    tx_id: 'data-loading-reducer',
+    options: {
+      debounceMs: 500,
+      ignoreInitialNullish: false, // Note: root state is object, not null, so this doesn't apply
+    },
+    onFeedback: fn(),
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: `
+**Data Loading with useReducer** - Shows ignoreInitialNullish behavior with reducers.
+
+**Important Note:** In this example, ignoreInitialNullish doesn't apply because the root initial state is an object \`{ data: null, loading: false, error: null }\`, not null/undefined itself.
+
+**Features:**
+- Data loading pattern with useReducer
+- Complex state with loading, error, and data fields
+- Action types: load_start, load_success, load_error, update_data, reset
+- Shows that ignoreInitialNullish only applies to root state being null/undefined
+
+**Key Point:** ignoreInitialNullish is about the **root state** being null/undefined, not individual fields within the state.
+
+Try the actions and see how all state changes are tracked since the root state is an object.
+        `,
+      },
+    },
+  },
+  render: _args => (
+    <KeletProvider project="test-project" apiKey="test-key">
+      <div
+        style={{ fontFamily: 'sans-serif', padding: '20px', maxWidth: '600px' }}
+      >
+        <h2>Data Loading Reducer Demo</h2>
+
+        <div
+          style={{
+            marginBottom: '20px',
+            padding: '15px',
+            border: '1px solid #ddd',
+            borderRadius: '8px',
+          }}
+        >
+          <h3>Current State:</h3>
+          <pre
+            style={{
+              backgroundColor: '#f5f5f5',
+              padding: '10px',
+              borderRadius: '4px',
+              fontSize: '14px',
+              minHeight: '80px',
+            }}
+          >
+            {JSON.stringify(_args.initialState, null, 2)}
+          </pre>
+        </div>
+
+        <div style={{ marginBottom: '20px' }}>
+          <h3>Actions:</h3>
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+            <button
+              style={{
+                padding: '10px 20px',
+                backgroundColor: '#007bff',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+              }}
+            >
+              Load Start
+            </button>
+            <button
+              style={{
+                padding: '10px 20px',
+                backgroundColor: '#28a745',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+              }}
+            >
+              Load Success
+            </button>
+            <button
+              style={{
+                padding: '10px 20px',
+                backgroundColor: '#dc3545',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+              }}
+            >
+              Load Error
+            </button>
+            <button
+              style={{
+                padding: '10px 20px',
+                backgroundColor: '#6c757d',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+              }}
+            >
+              Reset
+            </button>
+          </div>
+        </div>
+
+        <div
+          style={{
+            padding: '15px',
+            backgroundColor: '#f8f9fa',
+            borderRadius: '8px',
+          }}
+        >
+          <h4>Test Info:</h4>
+          <p>
+            <strong>Identifier:</strong> data-loading-reducer
+          </p>
+          <p>
+            <strong>Root State Type:</strong> Object (not null/undefined)
+          </p>
+          <p>
+            <strong>ignoreInitialNullish Effect:</strong> None (doesn't apply to
+            object root state)
+          </p>
+          <p>
+            <em>
+              Since the root state is an object, all changes will be tracked
+              regardless of ignoreInitialNullish setting.
+            </em>
+          </p>
+        </div>
+      </div>
+    </KeletProvider>
+  ),
+  play: async ({ canvasElement, args: _args }) => {
+    const canvas = within(canvasElement);
+
+    // This is just a demo - the buttons aren't actually connected
+    // But it shows the pattern and explains the ignoreInitialNullish behavior
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    // Verify the story rendered correctly
+    const heading = canvas.getByText('Data Loading Reducer Demo');
+    await expect(heading).toBeInTheDocument();
   },
 };

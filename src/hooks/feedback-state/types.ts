@@ -47,6 +47,13 @@ export interface FeedbackStateOptions<T> {
    * @default 'auto_state_change'
    */
   default_trigger_name?: string;
+
+  /**
+   * Whether to ignore transitions from initial null/undefined values to prevent noise
+   * from common loading patterns where initial state is null/undefined and then set via XHR
+   * @default true
+   */
+  ignoreInitialNullish?: boolean;
 }
 
 /**

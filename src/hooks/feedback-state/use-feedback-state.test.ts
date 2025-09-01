@@ -59,7 +59,7 @@ describe('useFeedbackState - Diff utilities', () => {
 // Tests for trigger_name functionality
 describe('useFeedbackState - trigger_name functionality', () => {
   beforeEach(() => {
-    vi.useFakeTimers({ shouldAdvanceTime: true });
+    vi.useFakeTimers();
   });
 
   afterEach(() => {
@@ -329,5 +329,229 @@ describe('useFeedbackState - trigger_name functionality', () => {
         trigger_name: 'increment',
       })
     );
+  });
+});
+
+// Tests for ignoreInitialNullish functionality
+describe('useFeedbackState - ignoreInitialNullish functionality', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.useRealTimers();
+  });
+
+  it('ignores null to value transition by default', async () => {
+    const mockHandler = vi.fn();
+    const { result } = renderHook(() =>
+      useFeedbackState(null, 'api-data-tx', {
+        debounceMs: 1000,
+        onFeedback: mockHandler,
+      })
+    );
+
+    // Simulate XHR loading pattern: null -> data
+    act(() => {
+      result.current[1]({ id: 1, name: 'John' } as any);
+    });
+
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
+
+    // Should NOT send feedback for null -> data transition
+    expect(mockHandler).not.toHaveBeenCalled();
+  });
+
+  it('ignores undefined to value transition by default', async () => {
+    const mockHandler = vi.fn();
+    const { result } = renderHook(() =>
+      useFeedbackState(undefined, 'api-data-tx', {
+        debounceMs: 1000,
+        onFeedback: mockHandler,
+      })
+    );
+
+    // Simulate loading pattern: undefined -> data
+    act(() => {
+      result.current[1]({ id: 1, name: 'John' } as any);
+    });
+
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
+
+    // Should NOT send feedback for undefined -> data transition
+    expect(mockHandler).not.toHaveBeenCalled();
+  });
+
+  it('tracks subsequent changes after initial nullish transition', async () => {
+    const mockHandler = vi.fn();
+    const { result } = renderHook(() =>
+      useFeedbackState(null, 'api-data-tx', {
+        debounceMs: 1000,
+        onFeedback: mockHandler,
+      })
+    );
+
+    // First transition: null -> data (should be ignored)
+    act(() => {
+      result.current[1]({ id: 1, name: 'John' } as any);
+    });
+
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
+
+    expect(mockHandler).not.toHaveBeenCalled();
+
+    // Second transition: data -> updated data (should be tracked)
+    act(() => {
+      result.current[1]({ id: 1, name: 'Jane' } as any);
+    });
+
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
+
+    // Should send feedback for data -> updated data transition
+    expect(mockHandler).toHaveBeenCalledTimes(1);
+    expect(mockHandler).toHaveBeenCalledWith(
+      expect.objectContaining({
+        tx_id: 'api-data-tx',
+        trigger_name: 'auto_state_change',
+      })
+    );
+  });
+
+  it('can be disabled with ignoreInitialNullish: false', async () => {
+    const mockHandler = vi.fn();
+    const { result } = renderHook(() =>
+      useFeedbackState(null, 'api-data-tx', {
+        debounceMs: 1000,
+        onFeedback: mockHandler,
+        ignoreInitialNullish: false,
+      })
+    );
+
+    // Transition: null -> data (should be tracked when disabled)
+    act(() => {
+      result.current[1]({ id: 1, name: 'John' } as any);
+    });
+
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
+
+    // Should send feedback when ignoreInitialNullish is disabled
+    expect(mockHandler).toHaveBeenCalledTimes(1);
+    expect(mockHandler).toHaveBeenCalledWith(
+      expect.objectContaining({
+        tx_id: 'api-data-tx',
+        trigger_name: 'auto_state_change',
+      })
+    );
+  });
+
+  it('works with non-nullish initial values', async () => {
+    const mockHandler = vi.fn();
+    const { result } = renderHook(() =>
+      useFeedbackState('initial', 'string-tx', {
+        debounceMs: 1000,
+        onFeedback: mockHandler,
+      })
+    );
+
+    // Change from non-nullish to non-nullish (should always be tracked)
+    act(() => {
+      result.current[1]('changed');
+    });
+
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
+
+    // Should send feedback for non-nullish initial values
+    expect(mockHandler).toHaveBeenCalledTimes(1);
+  });
+
+  it('handles complex objects with null initial state', async () => {
+    const mockHandler = vi.fn();
+    interface UserState {
+      user: { id: number; name: string } | null;
+      loading: boolean;
+    }
+
+    const { result } = renderHook(() =>
+      useFeedbackState<UserState>(
+        { user: null, loading: true },
+        'user-loading-tx',
+        {
+          debounceMs: 1000,
+          onFeedback: mockHandler,
+        }
+      )
+    );
+
+    // Simulate loading completion
+    act(() => {
+      result.current[1]({
+        user: { id: 1, name: 'John' },
+        loading: false,
+      });
+    });
+
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
+
+    // Should track changes in complex objects even when they contain null fields
+    // because the initial state is not nullish (it's an object)
+    expect(mockHandler).toHaveBeenCalledTimes(1);
+  });
+
+  it('ignores only first transition from nullish, not subsequent nullish transitions', async () => {
+    const mockHandler = vi.fn();
+    const { result } = renderHook(() =>
+      useFeedbackState(null, 'api-data-tx', {
+        debounceMs: 1000,
+        onFeedback: mockHandler,
+      })
+    );
+
+    // First transition: null -> data (ignored)
+    act(() => {
+      result.current[1]({ id: 1, name: 'John' } as any);
+    });
+
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
+
+    expect(mockHandler).not.toHaveBeenCalled();
+
+    // Second transition: data -> null (should be tracked)
+    act(() => {
+      result.current[1](null);
+    });
+
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
+
+    expect(mockHandler).toHaveBeenCalledTimes(1);
+
+    // Third transition: null -> data again (should be tracked now)
+    act(() => {
+      result.current[1]({ id: 2, name: 'Jane' } as any);
+    });
+
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
+
+    expect(mockHandler).toHaveBeenCalledTimes(2);
   });
 });
