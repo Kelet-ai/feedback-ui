@@ -12,7 +12,7 @@ const dirname =
 
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default mergeConfig(
-  viteConfig,
+  viteConfig({ mode: 'development', command: 'build' }),
   defineConfig({
     resolve: {
       alias: {

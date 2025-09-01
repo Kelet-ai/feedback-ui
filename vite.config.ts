@@ -4,7 +4,7 @@ import dts from 'vite-plugin-dts';
 import { resolve } from 'path';
 import tailwindcss from '@tailwindcss/vite';
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     tailwindcss(),
@@ -21,12 +21,18 @@ export default defineConfig({
     },
   },
   build: {
+    sourcemap: true,
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
       name: '@kelet-ai/feedback-ui',
       formats: ['es', 'umd'],
-      fileName: format => `feedback-ui.${format}.js`,
+      fileName: format => {
+        const isDev = mode === 'development';
+        const suffix = isDev ? '' : '.min';
+        return `feedback-ui.${format}${suffix}.js`;
+      },
     },
+    minify: mode !== 'development',
     rollupOptions: {
       external: ['react', 'react-dom'],
       output: {
@@ -37,4 +43,4 @@ export default defineConfig({
       },
     },
   },
-});
+}));

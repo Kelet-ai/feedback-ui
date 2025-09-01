@@ -19,7 +19,7 @@ import type {
   UpvoteButtonProps,
   VoteFeedbackRootProps,
 } from '@/types';
-import { useDefaultFeedbackHandler } from '@/contexts/kelet.tsx';
+import { useDefaultFeedbackHandler } from '@/contexts/kelet';
 
 // Utility function to merge props with a child element (asChild pattern)
 const mergeProps = (

@@ -66,8 +66,16 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/feedback-ui.es.js",
-      "require": "./dist/feedback-ui.umd.js"
+      "development": {
+        "import": "./dist/feedback-ui.es.js",
+        "require": "./dist/feedback-ui.umd.js"
+      },
+      "production": {
+        "import": "./dist/feedback-ui.es.min.js",
+        "require": "./dist/feedback-ui.umd.min.js"
+      },
+      "import": "./dist/feedback-ui.es.min.js",
+      "require": "./dist/feedback-ui.umd.min.js"
     }
   },
   "description": "A React component library for feedback UI components",
@@ -84,7 +92,10 @@
   "license": "APACHE-2.0",
   "scripts": {
     "dev": "NODE_NO_WARNINGS=1 storybook dev -p 6006",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && bun run build:prod && bun run build:dev && bun run build:merge",
+    "build:dev": "vite build --mode development --outDir dist-dev",
+    "build:prod": "vite build --mode production --outDir dist-prod",
+    "build:merge": "mkdir -p dist && cp -r dist-prod/* dist/ && cp dist-dev/feedback-ui.*.js dist/ && cp dist-dev/feedback-ui.*.js.map dist/ && rm -rf dist-dev dist-prod",
     "build-storybook": "storybook build",
     "test": "vitest",
     "test:unit": "vitest --project=unit",
