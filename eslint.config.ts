@@ -3,9 +3,8 @@ import js from '@eslint/js';
 import globals from 'globals';
 import reactHooks from 'eslint-plugin-react-hooks';
 import tseslint from 'typescript-eslint';
-import type { FlatConfig } from '@typescript-eslint/utils/ts-eslint';
 
-const config: FlatConfig.ConfigArray = tseslint.config(
+const config = tseslint.config(
   {
     ignores: [
       'dist',
