@@ -36,22 +36,27 @@ describe('Build verification', () => {
   });
 
   test('built JavaScript files exist and are not empty', async () => {
-    const esModulePath = new URL('../dist/feedback-ui.es.js', import.meta.url)
-      .pathname;
-    const umdModulePath = new URL('../dist/feedback-ui.umd.js', import.meta.url)
-      .pathname;
+    const files = [
+      '../dist/feedback-ui.es.js',
+      '../dist/feedback-ui.es.min.js', 
+      '../dist/feedback-ui.umd.js',
+      '../dist/feedback-ui.umd.min.js'
+    ];
 
-    // Check ES module
-    const esFile = await Bun.file(esModulePath);
-    const esContent = await esFile.text();
-    expect(esContent).toBeTruthy();
-    expect(esContent.length).toBeGreaterThan(1000); // Should be a substantial file
-
-    // Check UMD module
-    const umdFile = await Bun.file(umdModulePath);
-    const umdContent = await umdFile.text();
-    expect(umdContent).toBeTruthy();
-    expect(umdContent.length).toBeGreaterThan(1000); // Should be a substantial file
+    for (const filePath of files) {
+      const fullPath = new URL(filePath, import.meta.url).pathname;
+      const file = await Bun.file(fullPath);
+      const content = await file.text();
+      
+      expect(content).toBeTruthy();
+      expect(content.length).toBeGreaterThan(1000); // Should be a substantial file
+      
+      // Check that source maps exist
+      const mapPath = fullPath + '.map';
+      const mapFile = await Bun.file(mapPath);
+      const mapExists = await mapFile.exists();
+      expect(mapExists).toBe(true);
+    }
   });
 
   test('package.json exports configuration is correct', async () => {
@@ -62,8 +67,19 @@ describe('Build verification', () => {
     expect(packageJson.exports).toBeDefined();
     expect(packageJson.exports['.']).toBeDefined();
     expect(packageJson.exports['.'].types).toBe('./dist/index.d.ts');
-    expect(packageJson.exports['.'].import).toBe('./dist/feedback-ui.es.js');
-    expect(packageJson.exports['.'].require).toBe('./dist/feedback-ui.umd.js');
+    
+    // Check dual exports structure
+    expect(packageJson.exports['.'].development).toBeDefined();
+    expect(packageJson.exports['.'].development.import).toBe('./dist/feedback-ui.es.js');
+    expect(packageJson.exports['.'].development.require).toBe('./dist/feedback-ui.umd.js');
+    
+    expect(packageJson.exports['.'].production).toBeDefined();
+    expect(packageJson.exports['.'].production.import).toBe('./dist/feedback-ui.es.min.js');
+    expect(packageJson.exports['.'].production.require).toBe('./dist/feedback-ui.umd.min.js');
+    
+    // Check fallback exports (minified by default)
+    expect(packageJson.exports['.'].import).toBe('./dist/feedback-ui.es.min.js'); 
+    expect(packageJson.exports['.'].require).toBe('./dist/feedback-ui.umd.min.js');
 
     expect(packageJson.main).toBe('./dist/feedback-ui.umd.js');
     expect(packageJson.module).toBe('./dist/feedback-ui.es.js');
