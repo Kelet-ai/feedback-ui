@@ -1,3 +1,12 @@
+## [0.7.1](https://github.com/kelet-ai/feedback-ui/compare/v0.7.0...v0.7.1) (2025-09-02)
+
+
+### Bug Fixes
+
+* kelet base url configurable ([1abd1e3](https://github.com/kelet-ai/feedback-ui/commit/1abd1e32b3eb8f3cb18c685719e6bcbfdafc162d))
+
+
+
 # [0.7.0](https://github.com/kelet-ai/feedback-ui/compare/v0.6.0...v0.7.0) (2025-09-01)
 
 
@@ -37,15 +46,6 @@
 ### Features
 
 * add dual build outputs for improved debugging experience ([8a5c530](https://github.com/kelet-ai/feedback-ui/commit/8a5c530a92309f657ee9095ee95ae86d516161ad))
-
-
-
-## [0.4.2](https://github.com/kelet-ai/feedback-ui/compare/v0.4.1...v0.4.2) (2025-08-29)
-
-
-### Bug Fixes
-
-* changing tx_id reset the state ([a28bbe3](https://github.com/kelet-ai/feedback-ui/commit/a28bbe32412d0e4aa0a86d1ab080c7f158454ae1))
 
 
 
