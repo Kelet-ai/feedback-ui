@@ -10,6 +10,7 @@ interface KeletContextValue {
 interface KeletProviderProps {
   apiKey?: string;
   project: string;
+  baseUrl?: string;
 }
 
 interface FeedbackRequest {
@@ -25,7 +26,7 @@ interface FeedbackRequest {
 // Create the context
 export const KeletContext = createContext<KeletContextValue | null>(null);
 
-const KeletBaseUrl = 'https://api.kelet.ai/api';
+const DefaultKeletBaseUrl = 'https://api.kelet.ai/api';
 
 // Custom hook to use the Kelet context
 // noinspection JSUnusedGlobalSymbols
@@ -56,7 +57,7 @@ export const useDefaultFeedbackHandler = (): ((
 // The KeletProvider component
 export const KeletProvider: React.FC<
   React.PropsWithChildren<KeletProviderProps>
-> = ({ apiKey, project, children }) => {
+> = ({ apiKey, project, baseUrl, children }) => {
   // Get the parent context (if any)
   const parentContext = useContext(KeletContext);
 
@@ -70,7 +71,8 @@ export const KeletProvider: React.FC<
   }
 
   const feedback = async (data: FeedbackData) => {
-    const url = `${KeletBaseUrl}/projects/${project}/feedback`;
+    const resolvedBaseUrl = baseUrl || DefaultKeletBaseUrl;
+    const url = `${resolvedBaseUrl}/projects/${project}/feedback`;
     const req: FeedbackRequest = {
       tx_id: data.tx_id,
       source: data.source || 'EXPLICIT',
