@@ -252,7 +252,7 @@ const FeedbackReducerTest: React.FC<FeedbackReducerTestProps> = ({
           <p>
             <em>
               Check console for feedback logs. Changes are debounced based on
-              options.debounceMs (default: 1500ms). Trigger names are
+              options.debounceMs (default: 3000ms). Trigger names are
               automatically extracted from action.type.
             </em>
           </p>
@@ -349,7 +349,7 @@ A **drop-in replacement** for React's \`useReducer\` that automatically tracks s
 ## Key Features:
 - 🔄 **Drop-in useReducer replacement** - Same API signature and behavior
 - 🎯 **Automatic trigger name extraction** - Uses action.type as trigger_name automatically
-- ⏱️ **Debounced updates** - Prevents feedback spam (default: 1500ms)
+- ⏱️ **Debounced updates** - Prevents feedback spam (default: 3000ms)
 - 📊 **Multiple diff formats** - Git, object, or JSON diff formats
 - 🎭 **Dynamic tx_ids** - Can derive tx_id from state
 - 🎚️ **Vote determination** - Automatic upvote/downvote based on change size
@@ -367,7 +367,7 @@ function useFeedbackReducer<S, A>(
 ): [S, (action: A, trigger_name?: string) => void]
 
 interface FeedbackStateOptions<T> {
-  debounceMs?: number;       // Default: 1500
+  debounceMs?: number;       // Default: 3000
   diffType?: 'git' | 'object' | 'json';  // Default: 'git'
   compareWith?: (a: T, b: T) => boolean;
   metadata?: Record<string, any>;

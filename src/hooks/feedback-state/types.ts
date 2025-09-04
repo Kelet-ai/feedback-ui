@@ -8,7 +8,7 @@ import type { FeedbackData } from '@/types';
 export interface FeedbackStateOptions<T> {
   /**
    * Time to wait before sending feedback after state changes (ms)
-   * @default 1500
+   * @default 3000
    */
   debounceMs?: number;
 

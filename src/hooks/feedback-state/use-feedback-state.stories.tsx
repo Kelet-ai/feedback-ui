@@ -264,7 +264,7 @@ const FeedbackStateTest: React.FC<FeedbackStateTestProps> = ({
           <p>
             <em>
               Check console for feedback logs. Changes are debounced based on
-              options.debounceMs (default: 1500ms).
+              options.debounceMs (default: 3000ms).
             </em>
           </p>
         </div>
@@ -288,7 +288,7 @@ A **drop-in replacement** for React's \`useState\` that automatically tracks sta
 ## Key Features:
 - 🔄 **Drop-in useState replacement** - Same API signature and behavior
 - 🎯 **Automatic diff detection** - Only triggers on actual changes  
-- ⏱️ **Debounced updates** - Prevents feedback spam (default:  1500ms)
+- ⏱️ **Debounced updates** - Prevents feedback spam (default: 3000ms)
 - 📊 **Multiple diff formats** - Git, object, or JSON diff formats
 - 🎭 **Dynamic tx_ids** - Can derive tx_id from state
 - 🎚️ **Vote determination** - Automatic upvote/downvote based on change size
@@ -304,7 +304,7 @@ function useFeedbackState<T>(
 ): [T, React.Dispatch<React.SetStateAction<T>>]
 
 interface FeedbackStateOptions<T> {
-  debounceMs?: number;       // Default:  1500
+  debounceMs?: number;       // Default: 3000
   diffType?: 'git' | 'object' | 'json';  // Default: 'git'
   compareWith?: (a: T, b: T) => boolean;
   metadata?: Record<string, any>;
@@ -367,7 +367,7 @@ export const PrimitiveState: Story = {
 **Features:**
 - Number state management
 - Increment, add, and function update actions
-- Default options (git diff,  1500ms debounce)
+- Default options (git diff, 3000ms debounce)
 - Static string tx_id
 
 Try clicking the buttons and watch the console for feedback logs!
@@ -876,7 +876,7 @@ const LoadingStateTest: React.FC<FeedbackStateTestProps> = ({
             {options?.ignoreInitialNullish ?? 'true (default)'}
           </p>
           <p>
-            <strong>Debounce:</strong> {options?.debounceMs ?? 1500}ms
+            <strong>Debounce:</strong> {options?.debounceMs ?? 3000}ms
           </p>
           <p>
             <em>

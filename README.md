@@ -261,7 +261,7 @@ For implicit feedback, understanding how state changes are processed:
 // User types: "Hello" → "Hello World" → "Hello World!"
 // Only sends ONE feedback after user stops typing
 const [text, setText] = useFeedbackState('', 'editor', {
-  debounceMs: 1500, // Wait 1.5s after last change
+  debounceMs: 3000, // Wait 3s after last change
 });
 ```
 
@@ -535,7 +535,7 @@ interface FeedbackData {
 
 | Option                 | Type                                 | Default               | Description                            |
 | ---------------------- | ------------------------------------ | --------------------- | -------------------------------------- |
-| `debounceMs`           | `number`                             | `1500`                | Debounce time in milliseconds          |
+| `debounceMs`           | `number`                             | `3000`                | Debounce time in milliseconds          |
 | `diffType`             | `'git' \| 'object' \| 'json'`        | `'git'`               | Diff output format                     |
 | `compareWith`          | `(a: T, b: T) => boolean`            | `undefined`           | Custom equality function               |
 | `metadata`             | `Record<string, any>`                | `{}`                  | Additional metadata                    |

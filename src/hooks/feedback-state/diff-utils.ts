@@ -11,7 +11,7 @@ export function formatDiff<T>(
   oldValue: T,
   newValue: T,
   diffType: DiffType = 'git',
-  context = 3
+  context = 1
 ): string {
   switch (diffType) {
     case 'git':
@@ -32,7 +32,7 @@ export function formatDiff<T>(
  * @param context The number of lines of unchanged context to include (default: 3)
  * @returns A string containing the git-like diff in unified format
  */
-function formatGitDiff<T>(oldValue: T, newValue: T, context = 3): string {
+function formatGitDiff<T>(oldValue: T, newValue: T, context = 1): string {
   // Pretty-print both objects as JSON
   const oldStr = stringify(oldValue);
   const newStr = stringify(newValue);
@@ -48,8 +48,25 @@ function formatGitDiff<T>(oldValue: T, newValue: T, context = 3): string {
     { context }
   );
 
-  // Strip out the first two lines ("--- " and "+++ ")
-  return patch.split('\n').slice(2).join('\n');
+  // Split into lines and compact: keep only actual +/- changes, drop headers/context/markers
+  const lines = patch.split('\n');
+  const filtered = lines.filter(line => {
+    if (!line) return false;
+    if (line === '\\ No newline at end of file') return false;
+    if (line.startsWith('@@')) return false; // hunk header
+    if (line.startsWith('---') || line.startsWith('+++')) return false; // file headers
+    if (line.startsWith(' ')) return false; // unchanged context
+    // keep only real change lines (+/-) while excluding file headers already handled
+    if (line.startsWith('+') || line.startsWith('-')) return true;
+    return false;
+  });
+
+  // Remove leading/trailing empty lines that might remain after filtering
+  while (filtered.length && filtered[0]!.trim() === '') filtered.shift();
+  while (filtered.length && filtered[filtered.length - 1]!.trim() === '')
+    filtered.pop();
+
+  return filtered.join('\n');
 }
 
 /**

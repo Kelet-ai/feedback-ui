@@ -555,3 +555,78 @@ describe('useFeedbackState - ignoreInitialNullish functionality', () => {
     expect(mockHandler).toHaveBeenCalledTimes(2);
   });
 });
+
+// Tests for baseline diffing semantics
+describe('useFeedbackState - baseline diffing', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.useRealTimers();
+  });
+
+  it('diffs are computed against the initial baseline (non-nullish)', async () => {
+    const mockHandler = vi.fn();
+    const { result } = renderHook(() =>
+      useFeedbackState('a', 'baseline-tx', {
+        debounceMs: 200,
+        diffType: 'json',
+        onFeedback: mockHandler,
+      })
+    );
+
+    // Make two rapid changes within debounce window
+    act(() => {
+      result.current[1]('ab');
+      result.current[1]('abc');
+    });
+
+    // Flush debounce
+    act(() => {
+      vi.advanceTimersByTime(250);
+    });
+
+    expect(mockHandler).toHaveBeenCalledTimes(1);
+    const call = mockHandler.mock.calls[0]?.[0];
+    const correction = JSON.parse(call.correction);
+    expect(correction.before).toBe('a');
+    expect(correction.after).toBe('abc');
+  });
+
+  it('when initial is nullish and ignored, baseline becomes first non-nullish value', async () => {
+    const mockHandler = vi.fn();
+    const { result } = renderHook(() =>
+      useFeedbackState<string | null>(null, 'baseline-nullish', {
+        debounceMs: 200,
+        diffType: 'json',
+        onFeedback: mockHandler,
+        ignoreInitialNullish: true,
+      })
+    );
+
+    // First transition: null -> 'first' (should be ignored and set baseline)
+    act(() => {
+      result.current[1]('first');
+    });
+    act(() => {
+      vi.advanceTimersByTime(250);
+    });
+    expect(mockHandler).toHaveBeenCalledTimes(0);
+
+    // Second transition: 'first' -> 'second' (should be reported, baseline = 'first')
+    act(() => {
+      result.current[1]('second');
+    });
+    act(() => {
+      vi.advanceTimersByTime(250);
+    });
+
+    expect(mockHandler).toHaveBeenCalledTimes(1);
+    const call = mockHandler.mock.calls[0]?.[0];
+    const correction = JSON.parse(call.correction);
+    expect(correction.before).toBe('first');
+    expect(correction.after).toBe('second');
+  });
+});

@@ -22,7 +22,7 @@ export function useStateChangeTracking<T>(
   const feedbackHandler = options?.onFeedback || defaultFeedbackHandler;
 
   // Determine defaults from options
-  const debounceMs = options?.debounceMs ?? 1500;
+  const debounceMs = options?.debounceMs ?? 3000;
   const diffType = options?.diffType ?? 'git';
   const compareWith = options?.compareWith;
   const defaultTriggerName =
@@ -32,18 +32,22 @@ export function useStateChangeTracking<T>(
   // Keep track of previous state for comparison
   const prevStateRef = useRef<T>(currentState);
 
-  // Track the state when changes started (for debouncing)
-  const changeStartStateRef = useRef<T>(currentState);
-
   // Track if this is the first render
   const isFirstRenderRef = useRef<boolean>(true);
 
-  // Track the initial state to detect nullish→value transitions
+  // Track the initial (and later baseline) state for diffing
   const initialStateRef = useRef<T>(currentState);
+  // Snapshot whether the true initial state was nullish
+  const initialWasNullishRef = useRef<boolean>(currentState == null);
 
   // Track if we've had any non-nullish state yet
   const hasHadNonNullishStateRef = useRef<boolean>(
     currentState != null // != null catches both null and undefined
+  );
+
+  // Whether the baseline is eligible (respecting ignoreInitialNullish)
+  const hasEligibleBaselineRef = useRef<boolean>(
+    !(ignoreInitialNullish && currentState == null)
   );
 
   // Store timeout ID for debounce cleanup
@@ -99,7 +103,7 @@ export function useStateChangeTracking<T>(
         clearTimeout(timeoutRef.current);
 
         // Immediately send feedback for the previous trigger sequence
-        const startState = changeStartStateRef.current;
+        const startState = initialStateRef.current; // Baseline for diffing
         const currentStateBeforeChange = currentState; // Current state before this new change
 
         sendFeedback(
@@ -124,7 +128,11 @@ export function useStateChangeTracking<T>(
     if (isFirstRenderRef.current) {
       isFirstRenderRef.current = false;
       prevStateRef.current = currentState;
-      changeStartStateRef.current = currentState;
+      // Establish baseline eligibility on first render
+      if (!ignoreInitialNullish || currentState != null) {
+        initialStateRef.current = currentState; // becomes baseline
+        hasEligibleBaselineRef.current = true;
+      }
       return;
     }
 
@@ -138,7 +146,7 @@ export function useStateChangeTracking<T>(
       // Check if we should ignore this change due to initial nullish transition
       const shouldIgnoreChange =
         ignoreInitialNullish &&
-        initialStateRef.current == null && // Initial state was nullish
+        initialWasNullishRef.current && // True initial state was nullish
         !hasHadNonNullishStateRef.current && // We haven't had non-nullish state before
         currentState != null; // Current state is non-nullish
 
@@ -148,16 +156,15 @@ export function useStateChangeTracking<T>(
       }
 
       if (shouldIgnoreChange) {
+        // Set the baseline (initial) to the first non-nullish state and don't send feedback
+        initialStateRef.current = currentState;
+        hasEligibleBaselineRef.current = true;
         // Update refs but don't send feedback for this transition
         prevStateRef.current = currentState;
-        changeStartStateRef.current = currentState;
         return;
       }
 
-      // If no timer is running, this is the start of a change sequence
-      if (!timeoutRef.current) {
-        changeStartStateRef.current = prevState;
-      }
+      // If no timer is running, this is the start of a change sequence – baseline remains fixed
 
       // Clear previous timeout if it exists (extends the debounce timer)
       if (timeoutRef.current) {
@@ -169,19 +176,20 @@ export function useStateChangeTracking<T>(
 
       // Set new timeout to debounce feedback
       timeoutRef.current = setTimeout(() => {
-        // Compare from when changes started to final state
-        const startState = changeStartStateRef.current;
+        // Compare from baseline to final state
+        const startState = initialStateRef.current; // Always diff from baseline
         const finalState = currentState;
 
         // Send feedback using the helper
-        sendFeedback(
-          startState,
-          finalState,
-          currentTriggerNameRef.current || defaultTriggerName
-        );
+        if (hasEligibleBaselineRef.current) {
+          sendFeedback(
+            startState,
+            finalState,
+            currentTriggerNameRef.current || defaultTriggerName
+          );
+        }
 
         // Reset for next change sequence
-        changeStartStateRef.current = finalState;
         timeoutRef.current = null;
       }, debounceMs);
     }
