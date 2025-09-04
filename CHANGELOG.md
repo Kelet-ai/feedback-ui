@@ -1,3 +1,18 @@
+# [1.0.0](https://github.com/kelet-ai/feedback-ui/compare/v0.7.1...v1.0.0) (2025-09-04)
+
+
+### Features
+
+* **feedback-state:** diff against initial eligible baseline; compact diff output; default debounce 3s ([a76d776](https://github.com/kelet-ai/feedback-ui/commit/a76d77658d75b2e95eae744df3be3076ebf7d72f))
+
+
+### BREAKING CHANGES
+
+* **feedback-state:** - Default debounce is now 3000ms (was 1500ms).
+- Correction diffs are now computed from the initial eligible baseline instead of the previous state. Consumers relying on previous-state diffs should adjust expectations.
+
+
+
 ## [0.7.1](https://github.com/kelet-ai/feedback-ui/compare/v0.7.0...v0.7.1) (2025-09-02)
 
 
@@ -37,15 +52,6 @@
 ### Bug Fixes
 
 * build test ([f86ce62](https://github.com/kelet-ai/feedback-ui/commit/f86ce62b6aaaf815f9e317cc4dba69e7329efab8))
-
-
-
-# [0.5.0](https://github.com/kelet-ai/feedback-ui/compare/v0.4.2...v0.5.0) (2025-09-01)
-
-
-### Features
-
-* add dual build outputs for improved debugging experience ([8a5c530](https://github.com/kelet-ai/feedback-ui/commit/8a5c530a92309f657ee9095ee95ae86d516161ad))
 
 
 
