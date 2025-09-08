@@ -319,23 +319,6 @@ const [data, setData] = useFeedbackState(initial, 'tracker', {
 
 ---
 
-## 🔗 OpenTelemetry Integration
-
-Prefer W3C traceparent to correlate feedback with distributed traces:
-
-```tsx
-import { VoteFeedback, getTraceParent } from '@kelet-ai/feedback-ui';
-
-<VoteFeedback.Root tx_id={getTraceParent} onFeedback={handleFeedback}>
-  <VoteFeedback.UpvoteButton>👍</VoteFeedback.UpvoteButton>
-  <VoteFeedback.DownvoteButton>👎</VoteFeedback.DownvoteButton>
-</VoteFeedback.Root>;
-```
-
-Requires `@opentelemetry/api` for active context. If missing at runtime, an error is thrown.
-
----
-
 ## 🔧 Core Components
 
 ### **VoteFeedback.Root**
