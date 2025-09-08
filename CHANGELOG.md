@@ -1,3 +1,13 @@
+## [1.0.2](https://github.com/kelet-ai/feedback-ui/compare/v1.0.1...v1.0.2) (2025-09-08)
+
+
+### Bug Fixes
+
+* remove broken otel integration ([687b0db](https://github.com/kelet-ai/feedback-ui/commit/687b0dbca958bdca6976f3cdb23e2133d99ab447))
+* remove broken otel integration ([43e448b](https://github.com/kelet-ai/feedback-ui/commit/43e448b39736908a2adf7623884e8cfafbfb1abb))
+
+
+
 ## [1.0.1](https://github.com/kelet-ai/feedback-ui/compare/v1.0.0...v1.0.1) (2025-09-08)
 
 
@@ -43,15 +53,6 @@
 ### Features
 
 * add ignoreInitialNullish option to feedback state hooks ([9ad1e80](https://github.com/kelet-ai/feedback-ui/commit/9ad1e80c945a31b055033756ad837af9e79703f2))
-
-
-
-# [0.6.0](https://github.com/kelet-ai/feedback-ui/compare/v0.5.1...v0.6.0) (2025-09-01)
-
-
-### Features
-
-* enable source content in source maps for better OSS debugging ([22cc5d8](https://github.com/kelet-ai/feedback-ui/commit/22cc5d85f92f005f1dcf714dcdd4c94c67b28c4a))
 
 
 
