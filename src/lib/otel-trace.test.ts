@@ -1,113 +1,88 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { getOtelTraceId, _setOtelApiLoader } from './otel-trace';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { getTraceParent } from './otel-trace';
 
-describe('getOtelTraceId', () => {
-  // Mock the OTEL API
-  const mockOtelApi = {
-    trace: {
-      getSpanContext: vi.fn(),
-      getSpan: vi.fn(),
-    },
-    context: {
-      active: vi.fn(),
-    },
-  };
+// Helpers to access the OpenTelemetry global store symbol
+const OTEL_SYMBOL = Symbol.for('opentelemetry.js.api.1');
 
+describe('getTraceParent (dynamic OTEL loader)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    // Set up the mock loader
-    _setOtelApiLoader(() => mockOtelApi);
+    // Reset the OTEL global between tests
+
+    (globalThis as any)[OTEL_SYMBOL] = undefined;
   });
 
-  it('should return trace ID from span context', () => {
-    const mockTraceId = '1234567890abcdef1234567890abcdef';
-    const mockActiveContext = {};
-    const mockSpanContext = { traceId: mockTraceId };
+  it('returns traceparent from propagation.inject', () => {
+    const activeMock = vi.fn();
+    const injectMock = vi.fn();
 
-    mockOtelApi.trace.getSpanContext.mockReturnValue(mockSpanContext);
-    mockOtelApi.context.active.mockReturnValue(mockActiveContext);
+    // Provide a minimal OTEL API on the global store
 
-    const result = getOtelTraceId();
-
-    expect(result).toBe(mockTraceId);
-    expect(mockOtelApi.context.active).toHaveBeenCalledTimes(1);
-    expect(mockOtelApi.trace.getSpanContext).toHaveBeenCalledWith(
-      mockActiveContext
-    );
-  });
-
-  it('should return trace ID from active span when span context method fails', () => {
-    const mockTraceId = 'abcdef1234567890abcdef1234567890';
-    const mockActiveContext = {};
-    const mockSpan = {
-      spanContext: vi.fn().mockReturnValue({ traceId: mockTraceId }),
+    (globalThis as any)[OTEL_SYMBOL] = {
+      context: { active: activeMock },
+      propagation: { inject: injectMock },
     };
 
-    mockOtelApi.trace.getSpanContext.mockReturnValue(null);
-    mockOtelApi.trace.getSpan.mockReturnValue(mockSpan);
-    mockOtelApi.context.active.mockReturnValue(mockActiveContext);
-
-    const result = getOtelTraceId();
-
-    expect(result).toBe(mockTraceId);
-    expect(mockOtelApi.context.active).toHaveBeenCalledTimes(2);
-    expect(mockSpan.spanContext).toHaveBeenCalledTimes(1);
-  });
-
-  it('should throw error when no trace ID is available', () => {
     const mockActiveContext = {};
-
-    mockOtelApi.trace.getSpanContext.mockReturnValue(null);
-    mockOtelApi.trace.getSpan.mockReturnValue(null);
-    mockOtelApi.context.active.mockReturnValue(mockActiveContext);
-
-    expect(() => getOtelTraceId()).toThrow(
-      'OpenTelemetry trace ID not available. Ensure XHR/Fetch instrumentation is active and a request is in progress.'
-    );
-  });
-
-  it('should throw error when OpenTelemetry API is not available', () => {
-    // Mock the loader to simulate OTEL not available - the loader should rethrow the expected error
-    _setOtelApiLoader(() => {
-      try {
-        throw new Error('Cannot find module @opentelemetry/api');
-      } catch {
-        throw new Error(
-          'OpenTelemetry is not available. Install @opentelemetry/api to use trace ID extraction.'
-        );
+    activeMock.mockReturnValue(mockActiveContext);
+    injectMock.mockImplementation(
+      (_ctx: unknown, carrier: Record<string, string>) => {
+        carrier['traceparent'] =
+          '00-12345678901234567890123456789012-1234567890123456-01';
       }
+    );
+
+    const result = getTraceParent();
+    expect(result).toBe(
+      '00-12345678901234567890123456789012-1234567890123456-01'
+    );
+    expect(result).toMatch(/^\d{2}-[a-f0-9]{32}-[a-f0-9]{16}-\d{2}$/i);
+    expect(activeMock).toHaveBeenCalledTimes(1);
+    expect(injectMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('throws when inject fails', () => {
+    const activeMock = vi.fn();
+    const injectMock = vi.fn(() => {
+      throw new Error('injection error');
     });
 
-    expect(() => getOtelTraceId()).toThrow(
-      'OpenTelemetry is not available. Install @opentelemetry/api to use trace ID extraction.'
+    (globalThis as any)[OTEL_SYMBOL] = {
+      context: { active: activeMock },
+      propagation: { inject: injectMock },
+    };
+    activeMock.mockReturnValue({});
+
+    expect(() => getTraceParent()).toThrow(
+      'Failed to extract traceparent: injection error'
     );
   });
 
-  it('should handle OpenTelemetry API errors gracefully', () => {
-    const errorMessage = 'OTEL API error';
-    const mockActiveContext = {};
+  it('throws when traceparent not set on carrier', () => {
+    const activeMock = vi.fn();
+    const injectMock = vi.fn();
 
-    mockOtelApi.trace.getSpanContext.mockImplementation(() => {
-      throw new Error(errorMessage);
+    (globalThis as any)[OTEL_SYMBOL] = {
+      context: { active: activeMock },
+      propagation: { inject: injectMock },
+    };
+    activeMock.mockReturnValue({});
+    injectMock.mockImplementation(() => {
+      // do nothing
     });
-    mockOtelApi.context.active.mockReturnValue(mockActiveContext);
 
-    expect(() => getOtelTraceId()).toThrow(
-      `Failed to extract OpenTelemetry trace ID: ${errorMessage}`
+    expect(() => getTraceParent()).toThrow(
+      'traceparent header not available from active context'
     );
   });
 
-  it('should return valid trace ID format', () => {
-    const mockTraceId = '12345678901234567890123456789012';
-    const mockActiveContext = {};
-    const mockSpanContext = { traceId: mockTraceId };
+  it('throws when @opentelemetry/api is not available globally', () => {
+    // Ensure no OTEL symbol is defined
 
-    mockOtelApi.trace.getSpanContext.mockReturnValue(mockSpanContext);
-    mockOtelApi.context.active.mockReturnValue(mockActiveContext);
+    (globalThis as any)[OTEL_SYMBOL] = undefined;
 
-    const result = getOtelTraceId();
-
-    expect(result).toBe(mockTraceId);
-    expect(result).toMatch(/^[a-f0-9]{32}$/i);
+    expect(() => getTraceParent()).toThrow(
+      '@opentelemetry/api not found. Install it and configure a tracer provider.'
+    );
   });
 });

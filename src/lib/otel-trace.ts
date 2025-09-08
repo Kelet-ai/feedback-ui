@@ -1,64 +1,57 @@
 // Internal function for loading OpenTelemetry API - can be mocked in tests
-let _loadOtelApi = (): { trace: any; context: any } => {
-  try {
-    // Dynamic import - this will throw if @opentelemetry/api is not installed
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    return require('@opentelemetry/api');
-  } catch {
+const _loadOtelApi = (): { context: any; propagation: any } => {
+  const g: any = globalThis;
+  const store = g[Symbol.for('opentelemetry.js.api.1')];
+
+  const api = store?.api ?? store;
+
+  if (!api?.context || !api?.propagation) {
     throw new Error(
-      'OpenTelemetry is not available. Install @opentelemetry/api to use trace ID extraction.'
+      '@opentelemetry/api not found. Install it and configure a tracer provider.'
     );
   }
+  return api;
 };
 
-// Test helper to mock the OTEL API loader
-export function _setOtelApiLoader(loader: () => { trace: any; context: any }) {
-  _loadOtelApi = loader;
-}
-
 /**
- * Extracts the current OpenTelemetry trace ID from the active span context.
+ * Extracts a W3C traceparent header value from the current active context.
  *
- * @throws Error if OpenTelemetry is not available or no trace is currently active
- * @returns The trace ID string from the active OTEL span
+ * Uses the global OpenTelemetry propagation API to inject the active context
+ * into a carrier and returns the resulting `traceparent` header string.
+ *
+ * @throws Error if OpenTelemetry is not available or no active context exists
+ * @returns The `traceparent` header string
  *
  * @example
  * ```typescript
- * import { getOtelTraceId } from '@kelet-ai/feedback-ui';
+ * import { getTraceParent } from '@kelet-ai/feedback-ui';
  *
  * // Use as function with VoteFeedback component
- * <VoteFeedback.Root tx_id={getOtelTraceId} onFeedback={handleFeedback}>
+ * <VoteFeedback.Root tx_id={getTraceParent} onFeedback={handleFeedback}>
  *   <VoteFeedback.UpvoteButton>👍</VoteFeedback.UpvoteButton>
  *   <VoteFeedback.DownvoteButton>👎</VoteFeedback.DownvoteButton>
  * </VoteFeedback.Root>
  * ```
  */
-export function getOtelTraceId(): string {
-  const { trace, context } = _loadOtelApi();
-
+export function getTraceParent(_: unknown = null): string {
   try {
-    // Method 1: Get span context directly from active context
-    const spanContext = trace.getSpanContext(context.active());
-    if (spanContext?.traceId) {
-      return spanContext.traceId;
-    }
+    const { context, propagation } = _loadOtelApi();
+    const carrier: Record<string, string> = {};
 
-    // Method 2: Get from active span
-    const activeSpan = trace.getSpan(context.active());
-    if (activeSpan) {
-      const spanCtx = activeSpan.spanContext();
-      if (spanCtx.traceId) {
-        return spanCtx.traceId;
-      }
+    propagation.inject(context.active(), carrier, {
+      set: (c: Record<string, string>, k: string, v: string) => {
+        c[k] = v;
+      },
+    });
+
+    const traceparent = carrier['traceparent'];
+    if (!traceparent) {
+      throw new Error('traceparent header not available from active context');
     }
+    return traceparent;
   } catch (error) {
     throw new Error(
-      `Failed to extract OpenTelemetry trace ID: ${error instanceof Error ? error.message : 'Unknown error'}`
+      `Failed to extract traceparent: ${error instanceof Error ? error.message : 'Unknown error'}`
     );
   }
-
-  // No trace ID available
-  throw new Error(
-    'OpenTelemetry trace ID not available. Ensure XHR/Fetch instrumentation is active and a request is in progress.'
-  );
 }
