@@ -1,3 +1,12 @@
+## [1.0.1](https://github.com/kelet-ai/feedback-ui/compare/v1.0.0...v1.0.1) (2025-09-08)
+
+
+### Bug Fixes
+
+* getTraceParent instead of getOtelTraceId ([f264086](https://github.com/kelet-ai/feedback-ui/commit/f264086e418b8686952930f5d4eadad5363cbe77))
+
+
+
 # [1.0.0](https://github.com/kelet-ai/feedback-ui/compare/v0.7.1...v1.0.0) (2025-09-04)
 
 
@@ -43,15 +52,6 @@
 ### Features
 
 * enable source content in source maps for better OSS debugging ([22cc5d8](https://github.com/kelet-ai/feedback-ui/commit/22cc5d85f92f005f1dcf714dcdd4c94c67b28c4a))
-
-
-
-## [0.5.1](https://github.com/kelet-ai/feedback-ui/compare/v0.5.0...v0.5.1) (2025-09-01)
-
-
-### Bug Fixes
-
-* build test ([f86ce62](https://github.com/kelet-ai/feedback-ui/commit/f86ce62b6aaaf815f9e317cc4dba69e7329efab8))
 
 
 
