@@ -1,5 +1,6 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useEffect } from 'react';
 import type { FeedbackData } from '@/types';
+import { initEventCapture, getLatestEvent } from '@/lib/event-capture';
 
 interface KeletContextValue {
   api_key: string;
@@ -21,6 +22,7 @@ interface FeedbackRequest {
   explanation?: string;
   selection?: string;
   correction?: string;
+  metadata?: Record<string, any>;
 }
 
 // Create the context
@@ -58,6 +60,11 @@ export const useDefaultFeedbackHandler = (): ((
 export const KeletProvider: React.FC<
   React.PropsWithChildren<KeletProviderProps>
 > = ({ apiKey, project, baseUrl, children }) => {
+  // Initialize event capture once on mount
+  useEffect(() => {
+    initEventCapture();
+  }, []);
+
   // Get the parent context (if any)
   const parentContext = useContext(KeletContext);
 
@@ -73,6 +80,16 @@ export const KeletProvider: React.FC<
   const feedback = async (data: FeedbackData) => {
     const resolvedBaseUrl = baseUrl || DefaultKeletBaseUrl;
     const url = `${resolvedBaseUrl}/projects/${project}/feedback`;
+
+    // Snapshot the latest DOM event (if any, and if <10s old)
+    const capturedEvent = getLatestEvent();
+
+    // Merge captured event into metadata
+    const metadata = {
+      ...data.extra_metadata,
+      ...(capturedEvent && { $dom_event: capturedEvent }),
+    };
+
     const req: FeedbackRequest = {
       tx_id: data.tx_id,
       source: data.source || 'EXPLICIT',
@@ -80,7 +97,8 @@ export const KeletProvider: React.FC<
       explanation: data.explanation,
       correction: data.correction,
       selection: data.selection,
-      // Include trigger_name if needed in the future
+      trigger_name: data.trigger_name,
+      metadata: Object.keys(metadata).length > 0 ? metadata : undefined,
     };
     const response = await fetch(url, {
       method: 'POST',

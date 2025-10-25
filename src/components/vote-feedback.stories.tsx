@@ -131,9 +131,11 @@ export const HeadlessBasic: Story = {
     <VoteFeedback.Root {...args}>
       <div style={{ position: 'relative', display: 'inline-block' }}>
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-          <VoteFeedback.UpvoteButton>
+          <VoteFeedback.UpvoteButton asChild>
             {({ isSelected }) => (
-              <button
+              <div
+                role="button"
+                tabIndex={0}
                 style={{
                   padding: '8px 16px',
                   backgroundColor: '#22c55e',
@@ -146,13 +148,15 @@ export const HeadlessBasic: Story = {
                 }}
               >
                 👍 Like {isSelected && '(Selected)'}
-              </button>
+              </div>
             )}
           </VoteFeedback.UpvoteButton>
 
-          <VoteFeedback.DownvoteButton>
+          <VoteFeedback.DownvoteButton asChild>
             {({ isSelected }) => (
-              <button
+              <div
+                role="button"
+                tabIndex={0}
                 style={{
                   padding: '8px 16px',
                   backgroundColor: '#ef4444',
@@ -165,7 +169,7 @@ export const HeadlessBasic: Story = {
                 }}
               >
                 👎 Dislike {isSelected && '(Selected)'}
-              </button>
+              </div>
             )}
           </VoteFeedback.DownvoteButton>
         </div>
