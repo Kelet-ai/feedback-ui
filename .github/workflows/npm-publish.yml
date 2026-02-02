@@ -56,16 +56,7 @@ jobs:
       - name: Verify build output
         run: bun run verify-build
 
-      - name: Setup npm
-        uses: actions/setup-node@v6
-        with:
-          node-version: '24'
-          registry-url: 'https://registry.npmjs.org'
-
-      - name: Upgrade npm for OIDC trusted publishing
-        run: npm install -g npm@^11.5.1
-
       - name: Publish to NPM
         env:
-          NPM_CONFIG_PROVENANCE: true
-        run: npm publish --access public --provenance
+          NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: bun publish --access public
