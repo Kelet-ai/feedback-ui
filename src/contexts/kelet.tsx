@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect } from 'react';
 import type { FeedbackData } from '@/types';
-import { initEventCapture, getLatestEvent } from '@/lib/event-capture';
+import { getLatestEvent, initEventCapture } from '@/lib/event-capture';
 
 interface KeletContextValue {
   api_key: string;
@@ -86,7 +86,7 @@ export const KeletProvider: React.FC<
 
     // Merge captured event into metadata
     const metadata = {
-      ...data.extra_metadata,
+      ...(data.extra_metadata ?? {}),
       ...(capturedEvent && { $dom_event: capturedEvent }),
     };
 

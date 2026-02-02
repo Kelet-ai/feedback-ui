@@ -386,13 +386,20 @@ This is useful when you have:
               API: <code>{api_key.slice(0, 8)}...</code>
             </div>
             <div>
-              Project: <code data-testid={`${testId}-project`}>{project}</code>
+              Project:{' '}
+              <code
+                data-testid={`${testId}-project`}
+                data-feedback-id={`${testId}-project`}
+              >
+                {project}
+              </code>
             </div>
           </div>
 
           <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
             <button
               data-testid={`${testId}-upvote`}
+              data-feedback-id={`${testId}-upvote`}
               onClick={() => handleFeedback('upvote')}
               style={{
                 backgroundColor: 'rgba(255,255,255,0.2)',
@@ -408,6 +415,7 @@ This is useful when you have:
             </button>
             <button
               data-testid={`${testId}-downvote`}
+              data-feedback-id={`${testId}-downvote`}
               onClick={() => handleFeedback('downvote')}
               style={{
                 backgroundColor: 'rgba(255,255,255,0.2)',
@@ -584,6 +592,7 @@ Key behaviors:
           </h4>
           <button
             data-testid="test-network-error"
+            data-feedback-id="test-network-error"
             onClick={handleNetworkError}
             style={{
               backgroundColor: '#4299e1',
@@ -645,6 +654,7 @@ Key behaviors:
           </p>
           <button
             data-testid="test-default-handler"
+            data-feedback-id="test-default-handler"
             onClick={handleSubmit}
             style={{
               backgroundColor: '#4299e1',
@@ -700,6 +710,7 @@ Key behaviors:
           </h4>
           <button
             data-testid="trigger-api-key-error"
+            data-feedback-id="trigger-api-key-error"
             onClick={() => setShowError(true)}
             style={{
               backgroundColor: '#e53e3e',
@@ -809,6 +820,7 @@ Shows:
           <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
             <button
               data-testid="use-kelet-upvote"
+              data-feedback-id="use-kelet-upvote"
               onClick={() => handleQuickFeedback('upvote')}
               style={{
                 backgroundColor: '#48bb78',
@@ -824,6 +836,7 @@ Shows:
             </button>
             <button
               data-testid="use-kelet-downvote"
+              data-feedback-id="use-kelet-downvote"
               onClick={() => handleQuickFeedback('downvote')}
               style={{
                 backgroundColor: '#e53e3e',
@@ -895,6 +908,7 @@ Shows:
 
           <button
             data-testid="default-handler-submit"
+            data-feedback-id="default-handler-submit"
             onClick={handleFeedback}
             style={{
               backgroundColor: '#4299e1',

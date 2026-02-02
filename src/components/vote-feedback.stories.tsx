@@ -532,6 +532,7 @@ The \`asChild\` pattern is inspired by Radix UI and allows maximum flexibility w
           <VoteFeedback.UpvoteButton asChild>
             <div
               data-testid="custom-upvote"
+              data-feedback-id="custom-upvote"
               style={{
                 padding: '10px 20px',
                 background: 'linear-gradient(45deg, #ff6b6b, #ff8e8e)',
@@ -566,6 +567,7 @@ The \`asChild\` pattern is inspired by Radix UI and allows maximum flexibility w
           <VoteFeedback.DownvoteButton asChild>
             <span
               data-testid="custom-downvote"
+              data-feedback-id="custom-downvote"
               style={{
                 padding: '10px 20px',
                 background: 'linear-gradient(45deg, #667eea, #764ba2)',
@@ -627,6 +629,7 @@ The \`asChild\` pattern is inspired by Radix UI and allows maximum flexibility w
             <VoteFeedback.Textarea asChild>
               <textarea
                 data-testid="custom-textarea"
+                data-feedback-id="custom-textarea"
                 style={{
                   width: '100%',
                   padding: '12px',
@@ -652,6 +655,7 @@ The \`asChild\` pattern is inspired by Radix UI and allows maximum flexibility w
               <VoteFeedback.SubmitButton asChild>
                 <button
                   data-testid="custom-submit"
+                  data-feedback-id="custom-submit"
                   style={{
                     padding: '12px 24px',
                     backgroundColor: 'rgba(255, 255, 255, 0.2)',

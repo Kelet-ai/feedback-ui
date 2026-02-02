@@ -29,9 +29,8 @@ function serializeTarget(target: EventTarget | null): string {
   // Strategy 1: Use ID if available (most specific)
   if (el.id) return `#${el.id}`;
 
-  // Strategy 2: Use data-* attributes for custom identifiers
-  const dataId =
-    el.getAttribute('data-feedback-id') || el.getAttribute('data-testid');
+  // Strategy 2: Use data-feedback-id attributes for custom identifiers
+  const dataId = el.getAttribute('data-feedback-id');
   if (dataId) return `[data-feedback-id="${dataId}"]`;
 
   // Strategy 3: Build a selector path from element hierarchy
