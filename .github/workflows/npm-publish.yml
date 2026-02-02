@@ -23,12 +23,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup npm
-        uses: actions/setup-node@v6
-        with:
-          node-version: '24'
-          registry-url: 'https://registry.npmjs.org'
-
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
 
@@ -61,6 +55,13 @@ jobs:
 
       - name: Verify build output
         run: bun run verify-build
+
+      - name: Setup npm
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+      - run: npm --version
 
       - name: Publish to NPM
         run: npm publish --provenance --access public
