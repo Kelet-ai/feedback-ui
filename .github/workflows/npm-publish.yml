@@ -55,6 +55,4 @@ jobs:
         run: bun run verify-build
 
       - name: Publish to NPM
-        env:
-          NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: bun publish --access public
+        run: npm publish --provenance --access public
