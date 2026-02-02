@@ -56,14 +56,8 @@ jobs:
       - name: Verify build output
         run: bun run verify-build
 
-      - name: Setup npm
-        uses: actions/setup-node@v6
-        with:
-          node-version: '24'
-      - run: npm --version
-      - run: node --version
+      - name: Upgrade npm for OIDC trusted publishing
+        run: npm install -g npm@^11.5.1
 
       - name: Publish to NPM
-        run: npm publish --provenance --access public
-        env:
-          NPM_CONFIG_PROVENANCE: true
+        run: npm publish --access public --provenance˚
