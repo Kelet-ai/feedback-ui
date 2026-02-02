@@ -1,9 +1,9 @@
 import { useCallback, useReducer } from 'react';
 import { useStateChangeTracking } from './use-state-change-tracking';
 import type {
-  FeedbackStateOptions,
   FeedbackDispatch,
   FeedbackReducerReturn,
+  FeedbackStateOptions,
 } from './types';
 
 /**
@@ -12,16 +12,16 @@ import type {
  *
  * @param reducer The reducer function - same as React's useReducer
  * @param initialState The initial state value
- * @param tx_id A unique transaction ID for the state (string or function that derives from state)
+ * @param session_id A unique session ID for the state (string or function that derives from state)
  * @param options Optional configuration options
  * @param initializer Optional initializer function - same as React's useReducer
  * @returns A tuple of [state, dispatch] just like React's useReducer
  *
  * @example
- * // Basic usage with required tx_id
+ * // Basic usage with required session_id
  * const [state, dispatch] = useFeedbackReducer(reducer, initialState, 'counter');
  *
- * // Using with options and dynamic tx_id
+ * // Using with options and dynamic session_id
  * const [items, dispatch] = useFeedbackReducer(
  *   itemsReducer,
  *   [],
@@ -41,7 +41,7 @@ import type {
 export function useFeedbackReducer<S, A>(
   reducer: (state: S, action: A) => S,
   initialState: S,
-  tx_id: string | ((state: S) => string),
+  session_id: string | ((state: S) => string),
   options?: FeedbackStateOptions<S>,
   initializer?: (arg: S) => S
 ): FeedbackReducerReturn<S, A> {
@@ -53,7 +53,7 @@ export function useFeedbackReducer<S, A>(
   );
 
   // Use the shared state change tracking logic
-  const { notifyChange } = useStateChangeTracking(state, tx_id, options);
+  const { notifyChange } = useStateChangeTracking(state, session_id, options);
 
   // Wrap dispatch to track changes with trigger_name support
   const dispatch: FeedbackDispatch<A> = useCallback(

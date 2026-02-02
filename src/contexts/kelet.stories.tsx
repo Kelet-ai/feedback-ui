@@ -77,7 +77,7 @@ function YourComponent() {
   
   const handleFeedback = async () => {
     await feedback({
-      tx_id: 'unique-id',
+      session_id: 'unique-id',
       vote: 'upvote',
       explanation: 'Great feature!'
     });
@@ -125,9 +125,9 @@ function MultiProjectApp() {
 }
 
 // Each component sends feedback to its specific project:
-// Analytics → https://api.kelet.ai/api/projects/analytics/feedback
-// Feedback → https://api.kelet.ai/api/projects/user-feedback/feedback  
-// Support → https://api.kelet.ai/api/projects/customer-support/feedback
+// Analytics → https://api.kelet.ai/api/projects/analytics/signal
+// Feedback → https://api.kelet.ai/api/projects/user-feedback/signal  
+// Support → https://api.kelet.ai/api/projects/customer-support/signal
 \`\`\`
 
 ## Safe Hook Usage
@@ -143,7 +143,7 @@ function ReusableButton() {
   const handleClick = async () => {
     // Works with or without provider - no-op if no provider
     await feedback({
-      tx_id: 'button-click',
+      session_id: 'button-click',
       vote: 'upvote'
     });
   };
@@ -155,7 +155,7 @@ function ReusableButton() {
 ## API Endpoints
 
 Based on your provider configuration, feedback is sent to:
-- **URL Pattern:** \`https://api.kelet.ai/api/projects/{project}/feedback\`
+- **URL Pattern:** \`https://api.kelet.ai/api/projects/{project}/signal\`
 - **Headers:** \`Authorization: Bearer {apiKey}\`
 - **Method:** POST
 
@@ -168,7 +168,7 @@ The provider automatically handles common scenarios:
 
 \`\`\`tsx
 try {
-  await feedback({ tx_id: 'test', vote: 'upvote' });
+  await feedback({ session_id: 'test', vote: 'upvote' });
 } catch (error) {
   console.error('Feedback failed:', error.message);
   // Handle error appropriately
@@ -244,7 +244,7 @@ export const BasicProvider: Story = {
         setIsSubmitting(true);
         try {
           await feedback({
-            tx_id: `demo-${Date.now()}`,
+            session_id: `demo-${Date.now()}`,
             vote: 'upvote',
             explanation: feedbackText || undefined,
           });
@@ -357,7 +357,7 @@ This is useful when you have:
         setStatus('Submitting...');
         try {
           await feedback({
-            tx_id: `${project}-demo-${Date.now()}`,
+            session_id: `${project}-demo-${Date.now()}`,
             vote,
             explanation: `Feedback for ${project} project`,
           });
@@ -386,13 +386,20 @@ This is useful when you have:
               API: <code>{api_key.slice(0, 8)}...</code>
             </div>
             <div>
-              Project: <code data-testid={`${testId}-project`}>{project}</code>
+              Project:{' '}
+              <code
+                data-testid={`${testId}-project`}
+                data-feedback-id={`${testId}-project`}
+              >
+                {project}
+              </code>
             </div>
           </div>
 
           <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
             <button
               data-testid={`${testId}-upvote`}
+              data-feedback-id={`${testId}-upvote`}
               onClick={() => handleFeedback('upvote')}
               style={{
                 backgroundColor: 'rgba(255,255,255,0.2)',
@@ -408,6 +415,7 @@ This is useful when you have:
             </button>
             <button
               data-testid={`${testId}-downvote`}
+              data-feedback-id={`${testId}-downvote`}
               onClick={() => handleFeedback('downvote')}
               style={{
                 backgroundColor: 'rgba(255,255,255,0.2)',
@@ -559,7 +567,7 @@ Key behaviors:
         try {
           // This will be mocked to fail in the test
           await feedback({
-            tx_id: 'error-test',
+            session_id: 'error-test',
             vote: 'upvote',
           });
           setStatus('Success (unexpected!)');
@@ -584,6 +592,7 @@ Key behaviors:
           </h4>
           <button
             data-testid="test-network-error"
+            data-feedback-id="test-network-error"
             onClick={handleNetworkError}
             style={{
               backgroundColor: '#4299e1',
@@ -617,7 +626,7 @@ Key behaviors:
         try {
           // This should work silently (no-op when no provider)
           await defaultHandler({
-            tx_id: 'no-provider-test',
+            session_id: 'no-provider-test',
             vote: 'upvote',
           });
           setStatus('Default handler worked (no-op)');
@@ -645,6 +654,7 @@ Key behaviors:
           </p>
           <button
             data-testid="test-default-handler"
+            data-feedback-id="test-default-handler"
             onClick={handleSubmit}
             style={{
               backgroundColor: '#4299e1',
@@ -700,6 +710,7 @@ Key behaviors:
           </h4>
           <button
             data-testid="trigger-api-key-error"
+            data-feedback-id="trigger-api-key-error"
             onClick={() => setShowError(true)}
             style={{
               backgroundColor: '#e53e3e',
@@ -771,7 +782,7 @@ Shows:
       const handleQuickFeedback = async (vote: 'upvote' | 'downvote') => {
         try {
           await feedback({
-            tx_id: `quick-${Date.now()}`,
+            session_id: `quick-${Date.now()}`,
             vote,
             explanation: `Quick ${vote} from useKelet hook`,
           });
@@ -809,6 +820,7 @@ Shows:
           <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
             <button
               data-testid="use-kelet-upvote"
+              data-feedback-id="use-kelet-upvote"
               onClick={() => handleQuickFeedback('upvote')}
               style={{
                 backgroundColor: '#48bb78',
@@ -824,6 +836,7 @@ Shows:
             </button>
             <button
               data-testid="use-kelet-downvote"
+              data-feedback-id="use-kelet-downvote"
               onClick={() => handleQuickFeedback('downvote')}
               style={{
                 backgroundColor: '#e53e3e',
@@ -862,7 +875,7 @@ Shows:
         setStatus('Submitting...');
         try {
           await feedbackHandler({
-            tx_id: `default-handler-${Date.now()}`,
+            session_id: `default-handler-${Date.now()}`,
             vote: 'upvote',
             explanation: 'Using default feedback handler',
           });
@@ -895,6 +908,7 @@ Shows:
 
           <button
             data-testid="default-handler-submit"
+            data-feedback-id="default-handler-submit"
             onClick={handleFeedback}
             style={{
               backgroundColor: '#4299e1',

@@ -80,9 +80,9 @@ Perfect for professional applications with clean, modern UI.
       action: 'feedback-received',
       description: 'Callback when user provides feedback',
     },
-    tx_id: {
+    session_id: {
       control: 'text',
-      description: 'Required transaction ID for tracking feedback',
+      description: 'Required session ID for tracking feedback',
     },
     extra_metadata: {
       control: 'object',
@@ -112,7 +112,7 @@ Perfect for professional applications with clean, modern UI.
     },
   },
   args: {
-    tx_id: 'shadcn-demo',
+    session_id: 'shadcn-demo',
     onFeedback: fn(args => {
       console.log('Feedback received:', args, 'type:', typeof args);
     }),
@@ -124,7 +124,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    tx_id: 'shadcn-default',
+    session_id: 'shadcn-default',
     variant: 'outline',
   },
   parameters: {
@@ -162,7 +162,7 @@ Professional and clean!
     await expect(upvoteButton).toHaveAttribute('data-selected', 'true');
     await expect(downvoteButton).toHaveAttribute('data-selected', 'false');
     await expect(args.onFeedback).toHaveBeenCalledWith({
-      tx_id: 'shadcn-default',
+      session_id: 'shadcn-default',
       vote: 'upvote',
     });
 
@@ -173,7 +173,7 @@ Professional and clean!
     await expect(downvoteButton).toHaveAttribute('data-selected', 'true');
     await expect(upvoteButton).toHaveAttribute('data-selected', 'false');
     await expect(args.onFeedback).toHaveBeenLastCalledWith({
-      tx_id: 'shadcn-default',
+      session_id: 'shadcn-default',
       vote: 'downvote',
     });
 
@@ -187,7 +187,7 @@ Professional and clean!
     await userEvent.click(submitButton);
 
     await expect(args.onFeedback).toHaveBeenLastCalledWith({
-      tx_id: 'shadcn-default',
+      session_id: 'shadcn-default',
       vote: 'downvote',
       explanation: 'The explanation could be clearer',
     });
@@ -196,7 +196,7 @@ Professional and clean!
 
 export const Ghost: Story = {
   args: {
-    tx_id: 'shadcn-ghost',
+    session_id: 'shadcn-ghost',
     variant: 'ghost',
   },
   parameters: {
@@ -217,7 +217,7 @@ export const Ghost: Story = {
 
 export const Secondary: Story = {
   args: {
-    tx_id: 'shadcn-secondary',
+    session_id: 'shadcn-secondary',
     variant: 'secondary',
   },
   parameters: {
@@ -238,7 +238,7 @@ export const Secondary: Story = {
 
 export const DefaultFilled: Story = {
   args: {
-    tx_id: 'shadcn-filled',
+    session_id: 'shadcn-filled',
     variant: 'default',
   },
   parameters: {
@@ -259,7 +259,7 @@ export const DefaultFilled: Story = {
 
 export const CustomContent: Story = {
   args: {
-    tx_id: 'shadcn-custom',
+    session_id: 'shadcn-custom',
     variant: 'outline',
     title: 'Was this helpful?',
     description: 'Let us know how we can improve this content.',
@@ -284,7 +284,7 @@ export const CustomContent: Story = {
 
 export const InlineUsage: Story = {
   args: {
-    tx_id: 'shadcn-inline',
+    session_id: 'shadcn-inline',
     variant: 'ghost',
     size: 'sm',
   },

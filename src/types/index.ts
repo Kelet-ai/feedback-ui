@@ -6,10 +6,28 @@ import type {
 } from 'react';
 
 /**
+ * Captured DOM event information (automatically included in feedback metadata)
+ */
+export interface CapturedEvent {
+  /** Event type (e.g., 'click', 'keydown') */
+  type: string;
+  /** CSS selector path to the target element */
+  targetSelector: string;
+  /** Text content or aria-label of the target element */
+  targetText: string;
+  /** Timestamp when the event occurred (ms since epoch) */
+  timestamp: number;
+  /** Mouse coordinates for click events */
+  coordinates?: { x: number; y: number };
+  /** Key pressed for keyboard events */
+  key?: string;
+}
+
+/**
  * Feedback data structure returned by the component
  */
 export interface FeedbackData {
-  tx_id: string;
+  session_id: string;
   extra_metadata?: Record<string, any>;
   vote: 'upvote' | 'downvote';
   explanation?: string;
@@ -27,7 +45,7 @@ export interface VoteFeedbackRootProps {
   children: ReactNode;
   onFeedback?: (data: FeedbackData) => void | Promise<void>;
   defaultText?: string;
-  tx_id: string | (() => string);
+  session_id: string | (() => string);
   extra_metadata?: Record<string, any>;
   trigger_name?: string; // Optional trigger name for categorizing feedback
 }

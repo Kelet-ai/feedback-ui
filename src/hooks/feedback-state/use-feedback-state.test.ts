@@ -87,7 +87,7 @@ describe('useFeedbackState - trigger_name functionality', () => {
     expect(mockHandler).toHaveBeenCalledWith(
       expect.objectContaining({
         trigger_name: 'auto_state_change',
-        tx_id: 'test-id',
+        session_id: 'test-id',
       })
     );
   });
@@ -346,7 +346,7 @@ describe('useFeedbackState - ignoreInitialNullish functionality', () => {
   it('ignores null to value transition by default', async () => {
     const mockHandler = vi.fn();
     const { result } = renderHook(() =>
-      useFeedbackState(null, 'api-data-tx', {
+      useFeedbackState(null, 'api-data-session', {
         debounceMs: 1000,
         onFeedback: mockHandler,
       })
@@ -368,7 +368,7 @@ describe('useFeedbackState - ignoreInitialNullish functionality', () => {
   it('ignores undefined to value transition by default', async () => {
     const mockHandler = vi.fn();
     const { result } = renderHook(() =>
-      useFeedbackState(undefined, 'api-data-tx', {
+      useFeedbackState(undefined, 'api-data-session', {
         debounceMs: 1000,
         onFeedback: mockHandler,
       })
@@ -390,7 +390,7 @@ describe('useFeedbackState - ignoreInitialNullish functionality', () => {
   it('tracks subsequent changes after initial nullish transition', async () => {
     const mockHandler = vi.fn();
     const { result } = renderHook(() =>
-      useFeedbackState(null, 'api-data-tx', {
+      useFeedbackState(null, 'api-data-session', {
         debounceMs: 1000,
         onFeedback: mockHandler,
       })
@@ -420,7 +420,7 @@ describe('useFeedbackState - ignoreInitialNullish functionality', () => {
     expect(mockHandler).toHaveBeenCalledTimes(1);
     expect(mockHandler).toHaveBeenCalledWith(
       expect.objectContaining({
-        tx_id: 'api-data-tx',
+        session_id: 'api-data-session',
         trigger_name: 'auto_state_change',
       })
     );
@@ -429,7 +429,7 @@ describe('useFeedbackState - ignoreInitialNullish functionality', () => {
   it('can be disabled with ignoreInitialNullish: false', async () => {
     const mockHandler = vi.fn();
     const { result } = renderHook(() =>
-      useFeedbackState(null, 'api-data-tx', {
+      useFeedbackState(null, 'api-data-session', {
         debounceMs: 1000,
         onFeedback: mockHandler,
         ignoreInitialNullish: false,
@@ -449,7 +449,7 @@ describe('useFeedbackState - ignoreInitialNullish functionality', () => {
     expect(mockHandler).toHaveBeenCalledTimes(1);
     expect(mockHandler).toHaveBeenCalledWith(
       expect.objectContaining({
-        tx_id: 'api-data-tx',
+        session_id: 'api-data-session',
         trigger_name: 'auto_state_change',
       })
     );
@@ -458,7 +458,7 @@ describe('useFeedbackState - ignoreInitialNullish functionality', () => {
   it('works with non-nullish initial values', async () => {
     const mockHandler = vi.fn();
     const { result } = renderHook(() =>
-      useFeedbackState('initial', 'string-tx', {
+      useFeedbackState('initial', 'string-session', {
         debounceMs: 1000,
         onFeedback: mockHandler,
       })
@@ -487,7 +487,7 @@ describe('useFeedbackState - ignoreInitialNullish functionality', () => {
     const { result } = renderHook(() =>
       useFeedbackState<UserState>(
         { user: null, loading: true },
-        'user-loading-tx',
+        'user-loading-session',
         {
           debounceMs: 1000,
           onFeedback: mockHandler,
@@ -515,7 +515,7 @@ describe('useFeedbackState - ignoreInitialNullish functionality', () => {
   it('ignores only first transition from nullish, not subsequent nullish transitions', async () => {
     const mockHandler = vi.fn();
     const { result } = renderHook(() =>
-      useFeedbackState(null, 'api-data-tx', {
+      useFeedbackState(null, 'api-data-session', {
         debounceMs: 1000,
         onFeedback: mockHandler,
       })
@@ -570,7 +570,7 @@ describe('useFeedbackState - baseline diffing', () => {
   it('diffs are computed against the initial baseline (non-nullish)', async () => {
     const mockHandler = vi.fn();
     const { result } = renderHook(() =>
-      useFeedbackState('a', 'baseline-tx', {
+      useFeedbackState('a', 'baseline-session', {
         debounceMs: 200,
         diffType: 'json',
         onFeedback: mockHandler,

@@ -1,5 +1,6 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useEffect } from 'react';
 import type { FeedbackData } from '@/types';
+import { getLatestEvent, initEventCapture } from '@/lib/event-capture';
 
 interface KeletContextValue {
   api_key: string;
@@ -14,13 +15,14 @@ interface KeletProviderProps {
 }
 
 interface FeedbackRequest {
-  tx_id: string;
+  session_id: string;
   source: 'IMPLICIT' | 'EXPLICIT';
   trigger_name?: string;
   vote: 'upvote' | 'downvote';
   explanation?: string;
   selection?: string;
   correction?: string;
+  metadata?: Record<string, any>;
 }
 
 // Create the context
@@ -58,6 +60,11 @@ export const useDefaultFeedbackHandler = (): ((
 export const KeletProvider: React.FC<
   React.PropsWithChildren<KeletProviderProps>
 > = ({ apiKey, project, baseUrl, children }) => {
+  // Initialize event capture once on mount
+  useEffect(() => {
+    initEventCapture();
+  }, []);
+
   // Get the parent context (if any)
   const parentContext = useContext(KeletContext);
 
@@ -72,15 +79,26 @@ export const KeletProvider: React.FC<
 
   const feedback = async (data: FeedbackData) => {
     const resolvedBaseUrl = baseUrl || DefaultKeletBaseUrl;
-    const url = `${resolvedBaseUrl}/projects/${project}/feedback`;
+    const url = `${resolvedBaseUrl}/projects/${project}/signal`;
+
+    // Snapshot the latest DOM event (if any, and if <10s old)
+    const capturedEvent = getLatestEvent();
+
+    // Merge captured event into metadata
+    const metadata = {
+      ...(data.extra_metadata ?? {}),
+      ...(capturedEvent && { $dom_event: capturedEvent }),
+    };
+
     const req: FeedbackRequest = {
-      tx_id: data.tx_id,
+      session_id: data.session_id,
       source: data.source || 'EXPLICIT',
       vote: data.vote,
       explanation: data.explanation,
       correction: data.correction,
       selection: data.selection,
-      // Include trigger_name if needed in the future
+      trigger_name: data.trigger_name,
+      metadata: Object.keys(metadata).length > 0 ? metadata : undefined,
     };
     const response = await fetch(url, {
       method: 'POST',
