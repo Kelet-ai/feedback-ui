@@ -26,7 +26,7 @@ jobs:
       - name: Setup npm
         uses: actions/setup-node@v6
         with:
-          node-version: '25'
+          node-version: '24'
           registry-url: 'https://registry.npmjs.org'
 
       - name: Setup Bun
@@ -63,4 +63,4 @@ jobs:
         run: bun run verify-build
 
       - name: Publish to NPM
-        run: npm publish
+        run: npm publish --provenance --access public
