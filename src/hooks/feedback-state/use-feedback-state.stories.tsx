@@ -7,18 +7,18 @@ import { KeletProvider } from '@/contexts/kelet';
 // Test component that wraps the hook for testing
 interface FeedbackStateTestProps {
   initialState: any;
-  tx_id: string | ((state: any) => string);
+  session_id: string | ((state: any) => string);
   options?: any;
   onFeedback?: (data: any) => void;
 }
 
 const FeedbackStateTest: React.FC<FeedbackStateTestProps> = ({
   initialState,
-  tx_id,
+  session_id,
   options,
   onFeedback = () => {},
 }) => {
-  const [state, setState] = useFeedbackState(initialState, tx_id, {
+  const [state, setState] = useFeedbackState(initialState, session_id, {
     ...options,
     onFeedback,
   });
@@ -256,7 +256,7 @@ const FeedbackStateTest: React.FC<FeedbackStateTestProps> = ({
           <h4>Test Info:</h4>
           <p>
             <strong>Identifier:</strong>{' '}
-            {typeof tx_id === 'function' ? tx_id(state) : tx_id}
+            {typeof session_id === 'function' ? session_id(state) : session_id}
           </p>
           <p>
             <strong>Options:</strong> {JSON.stringify(options || {})}
@@ -290,7 +290,7 @@ A **drop-in replacement** for React's \`useState\` that automatically tracks sta
 - 🎯 **Automatic diff detection** - Only triggers on actual changes  
 - ⏱️ **Debounced updates** - Prevents feedback spam (default: 3000ms)
 - 📊 **Multiple diff formats** - Git, object, or JSON diff formats
-- 🎭 **Dynamic tx_ids** - Can derive tx_id from state
+- 🎭 **Dynamic session_ids** - Can derive session_id from state
 - 🎚️ **Vote determination** - Automatic upvote/downvote based on change size
 - 🔍 **Custom comparison** - Support for custom equality functions
 - 🚫 **Smart nullish handling** - Ignores null/undefined → data transitions by default
@@ -299,7 +299,7 @@ A **drop-in replacement** for React's \`useState\` that automatically tracks sta
 \`\`\`typescript
 function useFeedbackState<T>(
   initialState: T, 
-  tx_id: string | ((state: T) => string), 
+  session_id: string | ((state: T) => string), 
   options?: FeedbackStateOptions<T>
 ): [T, React.Dispatch<React.SetStateAction<T>>]
 
@@ -329,7 +329,7 @@ Perfect for automatically capturing user state changes as implicit feedback!
       control: 'object',
       description: 'Initial state value (any type)',
     },
-    tx_id: {
+    session_id: {
       control: 'text',
       description: 'Identifier for tracking (string or function)',
     },
@@ -355,7 +355,7 @@ type Story = StoryObj<typeof meta>;
 export const PrimitiveState: Story = {
   args: {
     initialState: 0,
-    tx_id: 'counter-demo',
+    session_id: 'counter-demo',
     options: { debounceMs: 1500 }, // Faster for testing
   },
   parameters: {
@@ -368,7 +368,7 @@ export const PrimitiveState: Story = {
 - Number state management
 - Increment, add, and function update actions
 - Default options (git diff, 3000ms debounce)
-- Static string tx_id
+- Static string session_id
 
 Try clicking the buttons and watch the console for feedback logs!
         `,
@@ -397,7 +397,7 @@ Try clicking the buttons and watch the console for feedback logs!
 
     // Get the actual call and verify the essential properties
     const feedbackCall = (args.onFeedback as any)?.mock?.calls?.[0]?.[0];
-    await expect(feedbackCall.tx_id).toBe('counter-demo');
+    await expect(feedbackCall.session_id).toBe('counter-demo');
     await expect(feedbackCall.source).toBe('IMPLICIT');
     await expect(feedbackCall.vote).toBe('downvote');
     await expect(feedbackCall.correction).toBeTruthy();
@@ -422,7 +422,7 @@ Try clicking the buttons and watch the console for feedback logs!
 export const ObjectState: Story = {
   args: {
     initialState: { name: 'Test User', active: true, count: 0 },
-    tx_id: 'user-object',
+    session_id: 'user-object',
     options: { diffType: 'object', debounceMs: 1000 },
   },
   parameters: {
@@ -447,23 +447,23 @@ Perfect for tracking user settings and preferences!
 export const ArrayState: Story = {
   args: {
     initialState: ['apple', 'banana'],
-    tx_id: (items: string[]) => `fruit-list-${items.length}`,
+    session_id: (items: string[]) => `fruit-list-${items.length}`,
     options: { diffType: 'json', metadata: { component: 'fruit-picker' } },
   },
   parameters: {
     docs: {
       description: {
         story: `
-**Array State** - Dynamic list with function tx_id.
+**Array State** - Dynamic list with function session_id.
 
 **Features:**
 - Array state management  
-- Dynamic tx_id based on array length
+- Dynamic session_id based on array length
 - JSON diff format
 - Custom metadata inclusion
 - Add/remove item actions
 
-The tx_id changes as the array grows: \`fruit-list-2\`, \`fruit-list-3\`, etc.
+The session_id changes as the array grows: \`fruit-list-2\`, \`fruit-list-3\`, etc.
         `,
       },
     },
@@ -473,7 +473,7 @@ The tx_id changes as the array grows: \`fruit-list-2\`, \`fruit-list-3\`, etc.
 export const StringState: Story = {
   args: {
     initialState: 'Hello World',
-    tx_id: 'text-content',
+    session_id: 'text-content',
     options: {
       diffType: 'git',
       compareWith: (a: string, b: string) => a.length === b.length,
@@ -501,7 +501,7 @@ The custom \`compareWith\` function only considers strings different if their le
 export const CustomValue: Story = {
   args: {
     initialState: { type: 'custom', value: 42 },
-    tx_id: 'custom-demo',
+    session_id: 'custom-demo',
     options: { diffType: 'git', debounceMs: 250, metadata: { test: true } },
   },
   parameters: {
@@ -545,7 +545,7 @@ Use the text input to set custom values like \`"hello"\`, \`123\`, or \`{"custom
 
     // Get the actual call and verify the essential properties
     const feedbackCall = (args.onFeedback as any)?.mock?.calls?.[0]?.[0];
-    await expect(feedbackCall.tx_id).toBe('custom-demo');
+    await expect(feedbackCall.session_id).toBe('custom-demo');
     await expect(feedbackCall.source).toBe('IMPLICIT');
     await expect(feedbackCall.vote).toBe('upvote'); // Fixed: object change is now calculated as <50%
     await expect(feedbackCall.correction).toBeTruthy();
@@ -572,7 +572,7 @@ Use the text input to set custom values like \`"hello"\`, \`123\`, or \`{"custom
 export const RapidChanges: Story = {
   args: {
     initialState: 0,
-    tx_id: 'rapid-changes-demo',
+    session_id: 'rapid-changes-demo',
     options: { diffType: 'git', debounceMs: 300 },
   },
   parameters: {
@@ -622,7 +622,7 @@ This test simulates rapid user interactions and verifies that only ONE feedback 
     await expect(args.onFeedback).toHaveBeenCalledTimes(1);
 
     const feedbackCall = (args.onFeedback as any)?.mock?.calls?.[0]?.[0];
-    await expect(feedbackCall.tx_id).toBe('rapid-changes-demo');
+    await expect(feedbackCall.session_id).toBe('rapid-changes-demo');
     await expect(feedbackCall.source).toBe('IMPLICIT');
 
     // The correction should show the change from 0 to 4 (not individual steps)
@@ -634,7 +634,7 @@ This test simulates rapid user interactions and verifies that only ONE feedback 
 export const CustomVoteLogic: Story = {
   args: {
     initialState: { severity: 'low', priority: 1 },
-    tx_id: 'issue-tracker',
+    session_id: 'issue-tracker',
     options: {
       debounceMs: 300,
       vote: (before: any, after: any, _diffPercentage: number) => {
@@ -688,7 +688,7 @@ export const CustomVoteLogic: Story = {
     await expect(args.onFeedback).toHaveBeenCalledTimes(1);
 
     const feedbackCall = (args.onFeedback as any)?.mock?.calls?.[0]?.[0];
-    await expect(feedbackCall.tx_id).toBe('issue-tracker');
+    await expect(feedbackCall.session_id).toBe('issue-tracker');
     await expect(feedbackCall.source).toBe('IMPLICIT');
 
     // The custom vote logic should determine the vote, not the default percentage logic
@@ -699,7 +699,7 @@ export const CustomVoteLogic: Story = {
 export const StaticVoteConfiguration: Story = {
   args: {
     initialState: 'Draft content...',
-    tx_id: 'content-editor',
+    session_id: 'content-editor',
     options: {
       debounceMs: 300,
       vote: 'upvote', // Always upvote regardless of changes
@@ -755,11 +755,11 @@ export const StaticVoteConfiguration: Story = {
 // New component for demonstrating ignoreInitialNullish with loading simulation
 const LoadingStateTest: React.FC<FeedbackStateTestProps> = ({
   initialState,
-  tx_id,
+  session_id,
   options,
   onFeedback = () => {},
 }) => {
-  const [state, setState] = useFeedbackState(initialState, tx_id, {
+  const [state, setState] = useFeedbackState(initialState, session_id, {
     ...options,
     onFeedback,
   });
@@ -869,7 +869,7 @@ const LoadingStateTest: React.FC<FeedbackStateTestProps> = ({
           <h4>Test Info:</h4>
           <p>
             <strong>Identifier:</strong>{' '}
-            {typeof tx_id === 'function' ? tx_id(state) : tx_id}
+            {typeof session_id === 'function' ? session_id(state) : session_id}
           </p>
           <p>
             <strong>ignoreInitialNullish:</strong>{' '}
@@ -894,7 +894,7 @@ const LoadingStateTest: React.FC<FeedbackStateTestProps> = ({
 export const IgnoreInitialNullishEnabled: Story = {
   args: {
     initialState: null,
-    tx_id: 'user-data-with-ignore',
+    session_id: 'user-data-with-ignore',
     options: {
       debounceMs: 500,
       ignoreInitialNullish: true, // Explicitly enabled (default)
@@ -963,7 +963,7 @@ This prevents noise from the common \`useState(null)\` → API load → \`setSta
     await expect(args.onFeedback).toHaveBeenCalledTimes(1);
 
     const feedbackCall = (args.onFeedback as any)?.mock?.calls?.[0]?.[0];
-    await expect(feedbackCall.tx_id).toBe('user-data-with-ignore');
+    await expect(feedbackCall.session_id).toBe('user-data-with-ignore');
     await expect(feedbackCall.source).toBe('IMPLICIT');
   },
 };
@@ -971,7 +971,7 @@ This prevents noise from the common \`useState(null)\` → API load → \`setSta
 export const IgnoreInitialNullishDisabled: Story = {
   args: {
     initialState: null,
-    tx_id: 'user-data-track-all',
+    session_id: 'user-data-track-all',
     options: {
       debounceMs: 500,
       ignoreInitialNullish: false, // Explicitly disabled
@@ -1020,7 +1020,7 @@ This is the traditional behavior where every state change is tracked.
     await expect(args.onFeedback).toHaveBeenCalledTimes(1);
 
     const firstCall = (args.onFeedback as any)?.mock?.calls?.[0]?.[0];
-    await expect(firstCall.tx_id).toBe('user-data-track-all');
+    await expect(firstCall.session_id).toBe('user-data-track-all');
 
     // Make another update
     const updateButton = canvas.getByText('Update User Data');
@@ -1037,7 +1037,7 @@ This is the traditional behavior where every state change is tracked.
 export const UndefinedInitialState: Story = {
   args: {
     initialState: undefined,
-    tx_id: 'undefined-demo',
+    session_id: 'undefined-demo',
     options: {
       debounceMs: 300,
       ignoreInitialNullish: true, // Default
@@ -1090,7 +1090,7 @@ Shows that ignoreInitialNullish works with both null and undefined initial value
 export const ComplexObjectWithNullFields: Story = {
   args: {
     initialState: { user: null, loading: true, errors: [] },
-    tx_id: 'complex-object-demo',
+    session_id: 'complex-object-demo',
     options: {
       debounceMs: 300,
       ignoreInitialNullish: true,
@@ -1131,6 +1131,6 @@ export const ComplexObjectWithNullFields: Story = {
     await expect(args.onFeedback).toHaveBeenCalledTimes(1);
 
     const feedbackCall = (args.onFeedback as any)?.mock?.calls?.[0]?.[0];
-    await expect(feedbackCall.tx_id).toBe('complex-object-demo');
+    await expect(feedbackCall.session_id).toBe('complex-object-demo');
   },
 };

@@ -76,7 +76,7 @@ interface VoteFeedbackContextValue {
   triggerRef: React.RefObject<HTMLButtonElement | null>;
   popoverId: string;
   triggerId: string;
-  tx_id: string;
+  session_id: string;
   extra_metadata?: Record<string, any>;
   trigger_name?: string;
 }
@@ -100,12 +100,13 @@ const VoteFeedbackRoot = ({
   children,
   onFeedback,
   defaultText = '',
-  tx_id: txIdProp,
+  session_id: sessionIdProp,
   extra_metadata,
   trigger_name,
 }: VoteFeedbackRootProps) => {
-  // Resolve tx_id (support both string and function)
-  const tx_id = typeof txIdProp === 'function' ? txIdProp() : txIdProp;
+  // Resolve session_id (support both string and function)
+  const session_id =
+    typeof sessionIdProp === 'function' ? sessionIdProp() : sessionIdProp;
   const [showPopover, setShowPopover] = useState(false);
   const [feedbackText, setFeedbackText] = useState(defaultText);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -121,7 +122,7 @@ const VoteFeedbackRoot = ({
   const defaultHandler = useDefaultFeedbackHandler();
   const handler = onFeedback || defaultHandler;
 
-  // Reset component state when tx_id changes
+  // Reset component state when session_id changes
   useEffect(() => {
     setShowPopover(false);
     setFeedbackText(defaultText);
@@ -130,12 +131,12 @@ const VoteFeedbackRoot = ({
 
     // Return focus to trigger button for accessibility
     setTimeout(() => triggerRef.current?.focus(), 0);
-  }, [tx_id, defaultText]);
+  }, [session_id, defaultText]);
 
   const handleUpvote = useCallback(async () => {
     setVote('upvote');
     const data: FeedbackData = {
-      tx_id,
+      session_id,
       vote: 'upvote',
       ...(extra_metadata && { extra_metadata }),
       ...(trigger_name && { trigger_name }),
@@ -147,14 +148,14 @@ const VoteFeedbackRoot = ({
     } finally {
       setIsSubmitting(false);
     }
-  }, [handler, tx_id, extra_metadata, trigger_name]);
+  }, [handler, session_id, extra_metadata, trigger_name]);
 
   const handleDownvote = useCallback(async () => {
     setVote('downvote');
     // First: Send feedback immediately (without explanation)
     if (handler) {
       const data: FeedbackData = {
-        tx_id,
+        session_id,
         vote: 'downvote',
         ...(extra_metadata && { extra_metadata }),
         ...(trigger_name && { trigger_name }),
@@ -183,7 +184,7 @@ const VoteFeedbackRoot = ({
       document.body.appendChild(announcement);
       setTimeout(() => document.body.removeChild(announcement), 1000);
     }, 0);
-  }, [handler, tx_id, extra_metadata, trigger_name]);
+  }, [handler, session_id, extra_metadata, trigger_name]);
 
   const handleTextareaChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -198,7 +199,7 @@ const VoteFeedbackRoot = ({
     if (hasText) {
       // Submit with explanation
       const data: FeedbackData = {
-        tx_id,
+        session_id,
         vote: 'downvote',
         explanation: feedbackText,
         ...(extra_metadata && { extra_metadata }),
@@ -228,7 +229,14 @@ const VoteFeedbackRoot = ({
       document.body.appendChild(announcement);
       setTimeout(() => document.body.removeChild(announcement), 1000);
     }
-  }, [handler, feedbackText, defaultText, tx_id, extra_metadata, trigger_name]);
+  }, [
+    handler,
+    feedbackText,
+    defaultText,
+    session_id,
+    extra_metadata,
+    trigger_name,
+  ]);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -282,7 +290,7 @@ const VoteFeedbackRoot = ({
     triggerRef,
     popoverId,
     triggerId,
-    tx_id,
+    session_id,
     extra_metadata,
     trigger_name,
   };

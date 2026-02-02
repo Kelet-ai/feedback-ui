@@ -15,7 +15,7 @@ interface KeletProviderProps {
 }
 
 interface FeedbackRequest {
-  tx_id: string;
+  session_id: string;
   source: 'IMPLICIT' | 'EXPLICIT';
   trigger_name?: string;
   vote: 'upvote' | 'downvote';
@@ -79,7 +79,7 @@ export const KeletProvider: React.FC<
 
   const feedback = async (data: FeedbackData) => {
     const resolvedBaseUrl = baseUrl || DefaultKeletBaseUrl;
-    const url = `${resolvedBaseUrl}/projects/${project}/feedback`;
+    const url = `${resolvedBaseUrl}/projects/${project}/signal`;
 
     // Snapshot the latest DOM event (if any, and if <10s old)
     const capturedEvent = getLatestEvent();
@@ -91,7 +91,7 @@ export const KeletProvider: React.FC<
     };
 
     const req: FeedbackRequest = {
-      tx_id: data.tx_id,
+      session_id: data.session_id,
       source: data.source || 'EXPLICIT',
       vote: data.vote,
       explanation: data.explanation,

@@ -64,13 +64,13 @@ describe('KeletProvider', () => {
       const { result } = renderHook(() => useKelet(), { wrapper });
 
       await result.current.feedback({
-        tx_id: 'test-id',
+        session_id: 'test-id',
         vote: 'upvote',
         explanation: 'Great feature!',
       });
 
       expect(mockFetch).toHaveBeenCalledWith(
-        'https://api.kelet.ai/api/projects/test-project/feedback',
+        'https://api.kelet.ai/api/projects/test-project/signal',
         expect.objectContaining({
           method: 'POST',
           headers: {
@@ -78,7 +78,7 @@ describe('KeletProvider', () => {
             Authorization: 'Bearer test-api-key',
           },
           body: JSON.stringify({
-            tx_id: 'test-id',
+            session_id: 'test-id',
             source: 'EXPLICIT',
             vote: 'upvote',
             explanation: 'Great feature!',
@@ -103,7 +103,7 @@ describe('KeletProvider', () => {
 
       await expect(
         result.current.feedback({
-          tx_id: 'test-id',
+          session_id: 'test-id',
           vote: 'upvote',
         })
       ).rejects.toThrow('Failed to submit feedback: Unauthorized');
@@ -127,22 +127,22 @@ describe('KeletProvider', () => {
     it('should override project but keep parent API key', async () => {
       const wrapper = ({ children }: { children: React.ReactNode }) => (
         <KeletProvider apiKey="parent-key" project="analytics">
-          <KeletProvider project="feedback">{children}</KeletProvider>
+          <KeletProvider project="sample">{children}</KeletProvider>
         </KeletProvider>
       );
 
       const { result } = renderHook(() => useKelet(), { wrapper });
 
       expect(result.current.api_key).toBe('parent-key');
-      expect(result.current.project).toBe('feedback');
+      expect(result.current.project).toBe('sample');
 
       await result.current.feedback({
-        tx_id: 'nested-test',
+        session_id: 'nested-test',
         vote: 'downvote',
       });
 
       expect(mockFetch).toHaveBeenCalledWith(
-        'https://api.kelet.ai/api/projects/feedback/feedback',
+        'https://api.kelet.ai/api/projects/sample/signal',
         expect.objectContaining({
           headers: expect.objectContaining({
             Authorization: 'Bearer parent-key',
@@ -205,7 +205,7 @@ describe('KeletProvider', () => {
   describe('Feedback data handling', () => {
     it('should include all feedback properties in API call', async () => {
       const feedbackData: FeedbackData = {
-        tx_id: 'complex-test',
+        session_id: 'complex-test',
         vote: 'downvote',
         explanation: 'Could be better',
         correction: 'Try this instead',
@@ -224,10 +224,10 @@ describe('KeletProvider', () => {
       await result.current.feedback(feedbackData);
 
       expect(mockFetch).toHaveBeenCalledWith(
-        'https://api.kelet.ai/api/projects/test/feedback',
+        'https://api.kelet.ai/api/projects/test/signal',
         expect.objectContaining({
           body: JSON.stringify({
-            tx_id: 'complex-test',
+            session_id: 'complex-test',
             source: 'IMPLICIT',
             vote: 'downvote',
             explanation: 'Could be better',
@@ -248,7 +248,7 @@ describe('KeletProvider', () => {
       const { result } = renderHook(() => useKelet(), { wrapper });
 
       await result.current.feedback({
-        tx_id: 'default-source-test',
+        session_id: 'default-source-test',
         vote: 'upvote',
       });
 
@@ -256,7 +256,7 @@ describe('KeletProvider', () => {
         expect.any(String),
         expect.objectContaining({
           body: JSON.stringify({
-            tx_id: 'default-source-test',
+            session_id: 'default-source-test',
             source: 'EXPLICIT',
             vote: 'upvote',
           }),
@@ -309,7 +309,7 @@ describe('useDefaultFeedbackHandler hook', () => {
     // Should not throw when called
     await expect(
       result.current({
-        tx_id: 'test',
+        session_id: 'test',
         vote: 'upvote',
       })
     ).resolves.not.toThrow();
@@ -344,16 +344,16 @@ describe('useDefaultFeedbackHandler hook', () => {
     });
 
     await result.current({
-      tx_id: 'default-handler-test',
+      session_id: 'default-handler-test',
       vote: 'upvote',
       explanation: 'Using default handler',
     });
 
     expect(mockFetch).toHaveBeenCalledWith(
-      'https://api.kelet.ai/api/projects/test-project/feedback',
+      'https://api.kelet.ai/api/projects/test-project/signal',
       expect.objectContaining({
         body: JSON.stringify({
-          tx_id: 'default-handler-test',
+          session_id: 'default-handler-test',
           source: 'EXPLICIT',
           vote: 'upvote',
           explanation: 'Using default handler',

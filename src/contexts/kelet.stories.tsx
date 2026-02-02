@@ -77,7 +77,7 @@ function YourComponent() {
   
   const handleFeedback = async () => {
     await feedback({
-      tx_id: 'unique-id',
+      session_id: 'unique-id',
       vote: 'upvote',
       explanation: 'Great feature!'
     });
@@ -125,9 +125,9 @@ function MultiProjectApp() {
 }
 
 // Each component sends feedback to its specific project:
-// Analytics → https://api.kelet.ai/api/projects/analytics/feedback
-// Feedback → https://api.kelet.ai/api/projects/user-feedback/feedback  
-// Support → https://api.kelet.ai/api/projects/customer-support/feedback
+// Analytics → https://api.kelet.ai/api/projects/analytics/signal
+// Feedback → https://api.kelet.ai/api/projects/user-feedback/signal  
+// Support → https://api.kelet.ai/api/projects/customer-support/signal
 \`\`\`
 
 ## Safe Hook Usage
@@ -143,7 +143,7 @@ function ReusableButton() {
   const handleClick = async () => {
     // Works with or without provider - no-op if no provider
     await feedback({
-      tx_id: 'button-click',
+      session_id: 'button-click',
       vote: 'upvote'
     });
   };
@@ -155,7 +155,7 @@ function ReusableButton() {
 ## API Endpoints
 
 Based on your provider configuration, feedback is sent to:
-- **URL Pattern:** \`https://api.kelet.ai/api/projects/{project}/feedback\`
+- **URL Pattern:** \`https://api.kelet.ai/api/projects/{project}/signal\`
 - **Headers:** \`Authorization: Bearer {apiKey}\`
 - **Method:** POST
 
@@ -168,7 +168,7 @@ The provider automatically handles common scenarios:
 
 \`\`\`tsx
 try {
-  await feedback({ tx_id: 'test', vote: 'upvote' });
+  await feedback({ session_id: 'test', vote: 'upvote' });
 } catch (error) {
   console.error('Feedback failed:', error.message);
   // Handle error appropriately
@@ -244,7 +244,7 @@ export const BasicProvider: Story = {
         setIsSubmitting(true);
         try {
           await feedback({
-            tx_id: `demo-${Date.now()}`,
+            session_id: `demo-${Date.now()}`,
             vote: 'upvote',
             explanation: feedbackText || undefined,
           });
@@ -357,7 +357,7 @@ This is useful when you have:
         setStatus('Submitting...');
         try {
           await feedback({
-            tx_id: `${project}-demo-${Date.now()}`,
+            session_id: `${project}-demo-${Date.now()}`,
             vote,
             explanation: `Feedback for ${project} project`,
           });
@@ -559,7 +559,7 @@ Key behaviors:
         try {
           // This will be mocked to fail in the test
           await feedback({
-            tx_id: 'error-test',
+            session_id: 'error-test',
             vote: 'upvote',
           });
           setStatus('Success (unexpected!)');
@@ -617,7 +617,7 @@ Key behaviors:
         try {
           // This should work silently (no-op when no provider)
           await defaultHandler({
-            tx_id: 'no-provider-test',
+            session_id: 'no-provider-test',
             vote: 'upvote',
           });
           setStatus('Default handler worked (no-op)');
@@ -771,7 +771,7 @@ Shows:
       const handleQuickFeedback = async (vote: 'upvote' | 'downvote') => {
         try {
           await feedback({
-            tx_id: `quick-${Date.now()}`,
+            session_id: `quick-${Date.now()}`,
             vote,
             explanation: `Quick ${vote} from useKelet hook`,
           });
@@ -862,7 +862,7 @@ Shows:
         setStatus('Submitting...');
         try {
           await feedbackHandler({
-            tx_id: `default-handler-${Date.now()}`,
+            session_id: `default-handler-${Date.now()}`,
             vote: 'upvote',
             explanation: 'Using default feedback handler',
           });

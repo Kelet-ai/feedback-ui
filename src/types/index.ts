@@ -27,7 +27,7 @@ export interface CapturedEvent {
  * Feedback data structure returned by the component
  */
 export interface FeedbackData {
-  tx_id: string;
+  session_id: string;
   extra_metadata?: Record<string, any>;
   vote: 'upvote' | 'downvote';
   explanation?: string;
@@ -45,7 +45,7 @@ export interface VoteFeedbackRootProps {
   children: ReactNode;
   onFeedback?: (data: FeedbackData) => void | Promise<void>;
   defaultText?: string;
-  tx_id: string | (() => string);
+  session_id: string | (() => string);
   extra_metadata?: Record<string, any>;
   trigger_name?: string; // Optional trigger name for categorizing feedback
 }
