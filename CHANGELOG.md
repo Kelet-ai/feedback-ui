@@ -1,3 +1,12 @@
+## [1.1.1](https://github.com/kelet-ai/feedback-ui/compare/v1.1.0...v1.1.1) (2026-02-11)
+
+
+### Bug Fixes
+
+* kelet url resolution ([4ea811f](https://github.com/kelet-ai/feedback-ui/commit/4ea811fd88fb94b203a09b871e29df330406de44))
+
+
+
 # [1.1.0](https://github.com/kelet-ai/feedback-ui/compare/v1.0.2...v1.1.0) (2026-02-02)
 
 
@@ -43,15 +52,6 @@
 
 * **feedback-state:** - Default debounce is now 3000ms (was 1500ms).
 - Correction diffs are now computed from the initial eligible baseline instead of the previous state. Consumers relying on previous-state diffs should adjust expectations.
-
-
-
-## [0.7.1](https://github.com/kelet-ai/feedback-ui/compare/v0.7.0...v0.7.1) (2025-09-02)
-
-
-### Bug Fixes
-
-* kelet base url configurable ([1abd1e3](https://github.com/kelet-ai/feedback-ui/commit/1abd1e32b3eb8f3cb18c685719e6bcbfdafc162d))
 
 
 
