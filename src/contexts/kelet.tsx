@@ -28,7 +28,7 @@ interface FeedbackRequest {
 // Create the context
 export const KeletContext = createContext<KeletContextValue | null>(null);
 
-const DefaultKeletBaseUrl = 'https://api.kelet.ai/api';
+const DefaultKeletBaseUrl = 'https://api.kelet.ai';
 
 // Custom hook to use the Kelet context
 // noinspection JSUnusedGlobalSymbols
@@ -76,10 +76,17 @@ export const KeletProvider: React.FC<
       'apiKey is required either directly or from a parent KeletProvider'
     );
   }
+  
+  let resolvedBaseUrl = baseUrl || DefaultKeletBaseUrl;
+  if (resolvedBaseUrl.endsWith('/api')) {
+    resolvedBaseUrl = resolvedBaseUrl.slice(0, -4);
+  }
+  if (resolvedBaseUrl.endsWith('/')) {
+    resolvedBaseUrl = resolvedBaseUrl.slice(0, -1);
+  }
 
   const feedback = async (data: FeedbackData) => {
-    const resolvedBaseUrl = baseUrl || DefaultKeletBaseUrl;
-    const url = `${resolvedBaseUrl}/projects/${project}/signal`;
+    const url = `${resolvedBaseUrl}/api/projects/${project}/signal`;
 
     // Snapshot the latest DOM event (if any, and if <10s old)
     const capturedEvent = getLatestEvent();
