@@ -1,10 +1,11 @@
-import { useCallback, useReducer } from 'react';
-import { useStateChangeTracking } from './use-state-change-tracking';
+import { useCallback, useReducer } from "react"
+
 import type {
   FeedbackDispatch,
   FeedbackReducerReturn,
   FeedbackStateOptions,
-} from './types';
+} from "./types"
+import { useStateChangeTracking } from "./use-state-change-tracking"
 
 /**
  * A drop-in replacement for React's useReducer that tracks changes to state over time
@@ -50,10 +51,10 @@ export function useFeedbackReducer<S, A>(
     reducer,
     initialState,
     initializer as any
-  );
+  )
 
   // Use the shared state change tracking logic
-  const { notifyChange } = useStateChangeTracking(state, session_id, options);
+  const { notifyChange } = useStateChangeTracking(state, session_id, options)
 
   // Wrap dispatch to track changes with trigger_name support
   const dispatch: FeedbackDispatch<A> = useCallback(
@@ -64,18 +65,18 @@ export function useFeedbackReducer<S, A>(
       // 3. Fall back to default trigger name from options or 'auto_state_change'
       const effectiveTrigger =
         trigger_name ||
-        (action && typeof action === 'object' && 'type' in action
+        (action && typeof action === "object" && "type" in action
           ? (action as any).type
-          : options?.default_trigger_name || 'auto_state_change');
+          : options?.default_trigger_name || "auto_state_change")
 
       // Notify about the impending state change with trigger name
-      notifyChange(effectiveTrigger);
+      notifyChange(effectiveTrigger)
 
       // Dispatch the action using React's native dispatch
-      dispatchInternal(action);
+      dispatchInternal(action)
     },
     [notifyChange, options?.default_trigger_name, dispatchInternal]
-  );
+  )
 
-  return [state, dispatch];
+  return [state, dispatch]
 }

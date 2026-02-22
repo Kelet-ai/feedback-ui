@@ -1,33 +1,34 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, fn, userEvent, within } from 'storybook/test';
-import { ShadcnVoteFeedback } from './vote-feedback';
+import type { Meta, StoryObj } from "@storybook/react-vite"
+import { expect, fn, userEvent, within } from "storybook/test"
+
+import { ShadcnVoteFeedback } from "./vote-feedback"
 
 const meta: Meta<typeof ShadcnVoteFeedback> = {
-  title: 'UI/Shadcn/VoteFeedback',
+  title: "UI/Shadcn/VoteFeedback",
   component: ShadcnVoteFeedback,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
     a11y: {
       config: {
         rules: [
           {
             // Ensure buttons have accessible names
-            id: 'button-name',
+            id: "button-name",
             enabled: true,
           },
           {
             // Ensure interactive elements are focusable
-            id: 'focusable-content',
+            id: "focusable-content",
             enabled: true,
           },
           {
             // Check ARIA attributes
-            id: 'aria-valid-attr',
+            id: "aria-valid-attr",
             enabled: true,
           },
           {
             // Check color contrast
-            id: 'color-contrast',
+            id: "color-contrast",
             enabled: false,
           },
         ],
@@ -77,55 +78,55 @@ Perfect for professional applications with clean, modern UI.
   },
   argTypes: {
     onFeedback: {
-      action: 'feedback-received',
-      description: 'Callback when user provides feedback',
+      action: "feedback-received",
+      description: "Callback when user provides feedback",
     },
     session_id: {
-      control: 'text',
-      description: 'Required session ID for tracking feedback',
+      control: "text",
+      description: "Required session ID for tracking feedback",
     },
     extra_metadata: {
-      control: 'object',
-      description: 'Optional metadata to include with feedback',
+      control: "object",
+      description: "Optional metadata to include with feedback",
     },
     variant: {
-      control: 'select',
-      options: ['default', 'outline', 'ghost', 'secondary'],
-      description: 'Button style variant',
+      control: "select",
+      options: ["default", "outline", "ghost", "secondary"],
+      description: "Button style variant",
     },
     size: {
-      control: 'select',
-      options: ['default', 'sm', 'lg', 'icon'],
-      description: 'Button size',
+      control: "select",
+      options: ["default", "sm", "lg", "icon"],
+      description: "Button size",
     },
     title: {
-      control: 'text',
-      description: 'Popover title',
+      control: "text",
+      description: "Popover title",
     },
     description: {
-      control: 'text',
-      description: 'Popover description',
+      control: "text",
+      description: "Popover description",
     },
     placeholder: {
-      control: 'text',
-      description: 'Textarea placeholder',
+      control: "text",
+      description: "Textarea placeholder",
     },
   },
   args: {
-    session_id: 'shadcn-demo',
-    onFeedback: fn(args => {
-      console.log('Feedback received:', args, 'type:', typeof args);
+    session_id: "shadcn-demo",
+    onFeedback: fn((args) => {
+      console.log("Feedback received:", args, "type:", typeof args)
     }),
   },
-};
+}
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+export default meta
+type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   args: {
-    session_id: 'shadcn-default',
-    variant: 'outline',
+    session_id: "shadcn-default",
+    variant: "outline",
   },
   parameters: {
     docs: {
@@ -145,59 +146,59 @@ Professional and clean!
     },
   },
   play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement);
+    const canvas = within(canvasElement)
 
     // Get buttons
-    const upvoteButton = canvas.getByRole('button', { name: /^helpful$/i });
-    const downvoteButton = canvas.getByRole('button', { name: /not helpful/i });
+    const upvoteButton = canvas.getByRole("button", { name: /^helpful$/i })
+    const downvoteButton = canvas.getByRole("button", { name: /not helpful/i })
 
     // 1. Initial state: both buttons should have the 'outline' variant
-    await expect(upvoteButton).toHaveAttribute('data-selected', 'false');
-    await expect(downvoteButton).toHaveAttribute('data-selected', 'false');
+    await expect(upvoteButton).toHaveAttribute("data-selected", "false")
+    await expect(downvoteButton).toHaveAttribute("data-selected", "false")
 
     // 2. Click upvote
-    await userEvent.click(upvoteButton);
+    await userEvent.click(upvoteButton)
 
     // Assert upvote is selected (data-selected) and downvote is not
-    await expect(upvoteButton).toHaveAttribute('data-selected', 'true');
-    await expect(downvoteButton).toHaveAttribute('data-selected', 'false');
+    await expect(upvoteButton).toHaveAttribute("data-selected", "true")
+    await expect(downvoteButton).toHaveAttribute("data-selected", "false")
     await expect(args.onFeedback).toHaveBeenCalledWith({
-      session_id: 'shadcn-default',
-      vote: 'upvote',
-    });
+      session_id: "shadcn-default",
+      vote: "upvote",
+    })
 
     // 3. Click downvote
-    await userEvent.click(downvoteButton);
+    await userEvent.click(downvoteButton)
 
     // Assert downvote is selected and upvote is not
-    await expect(downvoteButton).toHaveAttribute('data-selected', 'true');
-    await expect(upvoteButton).toHaveAttribute('data-selected', 'false');
+    await expect(downvoteButton).toHaveAttribute("data-selected", "true")
+    await expect(upvoteButton).toHaveAttribute("data-selected", "false")
     await expect(args.onFeedback).toHaveBeenLastCalledWith({
-      session_id: 'shadcn-default',
-      vote: 'downvote',
-    });
+      session_id: "shadcn-default",
+      vote: "downvote",
+    })
 
     // 4. Add detailed feedback
     const textarea = await within(document.body).findByPlaceholderText(
-      'What could we do better?'
-    );
-    await userEvent.type(textarea, 'The explanation could be clearer');
+      "What could we do better?"
+    )
+    await userEvent.type(textarea, "The explanation could be clearer")
 
-    const submitButton = within(document.body).getByText('Submit');
-    await userEvent.click(submitButton);
+    const submitButton = within(document.body).getByText("Submit")
+    await userEvent.click(submitButton)
 
     await expect(args.onFeedback).toHaveBeenLastCalledWith({
-      session_id: 'shadcn-default',
-      vote: 'downvote',
-      explanation: 'The explanation could be clearer',
-    });
+      session_id: "shadcn-default",
+      vote: "downvote",
+      explanation: "The explanation could be clearer",
+    })
   },
-};
+}
 
 export const Ghost: Story = {
   args: {
-    session_id: 'shadcn-ghost',
-    variant: 'ghost',
+    session_id: "shadcn-ghost",
+    variant: "ghost",
   },
   parameters: {
     docs: {
@@ -213,12 +214,12 @@ export const Ghost: Story = {
       },
     },
   },
-};
+}
 
 export const Secondary: Story = {
   args: {
-    session_id: 'shadcn-secondary',
-    variant: 'secondary',
+    session_id: "shadcn-secondary",
+    variant: "secondary",
   },
   parameters: {
     docs: {
@@ -234,12 +235,12 @@ export const Secondary: Story = {
       },
     },
   },
-};
+}
 
 export const DefaultFilled: Story = {
   args: {
-    session_id: 'shadcn-filled',
-    variant: 'default',
+    session_id: "shadcn-filled",
+    variant: "default",
   },
   parameters: {
     docs: {
@@ -255,15 +256,15 @@ export const DefaultFilled: Story = {
       },
     },
   },
-};
+}
 
 export const CustomContent: Story = {
   args: {
-    session_id: 'shadcn-custom',
-    variant: 'outline',
-    title: 'Was this helpful?',
-    description: 'Let us know how we can improve this content.',
-    placeholder: 'Share your specific feedback...',
+    session_id: "shadcn-custom",
+    variant: "outline",
+    title: "Was this helpful?",
+    description: "Let us know how we can improve this content.",
+    placeholder: "Share your specific feedback...",
   },
   parameters: {
     docs: {
@@ -280,13 +281,13 @@ export const CustomContent: Story = {
       },
     },
   },
-};
+}
 
 export const InlineUsage: Story = {
   args: {
-    session_id: 'shadcn-inline',
-    variant: 'ghost',
-    size: 'sm',
+    session_id: "shadcn-inline",
+    variant: "ghost",
+    size: "sm",
   },
   parameters: {
     docs: {
@@ -299,7 +300,7 @@ Shows how the component looks when used inline with text or other content.
       },
     },
   },
-  render: args => (
+  render: (args) => (
     <div className="max-w-md space-y-4">
       <p className="text-sm text-muted-foreground">
         This article explains how to implement authentication in React
@@ -311,4 +312,4 @@ Shows how the component looks when used inline with text or other content.
       </div>
     </div>
   ),
-};
+}

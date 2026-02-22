@@ -3,10 +3,10 @@ name: Publish to NPM
 on:
   push:
     paths:
-      - 'src/**'
-      - '!src/lib/utils.ts'
-      - '!src/ui/**'
-      - '!src/styles/**'
+      - "src/**"
+      - "!src/lib/utils.ts"
+      - "!src/ui/**"
+      - "!src/styles/**"
     branches: [main]
   workflow_dispatch:
 

@@ -1,17 +1,18 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, fn, userEvent, within } from 'storybook/test';
-import React, { useState } from 'react';
-import { useFeedbackReducer } from './use-feedback-reducer';
-import { KeletProvider } from '@/contexts/kelet';
+import React, { useState } from "react"
+import { KeletProvider } from "@/contexts/kelet"
+import type { Meta, StoryObj } from "@storybook/react-vite"
+import { expect, fn, userEvent, within } from "storybook/test"
+
+import { useFeedbackReducer } from "./use-feedback-reducer"
 
 // Test component that wraps the hook for testing
 interface FeedbackReducerTestProps {
-  reducer: (state: any, action: any) => any;
-  initialState: any;
-  session_id: string | ((state: any) => string);
-  options?: any;
-  onFeedback?: (data: any) => void;
-  initializer?: (init: any) => any;
+  reducer: (state: any, action: any) => any
+  initialState: any
+  session_id: string | ((state: any) => string)
+  options?: any
+  onFeedback?: (data: any) => void
+  initializer?: (init: any) => any
 }
 
 const FeedbackReducerTest: React.FC<FeedbackReducerTestProps> = ({
@@ -31,98 +32,98 @@ const FeedbackReducerTest: React.FC<FeedbackReducerTestProps> = ({
       onFeedback,
     },
     initializer
-  );
-  const [customAction, setCustomAction] = useState('');
+  )
+  const [customAction, setCustomAction] = useState("")
 
   return (
     <KeletProvider project="test-project" apiKey="test-key">
       <div
-        style={{ fontFamily: 'sans-serif', padding: '20px', maxWidth: '600px' }}
+        style={{ fontFamily: "sans-serif", padding: "20px", maxWidth: "600px" }}
       >
         <h2>useFeedbackReducer Test</h2>
 
         <div
           style={{
-            marginBottom: '20px',
-            padding: '15px',
-            border: '1px solid #ddd',
-            borderRadius: '8px',
+            marginBottom: "20px",
+            padding: "15px",
+            border: "1px solid #ddd",
+            borderRadius: "8px",
           }}
         >
           <h3>Current State:</h3>
           <pre
             style={{
-              backgroundColor: '#f5f5f5',
-              padding: '10px',
-              borderRadius: '4px',
-              fontSize: '14px',
+              backgroundColor: "#f5f5f5",
+              padding: "10px",
+              borderRadius: "4px",
+              fontSize: "14px",
             }}
           >
             {JSON.stringify(state, null, 2)}
           </pre>
         </div>
 
-        <div style={{ marginBottom: '20px' }}>
+        <div style={{ marginBottom: "20px" }}>
           <h3>Actions:</h3>
           <div
             style={{
-              display: 'flex',
-              gap: '10px',
-              flexWrap: 'wrap',
-              marginBottom: '15px',
+              display: "flex",
+              gap: "10px",
+              flexWrap: "wrap",
+              marginBottom: "15px",
             }}
           >
             {/* Counter actions */}
-            {typeof state === 'object' && 'count' in state && (
+            {typeof state === "object" && "count" in state && (
               <>
                 <button
-                  onClick={() => dispatch({ type: 'increment' })}
+                  onClick={() => dispatch({ type: "increment" })}
                   style={{
-                    padding: '8px 16px',
-                    backgroundColor: '#007bff',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '4px',
-                    cursor: 'pointer',
+                    padding: "8px 16px",
+                    backgroundColor: "#007bff",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "4px",
+                    cursor: "pointer",
                   }}
                 >
                   Increment
                 </button>
                 <button
-                  onClick={() => dispatch({ type: 'decrement' })}
+                  onClick={() => dispatch({ type: "decrement" })}
                   style={{
-                    padding: '8px 16px',
-                    backgroundColor: '#dc3545',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '4px',
-                    cursor: 'pointer',
+                    padding: "8px 16px",
+                    backgroundColor: "#dc3545",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "4px",
+                    cursor: "pointer",
                   }}
                 >
                   Decrement
                 </button>
                 <button
-                  onClick={() => dispatch({ type: 'add', payload: 5 })}
+                  onClick={() => dispatch({ type: "add", payload: 5 })}
                   style={{
-                    padding: '8px 16px',
-                    backgroundColor: '#28a745',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '4px',
-                    cursor: 'pointer',
+                    padding: "8px 16px",
+                    backgroundColor: "#28a745",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "4px",
+                    cursor: "pointer",
                   }}
                 >
                   Add 5
                 </button>
                 <button
-                  onClick={() => dispatch({ type: 'set', payload: 0 })}
+                  onClick={() => dispatch({ type: "set", payload: 0 })}
                   style={{
-                    padding: '8px 16px',
-                    backgroundColor: '#6c757d',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '4px',
-                    cursor: 'pointer',
+                    padding: "8px 16px",
+                    backgroundColor: "#6c757d",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "4px",
+                    cursor: "pointer",
                   }}
                 >
                   Reset to 0
@@ -131,22 +132,22 @@ const FeedbackReducerTest: React.FC<FeedbackReducerTestProps> = ({
             )}
 
             {/* Todo actions */}
-            {typeof state === 'object' && 'todos' in state && (
+            {typeof state === "object" && "todos" in state && (
               <>
                 <button
                   onClick={() =>
                     dispatch({
-                      type: 'add_todo',
+                      type: "add_todo",
                       payload: { text: `Todo ${Date.now()}` },
                     })
                   }
                   style={{
-                    padding: '8px 16px',
-                    backgroundColor: '#007bff',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '4px',
-                    cursor: 'pointer',
+                    padding: "8px 16px",
+                    backgroundColor: "#007bff",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "4px",
+                    cursor: "pointer",
                   }}
                 >
                   Add Todo
@@ -156,17 +157,17 @@ const FeedbackReducerTest: React.FC<FeedbackReducerTestProps> = ({
                     <button
                       onClick={() =>
                         dispatch({
-                          type: 'toggle_todo',
+                          type: "toggle_todo",
                           payload: { id: state.todos[0].id },
                         })
                       }
                       style={{
-                        padding: '8px 16px',
-                        backgroundColor: '#28a745',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: 'pointer',
+                        padding: "8px 16px",
+                        backgroundColor: "#28a745",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "4px",
+                        cursor: "pointer",
                       }}
                     >
                       Toggle First Todo
@@ -174,19 +175,19 @@ const FeedbackReducerTest: React.FC<FeedbackReducerTestProps> = ({
                     <button
                       onClick={() =>
                         dispatch({
-                          type: 'remove_todo',
+                          type: "remove_todo",
                           payload: {
                             id: state.todos[state.todos.length - 1].id,
                           },
                         })
                       }
                       style={{
-                        padding: '8px 16px',
-                        backgroundColor: '#dc3545',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: 'pointer',
+                        padding: "8px 16px",
+                        backgroundColor: "#dc3545",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "4px",
+                        cursor: "pointer",
                       }}
                     >
                       Remove Last Todo
@@ -197,36 +198,36 @@ const FeedbackReducerTest: React.FC<FeedbackReducerTestProps> = ({
             )}
           </div>
 
-          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
             <input
               type="text"
               placeholder="Custom action (JSON)"
               value={customAction}
-              onChange={e => setCustomAction(e.target.value)}
+              onChange={(e) => setCustomAction(e.target.value)}
               style={{
-                padding: '8px',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
+                padding: "8px",
+                border: "1px solid #ddd",
+                borderRadius: "4px",
                 flex: 1,
               }}
             />
             <button
               onClick={() => {
                 try {
-                  const action = JSON.parse(customAction);
-                  dispatch(action);
-                  setCustomAction('');
+                  const action = JSON.parse(customAction)
+                  dispatch(action)
+                  setCustomAction("")
                 } catch {
-                  alert('Invalid JSON action');
+                  alert("Invalid JSON action")
                 }
               }}
               style={{
-                padding: '8px 16px',
-                backgroundColor: '#6c757d',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
+                padding: "8px 16px",
+                backgroundColor: "#6c757d",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                cursor: "pointer",
               }}
             >
               Dispatch Custom Action
@@ -236,15 +237,15 @@ const FeedbackReducerTest: React.FC<FeedbackReducerTestProps> = ({
 
         <div
           style={{
-            padding: '15px',
-            backgroundColor: '#f8f9fa',
-            borderRadius: '8px',
+            padding: "15px",
+            backgroundColor: "#f8f9fa",
+            borderRadius: "8px",
           }}
         >
           <h4>Test Info:</h4>
           <p>
-            <strong>Identifier:</strong>{' '}
-            {typeof session_id === 'function' ? session_id(state) : session_id}
+            <strong>Identifier:</strong>{" "}
+            {typeof session_id === "function" ? session_id(state) : session_id}
           </p>
           <p>
             <strong>Options:</strong> {JSON.stringify(options || {})}
@@ -259,52 +260,52 @@ const FeedbackReducerTest: React.FC<FeedbackReducerTestProps> = ({
         </div>
       </div>
     </KeletProvider>
-  );
-};
+  )
+}
 
 // Counter reducer
 interface CounterState {
-  count: number;
+  count: number
 }
 
 type CounterAction =
-  | { type: 'increment' }
-  | { type: 'decrement' }
-  | { type: 'set'; payload: number }
-  | { type: 'add'; payload: number };
+  | { type: "increment" }
+  | { type: "decrement" }
+  | { type: "set"; payload: number }
+  | { type: "add"; payload: number }
 
 const counterReducer = (
   state: CounterState,
   action: CounterAction
 ): CounterState => {
   switch (action.type) {
-    case 'increment':
-      return { count: state.count + 1 };
-    case 'decrement':
-      return { count: state.count - 1 };
-    case 'set':
-      return { count: action.payload };
-    case 'add':
-      return { count: state.count + action.payload };
+    case "increment":
+      return { count: state.count + 1 }
+    case "decrement":
+      return { count: state.count - 1 }
+    case "set":
+      return { count: action.payload }
+    case "add":
+      return { count: state.count + action.payload }
     default:
-      return state;
+      return state
   }
-};
+}
 
 // Todo reducer
 interface TodoState {
-  todos: { id: number; text: string; completed: boolean }[];
+  todos: { id: number; text: string; completed: boolean }[]
 }
 
 type TodoAction =
-  | { type: 'add_todo'; payload: { text: string } }
-  | { type: 'toggle_todo'; payload: { id: number } }
-  | { type: 'remove_todo'; payload: { id: number } }
-  | { type: 'clear_all' };
+  | { type: "add_todo"; payload: { text: string } }
+  | { type: "toggle_todo"; payload: { id: number } }
+  | { type: "remove_todo"; payload: { id: number } }
+  | { type: "clear_all" }
 
 const todoReducer = (state: TodoState, action: TodoAction): TodoState => {
   switch (action.type) {
-    case 'add_todo':
+    case "add_todo":
       return {
         todos: [
           ...state.todos,
@@ -314,31 +315,31 @@ const todoReducer = (state: TodoState, action: TodoAction): TodoState => {
             completed: false,
           },
         ],
-      };
-    case 'toggle_todo':
+      }
+    case "toggle_todo":
       return {
-        todos: state.todos.map(todo =>
+        todos: state.todos.map((todo) =>
           todo.id === action.payload.id
             ? { ...todo, completed: !todo.completed }
             : todo
         ),
-      };
-    case 'remove_todo':
+      }
+    case "remove_todo":
       return {
-        todos: state.todos.filter(todo => todo.id !== action.payload.id),
-      };
-    case 'clear_all':
-      return { todos: [] };
+        todos: state.todos.filter((todo) => todo.id !== action.payload.id),
+      }
+    case "clear_all":
+      return { todos: [] }
     default:
-      return state;
+      return state
   }
-};
+}
 
 const meta: Meta<typeof FeedbackReducerTest> = {
-  title: 'Hooks/useFeedbackReducer',
+  title: "Hooks/useFeedbackReducer",
   component: FeedbackReducerTest,
   parameters: {
-    layout: 'fullscreen',
+    layout: "fullscreen",
     docs: {
       description: {
         component: `
@@ -391,44 +392,44 @@ Perfect for automatically capturing user interactions as implicit feedback in re
   argTypes: {
     reducer: {
       control: false,
-      description: 'Reducer function - same as React useReducer',
+      description: "Reducer function - same as React useReducer",
     },
     initialState: {
-      control: 'object',
-      description: 'Initial state value',
+      control: "object",
+      description: "Initial state value",
     },
     session_id: {
-      control: 'text',
-      description: 'Identifier for tracking (string or function)',
+      control: "text",
+      description: "Identifier for tracking (string or function)",
     },
     options: {
-      control: 'object',
-      description: 'Optional configuration options',
+      control: "object",
+      description: "Optional configuration options",
     },
     onFeedback: {
-      action: 'feedback-sent',
-      description: 'Callback when feedback is sent',
+      action: "feedback-sent",
+      description: "Callback when feedback is sent",
     },
     initializer: {
       control: false,
-      description: 'Optional initializer function',
+      description: "Optional initializer function",
     },
   },
   args: {
-    onFeedback: fn(data => {
-      console.log('Feedback sent:', data);
+    onFeedback: fn((data) => {
+      console.log("Feedback sent:", data)
     }),
   },
-};
+}
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+export default meta
+type Story = StoryObj<typeof meta>
 
 export const CounterExample: Story = {
   args: {
     reducer: counterReducer,
     initialState: { count: 0 },
-    session_id: 'counter-demo',
+    session_id: "counter-demo",
     options: { debounceMs: 1000 },
   },
   parameters: {
@@ -449,57 +450,57 @@ Try clicking the buttons and watch the console for feedback logs with extracted 
     },
   },
   play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement);
+    const canvas = within(canvasElement)
 
     // Wait for initial render
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100))
 
     // Find and click increment button
-    const incrementButton = canvas.getByText('Increment');
-    await userEvent.click(incrementButton);
+    const incrementButton = canvas.getByText("Increment")
+    await userEvent.click(incrementButton)
 
     // Wait for debounce + a bit more
-    await new Promise(resolve => setTimeout(resolve, 1100));
+    await new Promise((resolve) => setTimeout(resolve, 1100))
 
     // The state should have changed
-    const stateDisplay = canvas.getByText(/"count": 1/);
-    await expect(stateDisplay).toBeInTheDocument();
+    const stateDisplay = canvas.getByText(/"count": 1/)
+    await expect(stateDisplay).toBeInTheDocument()
 
     // Verify that feedback was called
-    await expect(args.onFeedback).toHaveBeenCalledTimes(1);
+    await expect(args.onFeedback).toHaveBeenCalledTimes(1)
 
     // Get the actual call and verify the essential properties
-    const feedbackCall = (args.onFeedback as any)?.mock?.calls?.[0]?.[0];
-    await expect(feedbackCall.session_id).toBe('counter-demo');
-    await expect(feedbackCall.source).toBe('IMPLICIT');
-    await expect(feedbackCall.trigger_name).toBe('increment'); // Extracted from action.type
-    await expect(feedbackCall.correction).toBeTruthy();
-    await expect(feedbackCall.explanation).toContain('diff percentage');
+    const feedbackCall = (args.onFeedback as any)?.mock?.calls?.[0]?.[0]
+    await expect(feedbackCall.session_id).toBe("counter-demo")
+    await expect(feedbackCall.source).toBe("IMPLICIT")
+    await expect(feedbackCall.trigger_name).toBe("increment") // Extracted from action.type
+    await expect(feedbackCall.correction).toBeTruthy()
+    await expect(feedbackCall.explanation).toContain("diff percentage")
 
     // Test another action type
-    const addButton = canvas.getByText('Add 5');
-    await userEvent.click(addButton);
+    const addButton = canvas.getByText("Add 5")
+    await userEvent.click(addButton)
 
     // Wait for debounce
-    await new Promise(resolve => setTimeout(resolve, 1100));
+    await new Promise((resolve) => setTimeout(resolve, 1100))
 
     // State should now be 6
-    const updatedStateDisplay = canvas.getByText(/"count": 6/);
-    await expect(updatedStateDisplay).toBeInTheDocument();
+    const updatedStateDisplay = canvas.getByText(/"count": 6/)
+    await expect(updatedStateDisplay).toBeInTheDocument()
 
     // Verify second feedback call with different trigger
-    await expect(args.onFeedback).toHaveBeenCalledTimes(2);
-    const secondCall = (args.onFeedback as any)?.mock?.calls?.[1]?.[0];
-    await expect(secondCall.trigger_name).toBe('add'); // Different trigger name
+    await expect(args.onFeedback).toHaveBeenCalledTimes(2)
+    const secondCall = (args.onFeedback as any)?.mock?.calls?.[1]?.[0]
+    await expect(secondCall.trigger_name).toBe("add") // Different trigger name
   },
-};
+}
 
 export const TodoListExample: Story = {
   args: {
     reducer: todoReducer,
     initialState: { todos: [] },
-    session_id: state => `todos-${state.todos.length}`,
-    options: { diffType: 'object', debounceMs: 800 },
+    session_id: (state) => `todos-${state.todos.length}`,
+    options: { diffType: "object", debounceMs: 800 },
   },
   parameters: {
     docs: {
@@ -519,13 +520,13 @@ Perfect for tracking user interactions in complex list-based UIs!
       },
     },
   },
-};
+}
 
 export const TriggerNameExamples: Story = {
   args: {
     reducer: counterReducer,
     initialState: { count: 0 },
-    session_id: 'trigger-demo',
+    session_id: "trigger-demo",
     options: { debounceMs: 500 },
   },
   parameters: {
@@ -545,63 +546,63 @@ Try different actions and observe how trigger names are extracted automatically!
       },
     },
   },
-  render: _args => <FeedbackReducerTest {..._args} />,
+  render: (_args) => <FeedbackReducerTest {..._args} />,
   play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement);
+    const canvas = within(canvasElement)
 
     // Test automatic trigger extraction
-    const incrementButton = canvas.getByText('Increment');
-    await userEvent.click(incrementButton);
+    const incrementButton = canvas.getByText("Increment")
+    await userEvent.click(incrementButton)
 
     // Wait for debounce
-    await new Promise(resolve => setTimeout(resolve, 600));
+    await new Promise((resolve) => setTimeout(resolve, 600))
 
     // Verify trigger name extraction
-    await expect(args.onFeedback).toHaveBeenCalledTimes(1);
-    const firstCall = (args.onFeedback as any)?.mock?.calls?.[0]?.[0];
-    await expect(firstCall.trigger_name).toBe('increment');
+    await expect(args.onFeedback).toHaveBeenCalledTimes(1)
+    const firstCall = (args.onFeedback as any)?.mock?.calls?.[0]?.[0]
+    await expect(firstCall.trigger_name).toBe("increment")
 
     // Test different action type
-    const addButton = canvas.getByText('Add 5');
-    await userEvent.click(addButton);
+    const addButton = canvas.getByText("Add 5")
+    await userEvent.click(addButton)
 
-    await new Promise(resolve => setTimeout(resolve, 600));
+    await new Promise((resolve) => setTimeout(resolve, 600))
 
-    await expect(args.onFeedback).toHaveBeenCalledTimes(2);
-    const secondCall = (args.onFeedback as any)?.mock?.calls?.[1]?.[0];
-    await expect(secondCall.trigger_name).toBe('add');
+    await expect(args.onFeedback).toHaveBeenCalledTimes(2)
+    const secondCall = (args.onFeedback as any)?.mock?.calls?.[1]?.[0]
+    await expect(secondCall.trigger_name).toBe("add")
 
     // Test custom JSON input functionality
-    const customInput = canvas.getByPlaceholderText('Custom action (JSON)');
-    const dispatchButton = canvas.getByText('Dispatch Custom Action');
+    const customInput = canvas.getByPlaceholderText("Custom action (JSON)")
+    const dispatchButton = canvas.getByText("Dispatch Custom Action")
 
     // Use fireEvent.change to set the input value directly (avoids userEvent.type parsing issues)
-    const { fireEvent } = await import('@testing-library/react');
+    const { fireEvent } = await import("@testing-library/react")
     fireEvent.change(customInput, {
       target: { value: '{"type": "set", "payload": 100}' },
-    });
+    })
 
     // Click the dispatch button
-    await userEvent.click(dispatchButton);
+    await userEvent.click(dispatchButton)
 
-    await new Promise(resolve => setTimeout(resolve, 600));
+    await new Promise((resolve) => setTimeout(resolve, 600))
 
     // Verify the state was updated
-    const finalStateDisplay = canvas.getByText(/"count": 100/);
-    await expect(finalStateDisplay).toBeInTheDocument();
+    const finalStateDisplay = canvas.getByText(/"count": 100/)
+    await expect(finalStateDisplay).toBeInTheDocument()
 
     // Verify third feedback call with custom trigger
-    await expect(args.onFeedback).toHaveBeenCalledTimes(3);
-    const thirdCall = (args.onFeedback as any)?.mock?.calls?.[2]?.[0];
-    await expect(thirdCall.trigger_name).toBe('set');
+    await expect(args.onFeedback).toHaveBeenCalledTimes(3)
+    const thirdCall = (args.onFeedback as any)?.mock?.calls?.[2]?.[0]
+    await expect(thirdCall.trigger_name).toBe("set")
   },
-};
+}
 
 export const RapidActions: Story = {
   args: {
     reducer: counterReducer,
     initialState: { count: 0 },
-    session_id: 'rapid-demo',
+    session_id: "rapid-demo",
     options: { debounceMs: 300 },
   },
   parameters: {
@@ -621,49 +622,49 @@ This test simulates rapid user interactions and verifies that only ONE feedback 
       },
     },
   },
-  render: _args => <FeedbackReducerTest {..._args} />,
+  render: (_args) => <FeedbackReducerTest {..._args} />,
   play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement);
+    const canvas = within(canvasElement)
 
     // Make rapid actions to test debouncing
-    const incrementButton = canvas.getByText('Increment');
+    const incrementButton = canvas.getByText("Increment")
 
     // Click rapidly multiple times (should be debounced into one feedback)
-    await userEvent.click(incrementButton); // 0 -> 1
-    await new Promise(resolve => setTimeout(resolve, 50));
-    await userEvent.click(incrementButton); // 1 -> 2
-    await new Promise(resolve => setTimeout(resolve, 50));
-    await userEvent.click(incrementButton); // 2 -> 3
-    await new Promise(resolve => setTimeout(resolve, 50));
-    await userEvent.click(incrementButton); // 3 -> 4
+    await userEvent.click(incrementButton) // 0 -> 1
+    await new Promise((resolve) => setTimeout(resolve, 50))
+    await userEvent.click(incrementButton) // 1 -> 2
+    await new Promise((resolve) => setTimeout(resolve, 50))
+    await userEvent.click(incrementButton) // 2 -> 3
+    await new Promise((resolve) => setTimeout(resolve, 50))
+    await userEvent.click(incrementButton) // 3 -> 4
 
     // State should be 4 now
-    const stateDisplay = canvas.getByText(/"count": 4/);
-    await expect(stateDisplay).toBeInTheDocument();
+    const stateDisplay = canvas.getByText(/"count": 4/)
+    await expect(stateDisplay).toBeInTheDocument()
 
     // Feedback should NOT be called yet (still debouncing)
-    await expect(args.onFeedback).toHaveBeenCalledTimes(0);
+    await expect(args.onFeedback).toHaveBeenCalledTimes(0)
 
     // Wait for debounce to complete (300ms + buffer)
-    await new Promise(resolve => setTimeout(resolve, 400));
+    await new Promise((resolve) => setTimeout(resolve, 400))
 
     // Now feedback should be called exactly ONCE with cumulative change (0->4)
-    await expect(args.onFeedback).toHaveBeenCalledTimes(1);
+    await expect(args.onFeedback).toHaveBeenCalledTimes(1)
 
-    const feedbackCall = (args.onFeedback as any)?.mock?.calls?.[0]?.[0];
-    await expect(feedbackCall.trigger_name).toBe('increment');
+    const feedbackCall = (args.onFeedback as any)?.mock?.calls?.[0]?.[0]
+    await expect(feedbackCall.trigger_name).toBe("increment")
 
     // The correction should show the change from 0 to 4 (not individual steps)
-    await expect(feedbackCall.correction).toContain('"count": 0');
-    await expect(feedbackCall.correction).toContain('"count": 4');
+    await expect(feedbackCall.correction).toContain('"count": 0')
+    await expect(feedbackCall.correction).toContain('"count": 4')
   },
-};
+}
 
 export const WithInitializer: Story = {
   args: {
     reducer: counterReducer,
     initialState: 5,
-    session_id: 'counter-with-init',
+    session_id: "counter-with-init",
     options: { debounceMs: 500 },
     initializer: (init: number) => ({ count: init * 2 }),
   },
@@ -683,52 +684,52 @@ The initializer function doubles the initial value, so count starts at 10 instea
       },
     },
   },
-  render: _args => <FeedbackReducerTest {..._args} />,
+  render: (_args) => <FeedbackReducerTest {..._args} />,
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+    const canvas = within(canvasElement)
 
     // Should start with count: 10 (5 * 2 from initializer)
-    const initialStateDisplay = canvas.getByText(/"count": 10/);
-    await expect(initialStateDisplay).toBeInTheDocument();
+    const initialStateDisplay = canvas.getByText(/"count": 10/)
+    await expect(initialStateDisplay).toBeInTheDocument()
   },
-};
+}
 
 // Data loading reducer for demonstrating ignoreInitialNullish
 interface DataState {
-  data: any;
-  loading: boolean;
-  error: string | null;
+  data: any
+  loading: boolean
+  error: string | null
 }
 
 type DataAction =
-  | { type: 'load_start' }
-  | { type: 'load_success'; payload: any }
-  | { type: 'load_error'; payload: string }
-  | { type: 'update_data'; payload: any }
-  | { type: 'reset' };
+  | { type: "load_start" }
+  | { type: "load_success"; payload: any }
+  | { type: "load_error"; payload: string }
+  | { type: "update_data"; payload: any }
+  | { type: "reset" }
 
 const dataReducer = (state: DataState, action: DataAction): DataState => {
   switch (action.type) {
-    case 'load_start':
-      return { ...state, loading: true, error: null };
-    case 'load_success':
-      return { data: action.payload, loading: false, error: null };
-    case 'load_error':
-      return { ...state, loading: false, error: action.payload };
-    case 'update_data':
-      return { ...state, data: action.payload };
-    case 'reset':
-      return { data: null, loading: false, error: null };
+    case "load_start":
+      return { ...state, loading: true, error: null }
+    case "load_success":
+      return { data: action.payload, loading: false, error: null }
+    case "load_error":
+      return { ...state, loading: false, error: action.payload }
+    case "update_data":
+      return { ...state, data: action.payload }
+    case "reset":
+      return { data: null, loading: false, error: null }
     default:
-      return state;
+      return state
   }
-};
+}
 
 export const IgnoreInitialNullishReducer: Story = {
   args: {
     reducer: dataReducer,
     initialState: { data: null, loading: false, error: null },
-    session_id: 'data-loading-reducer',
+    session_id: "data-loading-reducer",
     options: {
       debounceMs: 500,
       ignoreInitialNullish: false, // Note: root state is object, not null, so this doesn't apply
@@ -756,82 +757,82 @@ Try the actions and see how all state changes are tracked since the root state i
       },
     },
   },
-  render: _args => (
+  render: (_args) => (
     <KeletProvider project="test-project" apiKey="test-key">
       <div
-        style={{ fontFamily: 'sans-serif', padding: '20px', maxWidth: '600px' }}
+        style={{ fontFamily: "sans-serif", padding: "20px", maxWidth: "600px" }}
       >
         <h2>Data Loading Reducer Demo</h2>
 
         <div
           style={{
-            marginBottom: '20px',
-            padding: '15px',
-            border: '1px solid #ddd',
-            borderRadius: '8px',
+            marginBottom: "20px",
+            padding: "15px",
+            border: "1px solid #ddd",
+            borderRadius: "8px",
           }}
         >
           <h3>Current State:</h3>
           <pre
             style={{
-              backgroundColor: '#f5f5f5',
-              padding: '10px',
-              borderRadius: '4px',
-              fontSize: '14px',
-              minHeight: '80px',
+              backgroundColor: "#f5f5f5",
+              padding: "10px",
+              borderRadius: "4px",
+              fontSize: "14px",
+              minHeight: "80px",
             }}
           >
             {JSON.stringify(_args.initialState, null, 2)}
           </pre>
         </div>
 
-        <div style={{ marginBottom: '20px' }}>
+        <div style={{ marginBottom: "20px" }}>
           <h3>Actions:</h3>
-          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+          <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
             <button
               style={{
-                padding: '10px 20px',
-                backgroundColor: '#007bff',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
+                padding: "10px 20px",
+                backgroundColor: "#007bff",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                cursor: "pointer",
               }}
             >
               Load Start
             </button>
             <button
               style={{
-                padding: '10px 20px',
-                backgroundColor: '#28a745',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
+                padding: "10px 20px",
+                backgroundColor: "#28a745",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                cursor: "pointer",
               }}
             >
               Load Success
             </button>
             <button
               style={{
-                padding: '10px 20px',
-                backgroundColor: '#dc3545',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
+                padding: "10px 20px",
+                backgroundColor: "#dc3545",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                cursor: "pointer",
               }}
             >
               Load Error
             </button>
             <button
               style={{
-                padding: '10px 20px',
-                backgroundColor: '#6c757d',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
+                padding: "10px 20px",
+                backgroundColor: "#6c757d",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                cursor: "pointer",
               }}
             >
               Reset
@@ -841,9 +842,9 @@ Try the actions and see how all state changes are tracked since the root state i
 
         <div
           style={{
-            padding: '15px',
-            backgroundColor: '#f8f9fa',
-            borderRadius: '8px',
+            padding: "15px",
+            backgroundColor: "#f8f9fa",
+            borderRadius: "8px",
           }}
         >
           <h4>Test Info:</h4>
@@ -868,14 +869,14 @@ Try the actions and see how all state changes are tracked since the root state i
     </KeletProvider>
   ),
   play: async ({ canvasElement, args: _args }) => {
-    const canvas = within(canvasElement);
+    const canvas = within(canvasElement)
 
     // This is just a demo - the buttons aren't actually connected
     // But it shows the pattern and explains the ignoreInitialNullish behavior
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100))
 
     // Verify the story rendered correctly
-    const heading = canvas.getByText('Data Loading Reducer Demo');
-    await expect(heading).toBeInTheDocument();
+    const heading = canvas.getByText("Data Loading Reducer Demo")
+    await expect(heading).toBeInTheDocument()
   },
-};
+}

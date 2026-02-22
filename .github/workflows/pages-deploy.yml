@@ -4,8 +4,8 @@ on:
   push:
     branches: [main]
     paths:
-      - 'src/**'
-      - 'registry.json'
+      - "src/**"
+      - "registry.json"
   workflow_dispatch:
 
 jobs:
@@ -53,7 +53,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './storybook-static'
+          path: "./storybook-static"
 
       - name: Deploy to GitHub Pages
         id: deployment

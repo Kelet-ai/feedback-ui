@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useRef } from 'react';
-import { useDefaultFeedbackHandler } from '@/contexts/kelet';
-import { calculateDiffPercentage, formatDiff } from './diff-utils';
-import type { FeedbackStateOptions } from './types';
+import { useCallback, useEffect, useRef } from "react"
+import { useDefaultFeedbackHandler } from "@/contexts/kelet"
+
+import { calculateDiffPercentage, formatDiff } from "./diff-utils"
+import type { FeedbackStateOptions } from "./types"
 
 /**
  * Internal utility hook that handles state change tracking and feedback sending.
@@ -18,81 +19,81 @@ export function useStateChangeTracking<T>(
   options?: FeedbackStateOptions<T>
 ) {
   // Get the feedback handler (custom or default from Kelet context)
-  const defaultFeedbackHandler = useDefaultFeedbackHandler();
-  const feedbackHandler = options?.onFeedback || defaultFeedbackHandler;
+  const defaultFeedbackHandler = useDefaultFeedbackHandler()
+  const feedbackHandler = options?.onFeedback || defaultFeedbackHandler
 
   // Determine defaults from options
-  const debounceMs = options?.debounceMs ?? 3000;
-  const diffType = options?.diffType ?? 'git';
-  const compareWith = options?.compareWith;
+  const debounceMs = options?.debounceMs ?? 3000
+  const diffType = options?.diffType ?? "git"
+  const compareWith = options?.compareWith
   const defaultTriggerName =
-    options?.default_trigger_name ?? 'auto_state_change';
-  const ignoreInitialNullish = options?.ignoreInitialNullish ?? true;
+    options?.default_trigger_name ?? "auto_state_change"
+  const ignoreInitialNullish = options?.ignoreInitialNullish ?? true
 
   // Keep track of previous state for comparison
-  const prevStateRef = useRef<T>(currentState);
+  const prevStateRef = useRef<T>(currentState)
 
   // Track if this is the first render
-  const isFirstRenderRef = useRef<boolean>(true);
+  const isFirstRenderRef = useRef<boolean>(true)
 
   // Track the initial (and later baseline) state for diffing
-  const initialStateRef = useRef<T>(currentState);
+  const initialStateRef = useRef<T>(currentState)
   // Snapshot whether the true initial state was nullish
-  const initialWasNullishRef = useRef<boolean>(currentState == null);
+  const initialWasNullishRef = useRef<boolean>(currentState == null)
 
   // Track if we've had any non-nullish state yet
   const hasHadNonNullishStateRef = useRef<boolean>(
     currentState != null // != null catches both null and undefined
-  );
+  )
 
   // Whether the baseline is eligible (respecting ignoreInitialNullish)
   const hasEligibleBaselineRef = useRef<boolean>(
     !(ignoreInitialNullish && currentState == null)
-  );
+  )
 
   // Store timeout ID for debounce cleanup
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // Store the trigger name for the current change sequence
-  const currentTriggerNameRef = useRef<string | undefined>(undefined);
+  const currentTriggerNameRef = useRef<string | undefined>(undefined)
 
   // Helper function to send feedback
   const sendFeedback = useCallback(
     (startState: T, endState: T, triggerName: string) => {
-      const diffPercentage = calculateDiffPercentage(startState, endState);
-      const diffString = formatDiff(startState, endState, diffType);
+      const diffPercentage = calculateDiffPercentage(startState, endState)
+      const diffString = formatDiff(startState, endState, diffType)
 
-      let vote: 'upvote' | 'downvote';
+      let vote: "upvote" | "downvote"
       if (options?.vote) {
-        if (typeof options.vote === 'function') {
-          vote = options.vote(startState, endState, diffPercentage);
+        if (typeof options.vote === "function") {
+          vote = options.vote(startState, endState, diffPercentage)
         } else {
-          vote = options.vote;
+          vote = options.vote
         }
       } else {
-        vote = diffPercentage > 0.5 ? 'downvote' : 'upvote';
+        vote = diffPercentage > 0.5 ? "downvote" : "upvote"
       }
 
       const idString =
-        typeof session_id === 'function' ? session_id(endState) : session_id;
+        typeof session_id === "function" ? session_id(endState) : session_id
 
       feedbackHandler({
         session_id: idString,
         vote,
         explanation: `State change with diff percentage: ${(diffPercentage * 100).toFixed(1)}%`,
         correction: diffString,
-        source: 'IMPLICIT',
+        source: "IMPLICIT",
         extra_metadata: options?.metadata,
         trigger_name: triggerName,
-      });
+      })
     },
     [options, session_id, diffType, feedbackHandler]
-  );
+  )
 
   // Function to notify of impending state changes with trigger name support
   const notifyChange = useCallback(
     (trigger_name?: string) => {
-      const newTriggerName = trigger_name || defaultTriggerName;
+      const newTriggerName = trigger_name || defaultTriggerName
 
       // If trigger name changed and we have a running timer, immediately flush the previous sequence
       if (
@@ -101,47 +102,47 @@ export function useStateChangeTracking<T>(
         currentTriggerNameRef.current !== newTriggerName
       ) {
         // Clear the existing timeout
-        clearTimeout(timeoutRef.current);
+        clearTimeout(timeoutRef.current)
 
         // Immediately send feedback for the previous trigger sequence
-        const startState = initialStateRef.current; // Baseline for diffing
-        const currentStateBeforeChange = currentState; // Current state before this new change
+        const startState = initialStateRef.current // Baseline for diffing
+        const currentStateBeforeChange = currentState // Current state before this new change
 
         sendFeedback(
           startState,
           currentStateBeforeChange,
           currentTriggerNameRef.current
-        );
+        )
 
         // Reset for the new trigger sequence
-        timeoutRef.current = null;
+        timeoutRef.current = null
       }
 
       // Store the new trigger name for this change
-      currentTriggerNameRef.current = newTriggerName;
+      currentTriggerNameRef.current = newTriggerName
     },
     [currentState, defaultTriggerName, sendFeedback]
-  );
+  )
 
   // Effect to compare state changes and send feedback
   useEffect(() => {
     // Skip the initial render
     if (isFirstRenderRef.current) {
-      isFirstRenderRef.current = false;
-      prevStateRef.current = currentState;
+      isFirstRenderRef.current = false
+      prevStateRef.current = currentState
       // Establish baseline eligibility on first render
       if (!ignoreInitialNullish || currentState != null) {
-        initialStateRef.current = currentState; // becomes baseline
-        hasEligibleBaselineRef.current = true;
+        initialStateRef.current = currentState // becomes baseline
+        hasEligibleBaselineRef.current = true
       }
-      return;
+      return
     }
 
     // Check if state actually changed
-    const prevState = prevStateRef.current;
+    const prevState = prevStateRef.current
     const isEqual = compareWith
       ? compareWith(prevState, currentState)
-      : JSON.stringify(prevState) === JSON.stringify(currentState);
+      : JSON.stringify(prevState) === JSON.stringify(currentState)
 
     if (!isEqual) {
       // Check if we should ignore this change due to initial nullish transition
@@ -149,37 +150,37 @@ export function useStateChangeTracking<T>(
         ignoreInitialNullish &&
         initialWasNullishRef.current && // True initial state was nullish
         !hasHadNonNullishStateRef.current && // We haven't had non-nullish state before
-        currentState != null; // Current state is non-nullish
+        currentState != null // Current state is non-nullish
 
       // Update hasHadNonNullishStateRef if current state is non-nullish
       if (currentState != null) {
-        hasHadNonNullishStateRef.current = true;
+        hasHadNonNullishStateRef.current = true
       }
 
       if (shouldIgnoreChange) {
         // Set the baseline (initial) to the first non-nullish state and don't send feedback
-        initialStateRef.current = currentState;
-        hasEligibleBaselineRef.current = true;
+        initialStateRef.current = currentState
+        hasEligibleBaselineRef.current = true
         // Update refs but don't send feedback for this transition
-        prevStateRef.current = currentState;
-        return;
+        prevStateRef.current = currentState
+        return
       }
 
       // If no timer is running, this is the start of a change sequence – baseline remains fixed
 
       // Clear previous timeout if it exists (extends the debounce timer)
       if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
+        clearTimeout(timeoutRef.current)
       }
 
       // Update the current state reference immediately
-      prevStateRef.current = currentState;
+      prevStateRef.current = currentState
 
       // Set new timeout to debounce feedback
       timeoutRef.current = setTimeout(() => {
         // Compare from baseline to final state
-        const startState = initialStateRef.current; // Always diff from baseline
-        const finalState = currentState;
+        const startState = initialStateRef.current // Always diff from baseline
+        const finalState = currentState
 
         // Send feedback using the helper
         if (hasEligibleBaselineRef.current) {
@@ -187,20 +188,20 @@ export function useStateChangeTracking<T>(
             startState,
             finalState,
             currentTriggerNameRef.current || defaultTriggerName
-          );
+          )
         }
 
         // Reset for next change sequence
-        timeoutRef.current = null;
-      }, debounceMs);
+        timeoutRef.current = null
+      }, debounceMs)
     }
 
     // Cleanup function
     return () => {
       if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
+        clearTimeout(timeoutRef.current)
       }
-    };
+    }
   }, [
     currentState,
     session_id,
@@ -212,9 +213,9 @@ export function useStateChangeTracking<T>(
     defaultTriggerName,
     ignoreInitialNullish,
     sendFeedback,
-  ]);
+  ])
 
   return {
     notifyChange,
-  };
+  }
 }

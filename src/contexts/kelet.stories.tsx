@@ -1,14 +1,15 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, fn, userEvent, within } from 'storybook/test';
-import React, { useState } from 'react';
-import { KeletProvider, useDefaultFeedbackHandler, useKelet } from './kelet';
-import type { FeedbackData } from '@/types';
+import React, { useState } from "react"
+import type { FeedbackData } from "@/types"
+import type { Meta, StoryObj } from "@storybook/react-vite"
+import { expect, fn, userEvent, within } from "storybook/test"
+
+import { KeletProvider, useDefaultFeedbackHandler, useKelet } from "./kelet"
 
 const meta: Meta<typeof KeletProvider> = {
-  title: 'Contexts/KeletProvider',
+  title: "Contexts/KeletProvider",
   component: KeletProvider,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
     docs: {
       description: {
         component: `
@@ -36,21 +37,21 @@ This is useful for applications that need to send feedback to different Kelet pr
   },
   argTypes: {
     apiKey: {
-      control: 'text',
-      description: 'API key for Kelet authentication',
+      control: "text",
+      description: "API key for Kelet authentication",
     },
     project: {
-      control: 'text',
-      description: 'Project identifier for feedback submissions',
+      control: "text",
+      description: "Project identifier for feedback submissions",
     },
     children: {
       table: { disable: true },
     },
   },
-};
+}
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+export default meta
+type Story = StoryObj<typeof meta>
 
 export const README: Story = {
   parameters: {
@@ -181,31 +182,31 @@ try {
   render: () => (
     <div
       style={{
-        padding: '24px',
-        fontFamily: 'system-ui, sans-serif',
-        maxWidth: '800px',
-        margin: '0 auto',
+        padding: "24px",
+        fontFamily: "system-ui, sans-serif",
+        maxWidth: "800px",
+        margin: "0 auto",
       }}
     >
-      <h2 style={{ color: '#2d3748', marginBottom: '16px' }}>
+      <h2 style={{ color: "#2d3748", marginBottom: "16px" }}>
         📚 KeletProvider Documentation
       </h2>
-      <p style={{ fontSize: '16px', color: '#4a5568', lineHeight: '1.6' }}>
+      <p style={{ fontSize: "16px", color: "#4a5568", lineHeight: "1.6" }}>
         The complete usage guide is available in the <strong>Docs</strong> tab
         above. It includes code examples for basic usage, nested providers, and
         error handling.
       </p>
       <div
         style={{
-          padding: '16px',
-          backgroundColor: '#ebf8ff',
-          borderRadius: '8px',
-          border: '1px solid #90cdf4',
-          marginTop: '20px',
+          padding: "16px",
+          backgroundColor: "#ebf8ff",
+          borderRadius: "8px",
+          border: "1px solid #90cdf4",
+          marginTop: "20px",
         }}
       >
-        <h3 style={{ margin: '0 0 8px 0', color: '#2b6cb0' }}>Quick Start</h3>
-        <ol style={{ margin: '0', paddingLeft: '20px', color: '#4a5568' }}>
+        <h3 style={{ margin: "0 0 8px 0", color: "#2b6cb0" }}>Quick Start</h3>
+        <ol style={{ margin: "0", paddingLeft: "20px", color: "#4a5568" }}>
           <li>
             Wrap your app with <code>KeletProvider</code>
           </li>
@@ -220,57 +221,57 @@ try {
       </div>
     </div>
   ),
-};
+}
 
 // Mock feedback handler for demonstrations (currently unused but available for future stories)
 const _createMockFeedbackHandler = (label: string) =>
   fn((data: FeedbackData) => {
-    console.log(`[${label}] Feedback submitted:`, data);
-    return Promise.resolve();
-  });
+    console.log(`[${label}] Feedback submitted:`, data)
+    return Promise.resolve()
+  })
 
 export const BasicProvider: Story = {
   args: {
-    apiKey: 'demo-api-key-12345',
-    project: 'feedback-demo',
+    apiKey: "demo-api-key-12345",
+    project: "feedback-demo",
   },
-  render: args => {
+  render: (args) => {
     const ProviderDemo = () => {
-      const { api_key, project, feedback } = useKelet();
-      const [feedbackText, setFeedbackText] = useState('');
-      const [isSubmitting, setIsSubmitting] = useState(false);
+      const { api_key, project, feedback } = useKelet()
+      const [feedbackText, setFeedbackText] = useState("")
+      const [isSubmitting, setIsSubmitting] = useState(false)
 
       const handleSubmit = async () => {
-        setIsSubmitting(true);
+        setIsSubmitting(true)
         try {
           await feedback({
             session_id: `demo-${Date.now()}`,
-            vote: 'upvote',
+            vote: "upvote",
             explanation: feedbackText || undefined,
-          });
-          setFeedbackText('');
+          })
+          setFeedbackText("")
         } catch (_error) {
-          console.error('Feedback submission failed:', _error);
+          console.error("Feedback submission failed:", _error)
         } finally {
-          setIsSubmitting(false);
+          setIsSubmitting(false)
         }
-      };
+      }
 
       return (
         <div
           style={{
-            padding: '24px',
-            border: '1px solid #e1e5e9',
-            borderRadius: '8px',
-            maxWidth: '400px',
-            fontFamily: 'system-ui, sans-serif',
+            padding: "24px",
+            border: "1px solid #e1e5e9",
+            borderRadius: "8px",
+            maxWidth: "400px",
+            fontFamily: "system-ui, sans-serif",
           }}
         >
-          <h3 style={{ margin: '0 0 16px 0', color: '#2d3748' }}>
+          <h3 style={{ margin: "0 0 16px 0", color: "#2d3748" }}>
             Basic Kelet Provider
           </h3>
 
-          <div style={{ marginBottom: '16px', fontSize: '14px' }}>
+          <div style={{ marginBottom: "16px", fontSize: "14px" }}>
             <div>
               <strong>API Key:</strong> <code>{api_key}</code>
             </div>
@@ -279,20 +280,20 @@ export const BasicProvider: Story = {
             </div>
           </div>
 
-          <div style={{ marginBottom: '12px' }}>
+          <div style={{ marginBottom: "12px" }}>
             <textarea
               value={feedbackText}
-              onChange={e => setFeedbackText(e.target.value)}
+              onChange={(e) => setFeedbackText(e.target.value)}
               placeholder="Optional feedback message..."
               style={{
-                width: '100%',
-                padding: '8px',
-                border: '1px solid #cbd5e0',
-                borderRadius: '4px',
-                minHeight: '60px',
-                resize: 'vertical',
-                fontSize: '14px',
-                boxSizing: 'border-box',
+                width: "100%",
+                padding: "8px",
+                border: "1px solid #cbd5e0",
+                borderRadius: "4px",
+                minHeight: "60px",
+                resize: "vertical",
+                fontSize: "14px",
+                boxSizing: "border-box",
               }}
             />
           </div>
@@ -301,29 +302,29 @@ export const BasicProvider: Story = {
             onClick={handleSubmit}
             disabled={isSubmitting}
             style={{
-              backgroundColor: '#4299e1',
-              color: 'white',
-              border: 'none',
-              padding: '8px 16px',
-              borderRadius: '4px',
-              cursor: isSubmitting ? 'not-allowed' : 'pointer',
-              fontSize: '14px',
+              backgroundColor: "#4299e1",
+              color: "white",
+              border: "none",
+              padding: "8px 16px",
+              borderRadius: "4px",
+              cursor: isSubmitting ? "not-allowed" : "pointer",
+              fontSize: "14px",
               opacity: isSubmitting ? 0.6 : 1,
             }}
           >
-            {isSubmitting ? 'Submitting...' : 'Submit Feedback'}
+            {isSubmitting ? "Submitting..." : "Submit Feedback"}
           </button>
         </div>
-      );
-    };
+      )
+    }
 
     return (
       <KeletProvider {...args}>
         <ProviderDemo />
       </KeletProvider>
-    );
+    )
   },
-};
+}
 
 export const NestedMultiProject: Story = {
   parameters: {
@@ -346,47 +347,47 @@ This is useful when you have:
       color,
       testId,
     }: {
-      title: string;
-      color: string;
-      testId: string;
+      title: string
+      color: string
+      testId: string
     }) => {
-      const { api_key, project, feedback } = useKelet();
-      const [status, setStatus] = useState('');
+      const { api_key, project, feedback } = useKelet()
+      const [status, setStatus] = useState("")
 
-      const handleFeedback = async (vote: 'upvote' | 'downvote') => {
-        setStatus('Submitting...');
+      const handleFeedback = async (vote: "upvote" | "downvote") => {
+        setStatus("Submitting...")
         try {
           await feedback({
             session_id: `${project}-demo-${Date.now()}`,
             vote,
             explanation: `Feedback for ${project} project`,
-          });
-          setStatus(`✓ Submitted to ${project}`);
-          setTimeout(() => setStatus(''), 2000);
+          })
+          setStatus(`✓ Submitted to ${project}`)
+          setTimeout(() => setStatus(""), 2000)
         } catch (_error) {
-          setStatus('✗ Error');
-          setTimeout(() => setStatus(''), 2000);
+          setStatus("✗ Error")
+          setTimeout(() => setStatus(""), 2000)
         }
-      };
+      }
 
       return (
         <div
           style={{
-            padding: '16px',
-            margin: '8px',
+            padding: "16px",
+            margin: "8px",
             backgroundColor: color,
-            borderRadius: '6px',
-            color: 'white',
-            minWidth: '200px',
+            borderRadius: "6px",
+            color: "white",
+            minWidth: "200px",
           }}
         >
-          <h4 style={{ margin: '0 0 8px 0' }}>{title}</h4>
-          <div style={{ fontSize: '12px', marginBottom: '12px' }}>
+          <h4 style={{ margin: "0 0 8px 0" }}>{title}</h4>
+          <div style={{ fontSize: "12px", marginBottom: "12px" }}>
             <div>
               API: <code>{api_key.slice(0, 8)}...</code>
             </div>
             <div>
-              Project:{' '}
+              Project:{" "}
               <code
                 data-testid={`${testId}-project`}
                 data-feedback-id={`${testId}-project`}
@@ -396,19 +397,19 @@ This is useful when you have:
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+          <div style={{ display: "flex", gap: "8px", marginBottom: "8px" }}>
             <button
               data-testid={`${testId}-upvote`}
               data-feedback-id={`${testId}-upvote`}
-              onClick={() => handleFeedback('upvote')}
+              onClick={() => handleFeedback("upvote")}
               style={{
-                backgroundColor: 'rgba(255,255,255,0.2)',
-                border: '1px solid rgba(255,255,255,0.3)',
-                color: 'white',
-                padding: '4px 8px',
-                borderRadius: '3px',
-                cursor: 'pointer',
-                fontSize: '12px',
+                backgroundColor: "rgba(255,255,255,0.2)",
+                border: "1px solid rgba(255,255,255,0.3)",
+                color: "white",
+                padding: "4px 8px",
+                borderRadius: "3px",
+                cursor: "pointer",
+                fontSize: "12px",
               }}
             >
               👍
@@ -416,15 +417,15 @@ This is useful when you have:
             <button
               data-testid={`${testId}-downvote`}
               data-feedback-id={`${testId}-downvote`}
-              onClick={() => handleFeedback('downvote')}
+              onClick={() => handleFeedback("downvote")}
               style={{
-                backgroundColor: 'rgba(255,255,255,0.2)',
-                border: '1px solid rgba(255,255,255,0.3)',
-                color: 'white',
-                padding: '4px 8px',
-                borderRadius: '3px',
-                cursor: 'pointer',
-                fontSize: '12px',
+                backgroundColor: "rgba(255,255,255,0.2)",
+                border: "1px solid rgba(255,255,255,0.3)",
+                color: "white",
+                padding: "4px 8px",
+                borderRadius: "3px",
+                cursor: "pointer",
+                fontSize: "12px",
               }}
             >
               👎
@@ -432,26 +433,26 @@ This is useful when you have:
           </div>
 
           {status && (
-            <div style={{ fontSize: '11px', fontStyle: 'italic' }}>
+            <div style={{ fontSize: "11px", fontStyle: "italic" }}>
               {status}
             </div>
           )}
         </div>
-      );
-    };
+      )
+    }
 
     return (
-      <div style={{ fontFamily: 'system-ui, sans-serif' }}>
-        <h3 style={{ textAlign: 'center', marginBottom: '20px' }}>
+      <div style={{ fontFamily: "system-ui, sans-serif" }}>
+        <h3 style={{ textAlign: "center", marginBottom: "20px" }}>
           Multi-Project Workflow Demo
         </h3>
 
         <KeletProvider apiKey="shared-api-key-67890" project="main-app">
           <div
             style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              justifyContent: 'center',
+              display: "flex",
+              flexWrap: "wrap",
+              justifyContent: "center",
             }}
           >
             {/* Analytics Project */}
@@ -484,12 +485,12 @@ This is useful when you have:
 
           <div
             style={{
-              marginTop: '20px',
-              padding: '12px',
-              backgroundColor: '#f7fafc',
-              borderRadius: '6px',
-              fontSize: '14px',
-              textAlign: 'center',
+              marginTop: "20px",
+              padding: "12px",
+              backgroundColor: "#f7fafc",
+              borderRadius: "6px",
+              fontSize: "14px",
+              textAlign: "center",
             }}
           >
             <strong>Parent Context:</strong> API Key shared, each child has its
@@ -497,27 +498,27 @@ This is useful when you have:
           </div>
         </KeletProvider>
       </div>
-    );
+    )
   },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+    const canvas = within(canvasElement)
 
     // Verify different projects are displayed
-    expect(canvas.getByTestId('analytics-project')).toHaveTextContent(
-      'analytics'
-    );
-    expect(canvas.getByTestId('feedback-project')).toHaveTextContent(
-      'user-feedback'
-    );
-    expect(canvas.getByTestId('support-project')).toHaveTextContent(
-      'customer-support'
-    );
+    expect(canvas.getByTestId("analytics-project")).toHaveTextContent(
+      "analytics"
+    )
+    expect(canvas.getByTestId("feedback-project")).toHaveTextContent(
+      "user-feedback"
+    )
+    expect(canvas.getByTestId("support-project")).toHaveTextContent(
+      "customer-support"
+    )
 
     // Test interaction with one of the nested providers
-    const analyticsUpvote = canvas.getByTestId('analytics-upvote');
-    await userEvent.click(analyticsUpvote);
+    const analyticsUpvote = canvas.getByTestId("analytics-upvote")
+    await userEvent.click(analyticsUpvote)
   },
-};
+}
 
 export const ErrorHandling: Story = {
   parameters: {
@@ -535,59 +536,59 @@ Key behaviors:
     },
   },
   render: () => {
-    const [showError, setShowError] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
+    const [showError, setShowError] = useState(false)
+    const [errorMessage, setErrorMessage] = useState("")
 
     const ErrorBoundary = ({ children }: { children: React.ReactNode }) => {
       try {
-        return <>{children}</>;
+        return <>{children}</>
       } catch (_error) {
         return (
           <div
             style={{
-              padding: '16px',
-              backgroundColor: '#fed7d7',
-              borderRadius: '6px',
-              color: '#c53030',
-              fontSize: '14px',
+              padding: "16px",
+              backgroundColor: "#fed7d7",
+              borderRadius: "6px",
+              color: "#c53030",
+              fontSize: "14px",
             }}
           >
             <strong>Error:</strong> {(_error as Error).message}
           </div>
-        );
+        )
       }
-    };
+    }
 
     const ValidProvider = () => {
-      const { feedback } = useKelet();
-      const [status, setStatus] = useState('');
+      const { feedback } = useKelet()
+      const [status, setStatus] = useState("")
 
       const handleNetworkError = async () => {
-        setStatus('Testing network error...');
+        setStatus("Testing network error...")
         try {
           // This will be mocked to fail in the test
           await feedback({
-            session_id: 'error-test',
-            vote: 'upvote',
-          });
-          setStatus('Success (unexpected!)');
+            session_id: "error-test",
+            vote: "upvote",
+          })
+          setStatus("Success (unexpected!)")
         } catch (_error) {
-          setErrorMessage((_error as Error).message);
-          setStatus('Error caught successfully');
+          setErrorMessage((_error as Error).message)
+          setStatus("Error caught successfully")
         }
-      };
+      }
 
       return (
         <div
           style={{
-            padding: '16px',
-            border: '1px solid #68d391',
-            borderRadius: '6px',
-            backgroundColor: '#f0fff4',
-            marginBottom: '16px',
+            padding: "16px",
+            border: "1px solid #68d391",
+            borderRadius: "6px",
+            backgroundColor: "#f0fff4",
+            marginBottom: "16px",
           }}
         >
-          <h4 style={{ color: '#2f855a', margin: '0 0 12px 0' }}>
+          <h4 style={{ color: "#2f855a", margin: "0 0 12px 0" }}>
             ✓ Valid Provider (has API key)
           </h4>
           <button
@@ -595,60 +596,60 @@ Key behaviors:
             data-feedback-id="test-network-error"
             onClick={handleNetworkError}
             style={{
-              backgroundColor: '#4299e1',
-              color: 'white',
-              border: 'none',
-              padding: '8px 12px',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontSize: '12px',
+              backgroundColor: "#4299e1",
+              color: "white",
+              border: "none",
+              padding: "8px 12px",
+              borderRadius: "4px",
+              cursor: "pointer",
+              fontSize: "12px",
             }}
           >
             Test Network Error
           </button>
           {status && (
             <div
-              style={{ marginTop: '8px', fontSize: '12px', color: '#2d3748' }}
+              style={{ marginTop: "8px", fontSize: "12px", color: "#2d3748" }}
             >
               Status: {status}
             </div>
           )}
         </div>
-      );
-    };
+      )
+    }
 
     const DefaultHandlerDemo = () => {
-      const defaultHandler = useDefaultFeedbackHandler();
-      const [status, setStatus] = useState('');
+      const defaultHandler = useDefaultFeedbackHandler()
+      const [status, setStatus] = useState("")
 
       const handleSubmit = async () => {
-        setStatus('Submitting...');
+        setStatus("Submitting...")
         try {
           // This should work silently (no-op when no provider)
           await defaultHandler({
-            session_id: 'no-provider-test',
-            vote: 'upvote',
-          });
-          setStatus('Default handler worked (no-op)');
+            session_id: "no-provider-test",
+            vote: "upvote",
+          })
+          setStatus("Default handler worked (no-op)")
         } catch (_error) {
-          setStatus('Error: ' + (_error as Error).message);
+          setStatus("Error: " + (_error as Error).message)
         }
-      };
+      }
 
       return (
         <div
           style={{
-            padding: '16px',
-            border: '1px solid #90cdf4',
-            borderRadius: '6px',
-            backgroundColor: '#ebf8ff',
+            padding: "16px",
+            border: "1px solid #90cdf4",
+            borderRadius: "6px",
+            backgroundColor: "#ebf8ff",
           }}
         >
-          <h4 style={{ color: '#2b6cb0', margin: '0 0 12px 0' }}>
+          <h4 style={{ color: "#2b6cb0", margin: "0 0 12px 0" }}>
             useDefaultFeedbackHandler (no provider)
           </h4>
           <p
-            style={{ fontSize: '12px', margin: '0 0 8px 0', color: '#4a5568' }}
+            style={{ fontSize: "12px", margin: "0 0 8px 0", color: "#4a5568" }}
           >
             This should work without throwing errors
           </p>
@@ -657,30 +658,30 @@ Key behaviors:
             data-feedback-id="test-default-handler"
             onClick={handleSubmit}
             style={{
-              backgroundColor: '#4299e1',
-              color: 'white',
-              border: 'none',
-              padding: '8px 12px',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontSize: '12px',
+              backgroundColor: "#4299e1",
+              color: "white",
+              border: "none",
+              padding: "8px 12px",
+              borderRadius: "4px",
+              cursor: "pointer",
+              fontSize: "12px",
             }}
           >
             Test Default Handler
           </button>
           {status && (
             <div
-              style={{ marginTop: '8px', fontSize: '12px', color: '#2d3748' }}
+              style={{ marginTop: "8px", fontSize: "12px", color: "#2d3748" }}
             >
               Status: {status}
             </div>
           )}
         </div>
-      );
-    };
+      )
+    }
 
     return (
-      <div style={{ fontFamily: 'system-ui, sans-serif', maxWidth: '500px' }}>
+      <div style={{ fontFamily: "system-ui, sans-serif", maxWidth: "500px" }}>
         <h3>Error Handling Demo</h3>
 
         {/* Valid provider example */}
@@ -698,14 +699,14 @@ Key behaviors:
         {/* Button to show missing API key error */}
         <div
           style={{
-            padding: '16px',
-            border: '1px solid #fc8181',
-            borderRadius: '6px',
-            backgroundColor: '#fef5e7',
-            marginTop: '16px',
+            padding: "16px",
+            border: "1px solid #fc8181",
+            borderRadius: "6px",
+            backgroundColor: "#fef5e7",
+            marginTop: "16px",
           }}
         >
-          <h4 style={{ color: '#c05621', margin: '0 0 12px 0' }}>
+          <h4 style={{ color: "#c05621", margin: "0 0 12px 0" }}>
             Missing API Key Error
           </h4>
           <button
@@ -713,13 +714,13 @@ Key behaviors:
             data-feedback-id="trigger-api-key-error"
             onClick={() => setShowError(true)}
             style={{
-              backgroundColor: '#e53e3e',
-              color: 'white',
-              border: 'none',
-              padding: '8px 12px',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontSize: '12px',
+              backgroundColor: "#e53e3e",
+              color: "white",
+              border: "none",
+              padding: "8px 12px",
+              borderRadius: "4px",
+              cursor: "pointer",
+              fontSize: "12px",
             }}
           >
             Show Provider Without API Key
@@ -730,12 +731,12 @@ Key behaviors:
         {(showError || errorMessage) && (
           <div
             style={{
-              marginTop: '16px',
-              padding: '12px',
-              backgroundColor: '#fed7d7',
-              borderRadius: '6px',
-              color: '#c53030',
-              fontSize: '14px',
+              marginTop: "16px",
+              padding: "12px",
+              backgroundColor: "#fed7d7",
+              borderRadius: "6px",
+              color: "#c53030",
+              fontSize: "14px",
             }}
           >
             <strong>Error Caught:</strong>
@@ -745,19 +746,19 @@ Key behaviors:
           </div>
         )}
       </div>
-    );
+    )
   },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+    const canvas = within(canvasElement)
 
     // Test default handler (should work without errors)
-    const defaultHandlerButton = canvas.getByTestId('test-default-handler');
-    await userEvent.click(defaultHandlerButton);
+    const defaultHandlerButton = canvas.getByTestId("test-default-handler")
+    await userEvent.click(defaultHandlerButton)
 
     // The button click should work without throwing errors
-    expect(defaultHandlerButton).toBeInTheDocument();
+    expect(defaultHandlerButton).toBeInTheDocument()
   },
-};
+}
 
 export const HookUsageExamples: Story = {
   parameters: {
@@ -776,38 +777,38 @@ Shows:
   },
   render: () => {
     const ComponentWithUseKelet = () => {
-      const { api_key, project, feedback } = useKelet();
-      const [lastSubmission, setLastSubmission] = useState('');
+      const { api_key, project, feedback } = useKelet()
+      const [lastSubmission, setLastSubmission] = useState("")
 
-      const handleQuickFeedback = async (vote: 'upvote' | 'downvote') => {
+      const handleQuickFeedback = async (vote: "upvote" | "downvote") => {
         try {
           await feedback({
             session_id: `quick-${Date.now()}`,
             vote,
             explanation: `Quick ${vote} from useKelet hook`,
-          });
-          setLastSubmission(`${vote} submitted to ${project}`);
+          })
+          setLastSubmission(`${vote} submitted to ${project}`)
         } catch (_error) {
-          setLastSubmission('Error: ' + (_error as Error).message);
+          setLastSubmission("Error: " + (_error as Error).message)
         }
-      };
+      }
 
       return (
         <div
           style={{
-            padding: '16px',
-            border: '1px solid #4299e1',
-            borderRadius: '6px',
-            backgroundColor: '#ebf8ff',
-            marginBottom: '16px',
+            padding: "16px",
+            border: "1px solid #4299e1",
+            borderRadius: "6px",
+            backgroundColor: "#ebf8ff",
+            marginBottom: "16px",
           }}
         >
-          <h4 style={{ color: '#2b6cb0', margin: '0 0 12px 0' }}>
+          <h4 style={{ color: "#2b6cb0", margin: "0 0 12px 0" }}>
             useKelet() Hook
           </h4>
 
           <div
-            style={{ fontSize: '12px', marginBottom: '12px', color: '#4a5568' }}
+            style={{ fontSize: "12px", marginBottom: "12px", color: "#4a5568" }}
           >
             <div>
               🔑 API Key: <code>{api_key.slice(0, 10)}...</code>
@@ -817,19 +818,19 @@ Shows:
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+          <div style={{ display: "flex", gap: "8px", marginBottom: "8px" }}>
             <button
               data-testid="use-kelet-upvote"
               data-feedback-id="use-kelet-upvote"
-              onClick={() => handleQuickFeedback('upvote')}
+              onClick={() => handleQuickFeedback("upvote")}
               style={{
-                backgroundColor: '#48bb78',
-                color: 'white',
-                border: 'none',
-                padding: '6px 12px',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontSize: '12px',
+                backgroundColor: "#48bb78",
+                color: "white",
+                border: "none",
+                padding: "6px 12px",
+                borderRadius: "4px",
+                cursor: "pointer",
+                fontSize: "12px",
               }}
             >
               👍 Quick Upvote
@@ -837,15 +838,15 @@ Shows:
             <button
               data-testid="use-kelet-downvote"
               data-feedback-id="use-kelet-downvote"
-              onClick={() => handleQuickFeedback('downvote')}
+              onClick={() => handleQuickFeedback("downvote")}
               style={{
-                backgroundColor: '#e53e3e',
-                color: 'white',
-                border: 'none',
-                padding: '6px 12px',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontSize: '12px',
+                backgroundColor: "#e53e3e",
+                color: "white",
+                border: "none",
+                padding: "6px 12px",
+                borderRadius: "4px",
+                cursor: "pointer",
+                fontSize: "12px",
               }}
             >
               👎 Quick Downvote
@@ -855,53 +856,53 @@ Shows:
           {lastSubmission && (
             <div
               style={{
-                fontSize: '11px',
-                color: '#2d3748',
-                fontStyle: 'italic',
+                fontSize: "11px",
+                color: "#2d3748",
+                fontStyle: "italic",
               }}
             >
               Last: {lastSubmission}
             </div>
           )}
         </div>
-      );
-    };
+      )
+    }
 
     const ComponentWithDefaultHandler = () => {
-      const feedbackHandler = useDefaultFeedbackHandler();
-      const [status, setStatus] = useState('');
+      const feedbackHandler = useDefaultFeedbackHandler()
+      const [status, setStatus] = useState("")
 
       const handleFeedback = async () => {
-        setStatus('Submitting...');
+        setStatus("Submitting...")
         try {
           await feedbackHandler({
             session_id: `default-handler-${Date.now()}`,
-            vote: 'upvote',
-            explanation: 'Using default feedback handler',
-          });
-          setStatus('✓ Submitted successfully');
-          setTimeout(() => setStatus(''), 2000);
+            vote: "upvote",
+            explanation: "Using default feedback handler",
+          })
+          setStatus("✓ Submitted successfully")
+          setTimeout(() => setStatus(""), 2000)
         } catch (_error) {
-          setStatus('✗ Error: ' + (_error as Error).message);
+          setStatus("✗ Error: " + (_error as Error).message)
         }
-      };
+      }
 
       return (
         <div
           style={{
-            padding: '16px',
-            border: '1px solid #48bb78',
-            borderRadius: '6px',
-            backgroundColor: '#f0fff4',
-            marginBottom: '16px',
+            padding: "16px",
+            border: "1px solid #48bb78",
+            borderRadius: "6px",
+            backgroundColor: "#f0fff4",
+            marginBottom: "16px",
           }}
         >
-          <h4 style={{ color: '#2f855a', margin: '0 0 12px 0' }}>
+          <h4 style={{ color: "#2f855a", margin: "0 0 12px 0" }}>
             useDefaultFeedbackHandler() Hook
           </h4>
 
           <p
-            style={{ fontSize: '12px', margin: '0 0 12px 0', color: '#4a5568' }}
+            style={{ fontSize: "12px", margin: "0 0 12px 0", color: "#4a5568" }}
           >
             Safe to use - works with or without provider context
           </p>
@@ -911,13 +912,13 @@ Shows:
             data-feedback-id="default-handler-submit"
             onClick={handleFeedback}
             style={{
-              backgroundColor: '#4299e1',
-              color: 'white',
-              border: 'none',
-              padding: '8px 16px',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontSize: '12px',
+              backgroundColor: "#4299e1",
+              color: "white",
+              border: "none",
+              padding: "8px 16px",
+              borderRadius: "4px",
+              cursor: "pointer",
+              fontSize: "12px",
             }}
           >
             Submit with Default Handler
@@ -925,17 +926,17 @@ Shows:
 
           {status && (
             <div
-              style={{ marginTop: '8px', fontSize: '12px', color: '#2d3748' }}
+              style={{ marginTop: "8px", fontSize: "12px", color: "#2d3748" }}
             >
               {status}
             </div>
           )}
         </div>
-      );
-    };
+      )
+    }
 
     return (
-      <div style={{ fontFamily: 'system-ui, sans-serif', maxWidth: '600px' }}>
+      <div style={{ fontFamily: "system-ui, sans-serif", maxWidth: "600px" }}>
         <h3>Hook Usage Examples</h3>
 
         <KeletProvider apiKey="hook-demo-key" project="hook-examples">
@@ -945,30 +946,30 @@ Shows:
 
         <div
           style={{
-            padding: '12px',
-            backgroundColor: '#f7fafc',
-            borderRadius: '6px',
-            fontSize: '12px',
-            color: '#4a5568',
-            marginTop: '16px',
+            padding: "12px",
+            backgroundColor: "#f7fafc",
+            borderRadius: "6px",
+            fontSize: "12px",
+            color: "#4a5568",
+            marginTop: "16px",
           }}
         >
-          <strong>💡 Tip:</strong> Use <code>useDefaultFeedbackHandler()</code>{' '}
+          <strong>💡 Tip:</strong> Use <code>useDefaultFeedbackHandler()</code>{" "}
           when you want your component to work both inside and outside
           KeletProvider contexts.
         </div>
       </div>
-    );
+    )
   },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+    const canvas = within(canvasElement)
 
     // Test useKelet hook functionality
-    const upvoteButton = canvas.getByTestId('use-kelet-upvote');
-    await userEvent.click(upvoteButton);
+    const upvoteButton = canvas.getByTestId("use-kelet-upvote")
+    await userEvent.click(upvoteButton)
 
     // Test default handler
-    const defaultHandlerButton = canvas.getByTestId('default-handler-submit');
-    await userEvent.click(defaultHandlerButton);
+    const defaultHandlerButton = canvas.getByTestId("default-handler-submit")
+    await userEvent.click(defaultHandlerButton)
   },
-};
+}

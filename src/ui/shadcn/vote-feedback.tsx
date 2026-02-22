@@ -1,25 +1,25 @@
-import * as React from 'react';
-import type { VoteFeedbackRootProps } from '@kelet-ai/feedback-ui';
-import { VoteFeedback } from '@kelet-ai/feedback-ui';
-import { Button } from '@/components/ui/button';
+import * as React from "react"
+import { VoteFeedback, type VoteFeedbackRootProps } from "@kelet-ai/feedback-ui"
+import { ThumbsDown, ThumbsUp } from "lucide-react"
+
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover';
-import { Textarea } from '@/components/ui/textarea';
-import { ThumbsDown, ThumbsUp } from 'lucide-react';
-import { cn } from '@/lib/utils';
+} from "@/components/ui/popover"
+import { Textarea } from "@/components/ui/textarea"
 
 interface ShadcnVoteFeedbackProps
-  extends Omit<VoteFeedbackRootProps, 'children'> {
-  children?: React.ReactNode;
-  variant?: 'default' | 'outline' | 'ghost' | 'secondary';
-  size?: 'default' | 'sm' | 'lg' | 'icon';
-  title?: string;
-  description?: string;
-  placeholder?: string;
-  className?: string;
+  extends Omit<VoteFeedbackRootProps, "children"> {
+  children?: React.ReactNode
+  variant?: "default" | "outline" | "ghost" | "secondary"
+  size?: "default" | "sm" | "lg" | "icon"
+  title?: string
+  description?: string
+  placeholder?: string
+  className?: string
 }
 
 const ShadcnVoteFeedback = React.forwardRef<
@@ -29,34 +29,34 @@ const ShadcnVoteFeedback = React.forwardRef<
   (
     {
       children,
-      variant = 'outline',
-      size = 'sm',
-      title = 'Feedback',
-      description = 'Help us improve by sharing your thoughts.',
-      placeholder = 'What could we do better?',
+      variant = "outline",
+      size = "sm",
+      title = "Feedback",
+      description = "Help us improve by sharing your thoughts.",
+      placeholder = "What could we do better?",
       className,
       ...props
     },
     ref
   ) => {
-    let selectedVariant = variant;
-    let selectedBg = '';
+    let selectedVariant = variant
+    let selectedBg = ""
     switch (variant) {
-      case 'outline':
-        selectedBg = 'bg-secondary';
-        break;
-      case 'secondary':
-        selectedVariant = 'default';
-        break;
-      case 'ghost':
-        selectedBg = 'bg-secondary';
-        break;
-      case 'default':
-        selectedVariant = 'secondary';
-        break;
+      case "outline":
+        selectedBg = "bg-secondary"
+        break
+      case "secondary":
+        selectedVariant = "default"
+        break
+      case "ghost":
+        selectedBg = "bg-secondary"
+        break
+      case "default":
+        selectedVariant = "secondary"
+        break
     }
     return (
-      <div ref={ref} className={cn('flex items-center gap-1', className)}>
+      <div ref={ref} className={cn("flex items-center gap-1", className)}>
         <VoteFeedback.Root {...props}>
           {/* Upvote Button */}
           <VoteFeedback.UpvoteButton asChild>
@@ -64,7 +64,7 @@ const ShadcnVoteFeedback = React.forwardRef<
               <Button
                 variant={isSelected ? selectedVariant : variant}
                 size={size}
-                className={`h-8 w-8 p-0 ${isSelected ? `${selectedBg}` : ''}`}
+                className={`h-8 w-8 p-0 ${isSelected ? `${selectedBg}` : ""}`}
                 data-selected={isSelected}
                 aria-label="Helpful"
               >
@@ -82,7 +82,7 @@ const ShadcnVoteFeedback = React.forwardRef<
                   <Button
                     variant={isSelected ? selectedVariant : variant}
                     size={size}
-                    className={`h-8 w-8 p-0 ${isSelected ? `${selectedBg}` : ''}`}
+                    className={`h-8 w-8 p-0 ${isSelected ? `${selectedBg}` : ""}`}
                     data-selected={isSelected}
                     aria-label="Not helpful"
                   >
@@ -119,11 +119,11 @@ const ShadcnVoteFeedback = React.forwardRef<
           {children}
         </VoteFeedback.Root>
       </div>
-    );
+    )
   }
-);
+)
 
-ShadcnVoteFeedback.displayName = 'ShadcnVoteFeedback';
+ShadcnVoteFeedback.displayName = "ShadcnVoteFeedback"
 
-export { ShadcnVoteFeedback };
-export type { ShadcnVoteFeedbackProps };
+export { ShadcnVoteFeedback }
+export type { ShadcnVoteFeedbackProps }

@@ -9,6 +9,7 @@
   "module": "./dist/feedback-ui.es.js",
   "devDependencies": {
     "@chromatic-com/storybook": "^4.1.1",
+    "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
     "@radix-ui/react-popover": "^1.1.15",
     "@radix-ui/react-slot": "^1.2.3",
     "@storybook/addon-a11y": "^9.1.5",

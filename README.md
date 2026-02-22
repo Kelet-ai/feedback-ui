@@ -23,16 +23,16 @@ npx shadcn add https://feedback-ui.kelet.ai/r/vote-feedback.json
 ```
 
 ```tsx
-import { ShadcnVoteFeedback } from '@/components/ui/vote-feedback';
+import { ShadcnVoteFeedback } from "@/components/ui/vote-feedback"
 
 function App() {
   return (
     <ShadcnVoteFeedback
       session_id="my-feature"
-      onFeedback={feedback => console.log(feedback)}
+      onFeedback={(feedback) => console.log(feedback)}
       variant="outline"
     />
-  );
+  )
 }
 ```
 
@@ -89,16 +89,16 @@ npm install @kelet-ai/feedback-ui
 Users explicitly vote and provide comments:
 
 ```tsx
-import { VoteFeedback } from '@kelet-ai/feedback-ui';
+import { VoteFeedback } from "@kelet-ai/feedback-ui"
 
-<VoteFeedback.Root onFeedback={handleFeedback} session_id="ai-response">
+;<VoteFeedback.Root onFeedback={handleFeedback} session_id="ai-response">
   <VoteFeedback.UpvoteButton>👍 Helpful</VoteFeedback.UpvoteButton>
   <VoteFeedback.DownvoteButton>👎 Not helpful</VoteFeedback.DownvoteButton>
   <VoteFeedback.Popover>
     <VoteFeedback.Textarea placeholder="How can we improve?" />
     <VoteFeedback.SubmitButton>Send feedback</VoteFeedback.SubmitButton>
   </VoteFeedback.Popover>
-</VoteFeedback.Root>;
+</VoteFeedback.Root>
 ```
 
 ### **Pattern 2: Implicit State Tracking**
@@ -106,22 +106,22 @@ import { VoteFeedback } from '@kelet-ai/feedback-ui';
 Capture user behavior automatically by using a drop-in replacement for useState:
 
 ```tsx
-import { useFeedbackState } from '@kelet-ai/feedback-ui';
+import { useFeedbackState } from "@kelet-ai/feedback-ui"
 
 function ContentEditor() {
   // Drop-in useState replacement that tracks changes
   const [content, setContent] = useFeedbackState(
-    'Start writing...',
-    'content-editor'
-  );
+    "Start writing...",
+    "content-editor"
+  )
 
   return (
     <textarea
       value={content}
-      onChange={e => setContent(e.target.value)}
+      onChange={(e) => setContent(e.target.value)}
       placeholder="Edit this content..."
     />
-  );
+  )
   // 🎯 Automatically sends feedback when user stops editing!
 }
 ```
@@ -131,17 +131,17 @@ function ContentEditor() {
 For advanced state management with automatic trigger tracking, by using a drop-in replacement for useReducer:
 
 ```tsx
-import { useFeedbackReducer } from '@kelet-ai/feedback-ui';
+import { useFeedbackReducer } from "@kelet-ai/feedback-ui"
 
 function TodoApp() {
-  const [todos, dispatch] = useFeedbackReducer(todoReducer, [], 'todo-app');
+  const [todos, dispatch] = useFeedbackReducer(todoReducer, [], "todo-app")
 
   return (
-    <button onClick={() => dispatch({ type: 'ADD_TODO', text: 'New task' })}>
+    <button onClick={() => dispatch({ type: "ADD_TODO", text: "New task" })}>
       Add Todo
     </button>
     // 🎯 Automatically sends feedback with trigger_name: 'ADD_TODO'
-  );
+  )
 }
 ```
 
@@ -198,15 +198,15 @@ Controls how feedback is collected and what data is captured:
 ```tsx
 // Implicit feedback - tracks changes automatically
 const [content, setContent] = useFeedbackState(
-  'Initial content',
-  'content-editor'
-);
+  "Initial content",
+  "content-editor"
+)
 // Sends feedback when user stops editing
 
 // Loading pattern - no noise generated
-const [user, setUser] = useFeedbackState(null, 'user-data');
-setUser(userData); // ❌ No feedback sent (ignoreInitialNullish: true)
-setUser(updatedUser); // ✅ Feedback sent for real changes
+const [user, setUser] = useFeedbackState(null, "user-data")
+setUser(userData) // ❌ No feedback sent (ignoreInitialNullish: true)
+setUser(updatedUser) // ✅ Feedback sent for real changes
 ```
 
 ### **🏷️ Trigger Names**
@@ -224,16 +224,16 @@ Categorization system for grouping and analyzing feedback:
 
 ```tsx
 // Content creation triggers
-'user_typing' | 'ai_generation' | 'spell_check' | 'auto_format';
+;"user_typing" | "ai_generation" | "spell_check" | "auto_format"
 
 // User interaction triggers
-'manual_edit' | 'voice_input' | 'copy_paste' | 'drag_drop';
+;"manual_edit" | "voice_input" | "copy_paste" | "drag_drop"
 
 // Workflow triggers
-'draft' | 'review' | 'approval' | 'publication';
+;"draft" | "review" | "approval" | "publication"
 
 // AI interaction triggers
-'ai_completion' | 'ai_correction' | 'prompt_result';
+;"ai_completion" | "ai_correction" | "prompt_result"
 ```
 
 #### **Dynamic Trigger Names**
@@ -241,14 +241,14 @@ Categorization system for grouping and analyzing feedback:
 ```tsx
 const [document, setDocument] = useFeedbackState(
   initialDoc,
-  'document-editor',
-  { default_trigger_name: 'user_edit' }
-);
+  "document-editor",
+  { default_trigger_name: "user_edit" }
+)
 
 // Different triggers for different actions
-setDocument(aiGeneratedContent, 'ai_generation');
-setDocument(userEditedContent, 'manual_refinement');
-setDocument(spellCheckedContent, 'spell_check');
+setDocument(aiGeneratedContent, "ai_generation")
+setDocument(userEditedContent, "manual_refinement")
+setDocument(spellCheckedContent, "spell_check")
 ```
 
 ### **🔄 State Change Tracking**
@@ -260,9 +260,9 @@ For implicit feedback, understanding how state changes are processed:
 ```tsx
 // User types: "Hello" → "Hello World" → "Hello World!"
 // Only sends ONE feedback after user stops typing
-const [text, setText] = useFeedbackState('', 'editor', {
+const [text, setText] = useFeedbackState("", "editor", {
   debounceMs: 3000, // Wait 3s after last change
-});
+})
 ```
 
 #### **Diff Calculation**
@@ -281,14 +281,14 @@ Automatic classification of changes:
 
 ```tsx
 // Smart vote logic based on change magnitude
-const [data, setData] = useFeedbackState(initial, 'tracker', {
+const [data, setData] = useFeedbackState(initial, "tracker", {
   vote: (before, after, diffPercentage) => {
     // Small changes = refinement (positive)
-    if (diffPercentage <= 0.5) return 'upvote';
+    if (diffPercentage <= 0.5) return "upvote"
     // Large changes = major revision (might indicate issues)
-    return 'downvote';
+    return "downvote"
   },
-});
+})
 ```
 
 ### **🎯 Best Practices Summary**
@@ -330,7 +330,7 @@ Main container component that manages feedback state.
   session_id="unique-id" // Required: Unique tracking ID
   onFeedback={handleFeedback} // Required: Callback function
   trigger_name="user_feedback" // Optional: Categorization
-  extra_metadata={{ page: 'home' }} // Optional: Additional data
+  extra_metadata={{ page: "home" }} // Optional: Additional data
 >
   {/* Child components */}
 </VoteFeedback.Root>
@@ -368,39 +368,39 @@ A **drop-in replacement for React's useState** that automatically tracks state c
 #### **Basic Usage**
 
 ```tsx
-const [count, setCount] = useFeedbackState(0, 'counter-widget');
+const [count, setCount] = useFeedbackState(0, "counter-widget")
 ```
 
 #### **Advanced Configuration**
 
 ```tsx
 const [profile, setProfile] = useFeedbackState(
-  { name: '', email: '' },
-  state => `profile-${state.email}`, // Dynamic session_id
+  { name: "", email: "" },
+  (state) => `profile-${state.email}`, // Dynamic session_id
   {
     debounceMs: 2000, // Wait time before sending feedback
-    diffType: 'object', // Format: 'git' | 'object' | 'json'
-    metadata: { component: 'UserProfile' },
-    vote: 'upvote', // Static vote or custom function
+    diffType: "object", // Format: 'git' | 'object' | 'json'
+    metadata: { component: "UserProfile" },
+    vote: "upvote", // Static vote or custom function
   }
-);
+)
 ```
 
 #### **Trigger Names for Categorization**
 
 ```tsx
 const [content, setContent] = useFeedbackState(
-  'Initial content',
-  'content-editor',
-  { default_trigger_name: 'manual_edit' }
-);
+  "Initial content",
+  "content-editor",
+  { default_trigger_name: "manual_edit" }
+)
 
 // Uses default trigger
-setContent('User typed this');
+setContent("User typed this")
 
 // Override with specific trigger
-setContent('AI generated this', 'ai_assistance');
-setContent('Spell checker fixed this', 'spell_check');
+setContent("AI generated this", "ai_assistance")
+setContent("Spell checker fixed this", "spell_check")
 ```
 
 ### **useFeedbackReducer Hook**
@@ -411,12 +411,12 @@ A **drop-in replacement for React's useReducer** with automatic trigger name ext
 const [state, dispatch] = useFeedbackReducer(
   counterReducer,
   { count: 0 },
-  'counter-widget'
-);
+  "counter-widget"
+)
 
-dispatch({ type: 'increment' }); // trigger_name: 'increment'
-dispatch({ type: 'reset' }); // trigger_name: 'reset'
-dispatch({ type: 'custom' }, 'override'); // Custom trigger name
+dispatch({ type: "increment" }) // trigger_name: 'increment'
+dispatch({ type: "reset" }) // trigger_name: 'reset'
+dispatch({ type: "custom" }, "override") // Custom trigger name
 ```
 
 ---
@@ -426,7 +426,7 @@ dispatch({ type: 'custom' }, 'override'); // Custom trigger name
 ### **Basic Voting Interface**
 
 ```tsx
-<VoteFeedback.Root onFeedback={feedback => console.log(feedback)}>
+<VoteFeedback.Root onFeedback={(feedback) => console.log(feedback)}>
   <VoteFeedback.UpvoteButton>👍</VoteFeedback.UpvoteButton>
   <VoteFeedback.DownvoteButton>👎</VoteFeedback.DownvoteButton>
 </VoteFeedback.Root>
@@ -470,7 +470,7 @@ dispatch({ type: 'custom' }, 'override'); // Custom trigger name
   onFeedback={handleFeedback}
   trigger_name="ai_evaluation"
   extra_metadata={{
-    model: 'gpt-4',
+    model: "gpt-4",
     prompt_length: 150,
     response_time: 1200,
   }}
@@ -492,14 +492,14 @@ dispatch({ type: 'custom' }, 'override'); // Custom trigger name
 
 ```typescript
 interface FeedbackData {
-  session_id: string; // Unique tracking ID
-  vote: 'upvote' | 'downvote'; // User's vote
-  explanation?: string; // Optional user comment
-  extra_metadata?: Record<string, any>; // Additional context data
-  source?: 'IMPLICIT' | 'EXPLICIT'; // How feedback was collected
-  correction?: string; // For implicit feedback diffs
-  selection?: string; // Selected text context
-  trigger_name?: string; // Categorization tag
+  session_id: string // Unique tracking ID
+  vote: "upvote" | "downvote" // User's vote
+  explanation?: string // Optional user comment
+  extra_metadata?: Record<string, any> // Additional context data
+  source?: "IMPLICIT" | "EXPLICIT" // How feedback was collected
+  correction?: string // For implicit feedback diffs
+  selection?: string // Selected text context
+  trigger_name?: string // Categorization tag
 }
 ```
 
@@ -615,9 +615,9 @@ bun run checks      # Run all quality checks (lint, format, typecheck, tests)
 
 ```tsx
 // ✅ Ensure debounce time has passed(the time, not the configuration! :P) and state actually changed
-const [value, setValue] = useFeedbackState('initial', 'test', {
+const [value, setValue] = useFeedbackState("initial", "test", {
   debounceMs: 1000, // Wait 1 second after last change
-});
+})
 ```
 
 #### **Q: Styling not working**

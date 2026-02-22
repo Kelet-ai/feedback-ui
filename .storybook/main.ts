@@ -1,23 +1,23 @@
-import type { StorybookConfig } from '@storybook/react-vite';
+import type { StorybookConfig } from "@storybook/react-vite"
 
 const config: StorybookConfig = {
-  stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
+  stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
 
   addons: [
-    '@storybook/addon-docs',
-    '@storybook/addon-a11y',
-    '@storybook/addon-vitest',
-    '@chromatic-com/storybook',
-    '@storybook/addon-themes',
+    "@storybook/addon-docs",
+    "@storybook/addon-a11y",
+    "@storybook/addon-vitest",
+    "@chromatic-com/storybook",
+    "@storybook/addon-themes",
   ],
 
   framework: {
-    name: '@storybook/react-vite',
+    name: "@storybook/react-vite",
     options: {},
   },
 
   typescript: {
-    reactDocgen: 'react-docgen-typescript',
+    reactDocgen: "react-docgen-typescript",
   },
 
   core: {
@@ -28,11 +28,11 @@ const config: StorybookConfig = {
     viteConfig.optimizeDeps = {
       include: [
         ...(viteConfig.optimizeDeps?.include || []),
-        'react/jsx-dev-runtime',
+        "react/jsx-dev-runtime",
       ],
-    };
-    return viteConfig;
+    }
+    return viteConfig
   },
-};
+}
 
-export default config;
+export default config

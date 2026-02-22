@@ -11,59 +11,59 @@
  * - SSR-safe: Guards against server-side rendering
  */
 
-import type { CapturedEvent } from '@/types';
+import type { CapturedEvent } from "@/types"
 
 // Module-level storage - latest event only (memory safe)
-let latestEvent: CapturedEvent | null = null;
-let isInitialized = false;
+let latestEvent: CapturedEvent | null = null
+let isInitialized = false
 
 /**
  * Serialize a DOM element to CSS selector WITHOUT holding references.
  * This prevents memory leaks while providing useful debugging information.
  */
 function serializeTarget(target: EventTarget | null): string {
-  if (!target || !(target instanceof Element)) return 'unknown';
+  if (!target || !(target instanceof Element)) return "unknown"
 
-  const el = target as Element;
+  const el = target as Element
 
   // Strategy 1: Use ID if available (most specific)
-  if (el.id) return `#${el.id}`;
+  if (el.id) return `#${el.id}`
 
   // Strategy 2: Use data-feedback-id attributes for custom identifiers
-  const dataId = el.getAttribute('data-feedback-id');
-  if (dataId) return `[data-feedback-id="${dataId}"]`;
+  const dataId = el.getAttribute("data-feedback-id")
+  if (dataId) return `[data-feedback-id="${dataId}"]`
 
   // Strategy 3: Build a selector path from element hierarchy
-  const path: string[] = [];
-  let current: Element | null = el;
-  let depth = 0;
-  const MAX_DEPTH = 5; // Prevent huge selectors
+  const path: string[] = []
+  let current: Element | null = el
+  let depth = 0
+  const MAX_DEPTH = 5 // Prevent huge selectors
 
   while (current && current !== document.body && depth < MAX_DEPTH) {
-    let selector = current.tagName.toLowerCase();
+    let selector = current.tagName.toLowerCase()
 
     // Add the first class if available for better specificity
     if (current.classList.length > 0) {
-      const className = Array.from(current.classList)[0];
-      selector += `.${className}`;
+      const className = Array.from(current.classList)[0]
+      selector += `.${className}`
     }
 
     // Add nth-child for uniqueness when needed
-    const parent: Element | null = current.parentElement;
+    const parent: Element | null = current.parentElement
     if (parent) {
-      const siblings = Array.from(parent.children);
-      const index = siblings.indexOf(current) + 1;
+      const siblings = Array.from(parent.children)
+      const index = siblings.indexOf(current) + 1
       if (siblings.length > 1) {
-        selector += `:nth-child(${index})`;
+        selector += `:nth-child(${index})`
       }
     }
 
-    path.unshift(selector);
-    current = parent;
-    depth++;
+    path.unshift(selector)
+    current = parent
+    depth++
   }
 
-  return path.join(' > ');
+  return path.join(" > ")
 }
 
 /**
@@ -71,17 +71,17 @@ function serializeTarget(target: EventTarget | null): string {
  * Prefers aria-label for accessibility, falls back to textContent.
  */
 function getTargetText(target: EventTarget | null): string {
-  if (!target || !(target instanceof Element)) return '';
+  if (!target || !(target instanceof Element)) return ""
 
-  const el = target as Element;
+  const el = target as Element
 
   // Prefer aria-label (better for accessibility and semantic meaning)
-  const ariaLabel = el.getAttribute('aria-label');
-  if (ariaLabel) return ariaLabel.substring(0, 50);
+  const ariaLabel = el.getAttribute("aria-label")
+  if (ariaLabel) return ariaLabel.substring(0, 50)
 
   // Get button text or other text content
-  const text = el.textContent?.trim() || '';
-  return text.substring(0, 50); // Prevent huge strings
+  const text = el.textContent?.trim() || ""
+  return text.substring(0, 50) // Prevent huge strings
 }
 
 /**
@@ -94,16 +94,16 @@ function captureEvent(e: Event): CapturedEvent {
     targetSelector: serializeTarget(e.target),
     targetText: getTargetText(e.target),
     timestamp: Date.now(),
-  };
+  }
 
   // Add event-specific data
   if (e instanceof MouseEvent) {
-    captured.coordinates = { x: e.clientX, y: e.clientY };
+    captured.coordinates = { x: e.clientX, y: e.clientY }
   } else if (e instanceof KeyboardEvent) {
-    captured.key = e.key;
+    captured.key = e.key
   }
 
-  return captured;
+  return captured
 }
 
 /**
@@ -111,26 +111,26 @@ function captureEvent(e: Event): CapturedEvent {
  * Uses capture phase to intercept events before React handlers.
  */
 export function initEventCapture(): void {
-  if (isInitialized || typeof window === 'undefined') return;
+  if (isInitialized || typeof window === "undefined") return
 
   // Event types to track (excludes high-frequency events like mousemove)
-  const eventTypes = ['click', 'keydown', 'submit', 'change'];
+  const eventTypes = ["click", "keydown", "submit", "change"]
 
-  eventTypes.forEach(type => {
+  eventTypes.forEach((type) => {
     window.addEventListener(
       type,
-      e => {
+      (e) => {
         // Capture synchronously before React sees it
-        latestEvent = captureEvent(e);
+        latestEvent = captureEvent(e)
       },
       {
         capture: true, // Intercept before React handlers
         passive: true, // Better scroll performance
       }
-    );
-  });
+    )
+  })
 
-  isInitialized = true;
+  isInitialized = true
 }
 
 /**
@@ -140,25 +140,25 @@ export function initEventCapture(): void {
  * @returns A copy of the latest event, or null if none/stale
  */
 export function getLatestEvent(): CapturedEvent | null {
-  if (!latestEvent) return null;
+  if (!latestEvent) return null
 
   // Check if the event is stale (>10 seconds old)
-  const age = Date.now() - latestEvent.timestamp;
+  const age = Date.now() - latestEvent.timestamp
   if (age > 10000) {
     // 10 seconds in milliseconds
-    latestEvent = null; // Discard stale event
-    return null;
+    latestEvent = null // Discard stale event
+    return null
   }
 
   // Return a copy to prevent mutations
-  return { ...latestEvent };
+  return { ...latestEvent }
 }
 
 /**
  * Clear the captured event (useful for cleanup or testing).
  */
 export function clearLatestEvent(): void {
-  latestEvent = null;
+  latestEvent = null
 }
 
 /**
@@ -166,5 +166,5 @@ export function clearLatestEvent(): void {
  * Useful for testing and debugging.
  */
 export function isEventCaptureInitialized(): boolean {
-  return isInitialized;
+  return isInitialized
 }

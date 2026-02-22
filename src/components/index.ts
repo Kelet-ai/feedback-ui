@@ -1,1 +1,1 @@
-export { VoteFeedback } from '@/components/vote-feedback';
+export { VoteFeedback } from "@/components/vote-feedback"

@@ -1,6 +1,7 @@
-import { useCallback, useState } from 'react';
-import { useStateChangeTracking } from './use-state-change-tracking';
-import type { FeedbackStateOptions, FeedbackStateReturn } from './types';
+import { useCallback, useState } from "react"
+
+import type { FeedbackStateOptions, FeedbackStateReturn } from "./types"
+import { useStateChangeTracking } from "./use-state-change-tracking"
 
 /**
  * A drop-in replacement for React's useState that tracks changes to state over time
@@ -37,30 +38,30 @@ export function useFeedbackState<T>(
   options?: FeedbackStateOptions<T>
 ): FeedbackStateReturn<T> {
   // Use React's native useState for state management
-  const [state, setStateInternal] = useState<T>(initialState);
+  const [state, setStateInternal] = useState<T>(initialState)
 
   // Use the shared state change tracking logic
-  const { notifyChange } = useStateChangeTracking(state, session_id, options);
+  const { notifyChange } = useStateChangeTracking(state, session_id, options)
 
   // Wrap setState to track changes with trigger_name support
   const setState: FeedbackStateReturn<T>[1] = useCallback(
     (value, trigger_name) => {
       // Notify about the impending state change with trigger name
-      notifyChange(trigger_name);
+      notifyChange(trigger_name)
 
       // Update state using React's native setState
-      setStateInternal(prevState => {
+      setStateInternal((prevState) => {
         // Handle functional updates
         const newState =
-          typeof value === 'function'
+          typeof value === "function"
             ? (value as (prevState: T) => T)(prevState)
-            : value;
+            : value
 
-        return newState;
-      });
+        return newState
+      })
     },
     [notifyChange]
-  );
+  )
 
-  return [state, setState];
+  return [state, setState]
 }

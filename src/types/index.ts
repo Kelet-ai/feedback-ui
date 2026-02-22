@@ -3,38 +3,38 @@ import type {
   HTMLAttributes,
   ReactNode,
   TextareaHTMLAttributes,
-} from 'react';
+} from "react"
 
 /**
  * Captured DOM event information (automatically included in feedback metadata)
  */
 export interface CapturedEvent {
   /** Event type (e.g., 'click', 'keydown') */
-  type: string;
+  type: string
   /** CSS selector path to the target element */
-  targetSelector: string;
+  targetSelector: string
   /** Text content or aria-label of the target element */
-  targetText: string;
+  targetText: string
   /** Timestamp when the event occurred (ms since epoch) */
-  timestamp: number;
+  timestamp: number
   /** Mouse coordinates for click events */
-  coordinates?: { x: number; y: number };
+  coordinates?: { x: number; y: number }
   /** Key pressed for keyboard events */
-  key?: string;
+  key?: string
 }
 
 /**
  * Feedback data structure returned by the component
  */
 export interface FeedbackData {
-  session_id: string;
-  extra_metadata?: Record<string, any>;
-  vote: 'upvote' | 'downvote';
-  explanation?: string;
-  source?: 'IMPLICIT' | 'EXPLICIT'; // Default is 'EXPLICIT'
-  correction?: string; // Used for diff data
-  selection?: string; // Optional selected text
-  trigger_name?: string; // Optional trigger name for categorizing feedback
+  session_id: string
+  extra_metadata?: Record<string, any>
+  vote: "upvote" | "downvote"
+  explanation?: string
+  source?: "IMPLICIT" | "EXPLICIT" // Default is 'EXPLICIT'
+  correction?: string // Used for diff data
+  selection?: string // Optional selected text
+  trigger_name?: string // Optional trigger name for categorizing feedback
 }
 
 /**
@@ -42,12 +42,12 @@ export interface FeedbackData {
  * This is a headless component - no styling included
  */
 export interface VoteFeedbackRootProps {
-  children: ReactNode;
-  onFeedback?: (data: FeedbackData) => void | Promise<void>;
-  defaultText?: string;
-  session_id: string | (() => string);
-  extra_metadata?: Record<string, any>;
-  trigger_name?: string; // Optional trigger name for categorizing feedback
+  children: ReactNode
+  onFeedback?: (data: FeedbackData) => void | Promise<void>
+  defaultText?: string
+  session_id: string | (() => string)
+  extra_metadata?: Record<string, any>
+  trigger_name?: string // Optional trigger name for categorizing feedback
 }
 
 /**
@@ -55,11 +55,9 @@ export interface VoteFeedbackRootProps {
  * Headless - you provide your own styling and content
  */
 export interface UpvoteButtonProps
-  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
-  asChild?: boolean;
-  children:
-    | ReactNode
-    | (({ isSelected }: { isSelected: boolean }) => ReactNode);
+  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "children"> {
+  asChild?: boolean
+  children: ReactNode | (({ isSelected }: { isSelected: boolean }) => ReactNode)
 }
 
 /**
@@ -67,11 +65,9 @@ export interface UpvoteButtonProps
  * Headless - you provide your own styling and content
  */
 export interface DownvoteButtonProps
-  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
-  asChild?: boolean;
-  children:
-    | ReactNode
-    | (({ isSelected }: { isSelected: boolean }) => ReactNode);
+  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "children"> {
+  asChild?: boolean
+  children: ReactNode | (({ isSelected }: { isSelected: boolean }) => ReactNode)
 }
 
 /**
@@ -79,8 +75,8 @@ export interface DownvoteButtonProps
  * Headless - you control the positioning and styling
  */
 export interface PopoverProps extends HTMLAttributes<HTMLDivElement> {
-  asChild?: boolean;
-  children: ReactNode;
+  asChild?: boolean
+  children: ReactNode
 }
 
 /**
@@ -89,7 +85,7 @@ export interface PopoverProps extends HTMLAttributes<HTMLDivElement> {
  */
 export interface TextareaProps
   extends TextareaHTMLAttributes<HTMLTextAreaElement> {
-  asChild?: boolean;
+  asChild?: boolean
 }
 
 /**
@@ -98,6 +94,6 @@ export interface TextareaProps
  */
 export interface SubmitButtonProps
   extends ButtonHTMLAttributes<HTMLButtonElement> {
-  asChild?: boolean;
-  children: ReactNode;
+  asChild?: boolean
+  children: ReactNode
 }
