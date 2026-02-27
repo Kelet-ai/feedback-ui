@@ -17,13 +17,15 @@ interface KeletProviderProps {
 
 interface FeedbackRequest {
   session_id: string
-  source: "IMPLICIT" | "EXPLICIT"
+  kind: "feedback" | "edit"
+  source: "human"
   trigger_name?: string
-  vote: "upvote" | "downvote"
-  explanation?: string
-  selection?: string
-  correction?: string
+  score?: number
+  value?: string
+  confidence?: number
   metadata?: Record<string, any>
+  timestamp?: string
+  trace_id?: string
 }
 
 // Create the context
@@ -94,19 +96,21 @@ export const KeletProvider: React.FC<
 
     // Merge captured event into metadata
     const metadata = {
-      ...(data.extra_metadata ?? {}),
+      ...(data.metadata ?? {}),
       ...(capturedEvent && { $dom_event: capturedEvent }),
     }
 
     const req: FeedbackRequest = {
       session_id: data.session_id,
-      source: data.source || "EXPLICIT",
-      vote: data.vote,
-      explanation: data.explanation,
-      correction: data.correction,
-      selection: data.selection,
+      kind: data.kind,
+      source: data.source,
       trigger_name: data.trigger_name,
+      score: data.score,
+      value: data.value,
+      confidence: data.confidence,
       metadata: Object.keys(metadata).length > 0 ? metadata : undefined,
+      timestamp: data.timestamp || new Date().toISOString(),
+      trace_id: data.trace_id,
     }
     const response = await fetch(url, {
       method: "POST",

@@ -57,7 +57,7 @@ You have complete control over the appearance and can build your own design syst
 The headless approach separates the "brain" (logic) from the "looks" (styling). This gives you maximum flexibility while handling all the complex accessibility and interaction logic for you.
 
 ## API:
-- **type**: Uses 'upvote' | 'downvote' literal types
+- **score**: Uses numeric score (1 for upvote, 0 for downvote)
 - **Components**: UpvoteButton, DownvoteButton
 
 ## Accessibility Features:
@@ -78,7 +78,7 @@ The headless approach separates the "brain" (logic) from the "looks" (styling). 
       control: "text",
       description: "Required session ID for tracking feedback",
     },
-    extra_metadata: {
+    metadata: {
       control: "object",
       description: "Optional metadata to include with feedback",
     },
@@ -112,10 +112,14 @@ export const HeadlessBasic: Story = {
     // Assert upvote is selected and downvote is not
     await expect(upvoteButton).toHaveTextContent("(Selected)")
     await expect(downvoteButton).not.toHaveTextContent("(Selected)")
-    await expect(args.onFeedback).toHaveBeenCalledWith({
-      session_id: "story-demo",
-      vote: "upvote",
-    })
+    await expect(args.onFeedback).toHaveBeenCalledWith(
+      expect.objectContaining({
+        session_id: "story-demo",
+        kind: "feedback",
+        source: "human",
+        score: 1,
+      })
+    )
 
     // 3. Click downvote
     await userEvent.click(downvoteButton)
@@ -123,10 +127,14 @@ export const HeadlessBasic: Story = {
     // Assert downvote is selected and upvote is not
     await expect(downvoteButton).toHaveTextContent("(Selected)")
     await expect(upvoteButton).not.toHaveTextContent("(Selected)")
-    await expect(args.onFeedback).toHaveBeenCalledWith({
-      session_id: "story-demo",
-      vote: "downvote",
-    })
+    await expect(args.onFeedback).toHaveBeenCalledWith(
+      expect.objectContaining({
+        session_id: "story-demo",
+        kind: "feedback",
+        source: "human",
+        score: 0,
+      })
+    )
   },
   render: (args) => (
     <VoteFeedback.Root {...args}>
@@ -248,11 +256,15 @@ export const HeadlessCustomStyling: Story = {
     const submitButton = canvas.getByText("Submit Feedback")
     await userEvent.click(submitButton)
 
-    await expect(args.onFeedback).toHaveBeenCalledWith({
-      session_id: "story-demo",
-      vote: "downvote",
-      explanation: "Could be improved",
-    })
+    await expect(args.onFeedback).toHaveBeenCalledWith(
+      expect.objectContaining({
+        session_id: "story-demo",
+        kind: "feedback",
+        source: "human",
+        score: 0,
+        value: "Could be improved",
+      })
+    )
   },
   render: (args) => (
     <VoteFeedback.Root {...args}>
@@ -367,10 +379,14 @@ export const HeadlessMinimal: Story = {
     const sendButton = canvas.getByText("Send")
     await userEvent.click(sendButton)
 
-    await expect(args.onFeedback).toHaveBeenCalledWith({
-      session_id: "story-demo",
-      vote: "downvote",
-    })
+    await expect(args.onFeedback).toHaveBeenCalledWith(
+      expect.objectContaining({
+        session_id: "story-demo",
+        kind: "feedback",
+        source: "human",
+        score: 0,
+      })
+    )
   },
   render: (args) => (
     <VoteFeedback.Root {...args}>
@@ -455,7 +471,7 @@ export const HeadlessMinimal: Story = {
 export const AsChildPattern: Story = {
   args: {
     session_id: "as-child-demo",
-    extra_metadata: {
+    metadata: {
       testId: "as-child-pattern",
     },
   },
@@ -483,25 +499,33 @@ The \`asChild\` pattern is inspired by Radix UI and allows maximum flexibility w
     const customUpvote = canvas.getByTestId("custom-upvote")
     await userEvent.click(customUpvote)
 
-    await expect(args.onFeedback).toHaveBeenCalledWith({
-      session_id: "as-child-demo",
-      extra_metadata: {
-        testId: "as-child-pattern",
-      },
-      vote: "upvote",
-    })
+    await expect(args.onFeedback).toHaveBeenCalledWith(
+      expect.objectContaining({
+        session_id: "as-child-demo",
+        kind: "feedback",
+        source: "human",
+        score: 1,
+        metadata: {
+          testId: "as-child-pattern",
+        },
+      })
+    )
 
     // Test custom downvote element
     const customDownvote = canvas.getByTestId("custom-downvote")
     await userEvent.click(customDownvote)
 
-    await expect(args.onFeedback).toHaveBeenLastCalledWith({
-      session_id: "as-child-demo",
-      extra_metadata: {
-        testId: "as-child-pattern",
-      },
-      vote: "downvote",
-    })
+    await expect(args.onFeedback).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        session_id: "as-child-demo",
+        kind: "feedback",
+        source: "human",
+        score: 0,
+        metadata: {
+          testId: "as-child-pattern",
+        },
+      })
+    )
 
     // Test custom textarea
     const customTextarea = canvas.getByTestId("custom-textarea")
@@ -511,14 +535,18 @@ The \`asChild\` pattern is inspired by Radix UI and allows maximum flexibility w
     const customSubmit = canvas.getByTestId("custom-submit")
     await userEvent.click(customSubmit)
 
-    await expect(args.onFeedback).toHaveBeenLastCalledWith({
-      session_id: "as-child-demo",
-      extra_metadata: {
-        testId: "as-child-pattern",
-      },
-      vote: "downvote",
-      explanation: "Using custom elements!",
-    })
+    await expect(args.onFeedback).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        session_id: "as-child-demo",
+        kind: "feedback",
+        source: "human",
+        score: 0,
+        value: "Using custom elements!",
+        metadata: {
+          testId: "as-child-pattern",
+        },
+      })
+    )
 
     // Verify accessibility attributes are applied to custom elements
     expect(customUpvote).toHaveAttribute("aria-label", "Upvote feedback")
@@ -697,7 +725,7 @@ The \`asChild\` pattern is inspired by Radix UI and allows maximum flexibility w
 export const CompleteWorkflow: Story = {
   args: {
     session_id: "workflow-test",
-    extra_metadata: {
+    metadata: {
       userId: "user-123",
       sessionId: "session-456",
     },
@@ -711,7 +739,7 @@ export const CompleteWorkflow: Story = {
 1. **Upvote flow** - Click thumbs up and see action logged
 2. **Downvote with text** - Open popover, type feedback, submit
 3. **Empty submit** - Submit without text just closes popover
-4. **Metadata inclusion** - All callbacks include session_id and extra_metadata
+4. **Metadata inclusion** - All callbacks include session_id and metadata
 
 Watch the **Interactions** panel to see automated testing, and **Actions** panel for callback data!
         `,
@@ -725,56 +753,72 @@ Watch the **Interactions** panel to see automated testing, and **Actions** panel
     const upvoteButton = canvas.getByText("👍 Like")
     await userEvent.click(upvoteButton)
 
-    await expect(args.onFeedback).toHaveBeenCalledWith({
-      session_id: "workflow-test",
-      extra_metadata: {
-        userId: "user-123",
-        sessionId: "session-456",
-      },
-      vote: "upvote",
-    })
+    await expect(args.onFeedback).toHaveBeenCalledWith(
+      expect.objectContaining({
+        session_id: "workflow-test",
+        kind: "feedback",
+        source: "human",
+        score: 1,
+        metadata: {
+          userId: "user-123",
+          sessionId: "session-456",
+        },
+      })
+    )
 
     // Test 2: Downvote with immediate callback first
     const downvoteButton = canvas.getByText("👎 Dislike")
     await userEvent.click(downvoteButton)
 
-    // Should immediately send feedback (no explanation)
-    await expect(args.onFeedback).toHaveBeenLastCalledWith({
-      session_id: "workflow-test",
-      extra_metadata: {
-        userId: "user-123",
-        sessionId: "session-456",
-      },
-      vote: "downvote",
-    })
+    // Should immediately send feedback (no value)
+    await expect(args.onFeedback).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        session_id: "workflow-test",
+        kind: "feedback",
+        source: "human",
+        score: 0,
+        metadata: {
+          userId: "user-123",
+          sessionId: "session-456",
+        },
+      })
+    )
 
     // Then user can provide detailed feedback
     await userEvent.type(canvas.getByRole("textbox"), "This needs improvement")
 
     await userEvent.click(canvas.getByText("Send"))
 
-    await expect(args.onFeedback).toHaveBeenLastCalledWith({
-      session_id: "workflow-test",
-      extra_metadata: {
-        userId: "user-123",
-        sessionId: "session-456",
-      },
-      vote: "downvote",
-      explanation: "This needs improvement",
-    })
+    await expect(args.onFeedback).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        session_id: "workflow-test",
+        kind: "feedback",
+        source: "human",
+        score: 0,
+        value: "This needs improvement",
+        metadata: {
+          userId: "user-123",
+          sessionId: "session-456",
+        },
+      })
+    )
 
     // Test 3: Downvote without submitting text (should only get initial callback)
     await userEvent.click(downvoteButton)
 
     // This should send feedback immediately
-    await expect(args.onFeedback).toHaveBeenLastCalledWith({
-      session_id: "workflow-test",
-      extra_metadata: {
-        userId: "user-123",
-        sessionId: "session-456",
-      },
-      vote: "downvote",
-    })
+    await expect(args.onFeedback).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        session_id: "workflow-test",
+        kind: "feedback",
+        source: "human",
+        score: 0,
+        metadata: {
+          userId: "user-123",
+          sessionId: "session-456",
+        },
+      })
+    )
 
     // Clicking submit without text should just close (no additional call)
     const callsBefore = [...(args.onFeedback as any).mock.calls]

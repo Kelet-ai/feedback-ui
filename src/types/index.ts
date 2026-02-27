@@ -24,17 +24,24 @@ export interface CapturedEvent {
 }
 
 /**
+ * Signal kind — what type of signal this is
+ */
+export type SignalKind = "feedback" | "edit"
+
+/**
  * Feedback data structure returned by the component
  */
 export interface FeedbackData {
   session_id: string
-  extra_metadata?: Record<string, any>
-  vote: "upvote" | "downvote"
-  explanation?: string
-  source?: "IMPLICIT" | "EXPLICIT" // Default is 'EXPLICIT'
-  correction?: string // Used for diff data
-  selection?: string // Optional selected text
-  trigger_name?: string // Optional trigger name for categorizing feedback
+  kind: SignalKind
+  source: "human"
+  trigger_name?: string
+  score?: number // 1 for upvote, 0 for downvote
+  value?: string // text content: feedback text, diff, reasoning, etc.
+  confidence?: number // diff_percentage for implicit edits (0.0-1.0)
+  metadata?: Record<string, any>
+  timestamp?: string // ISO 8601
+  trace_id?: string // optional, if available
 }
 
 /**
@@ -46,8 +53,9 @@ export interface VoteFeedbackRootProps {
   onFeedback?: (data: FeedbackData) => void | Promise<void>
   defaultText?: string
   session_id: string | (() => string)
-  extra_metadata?: Record<string, any>
-  trigger_name?: string // Optional trigger name for categorizing feedback
+  metadata?: Record<string, any>
+  trigger_name?: string // Trigger name for categorizing feedback (no default)
+  trace_id?: string // Optional trace ID to attach to feedback
 }
 
 /**

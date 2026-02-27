@@ -57,8 +57,8 @@ describe("useFeedbackState - Diff utilities", () => {
   })
 })
 
-// Tests for trigger_name functionality
-describe("useFeedbackState - trigger_name functionality", () => {
+// Tests for trigger functionality
+describe("useFeedbackState - trigger functionality", () => {
   beforeEach(() => {
     vi.useFakeTimers()
   })
@@ -68,7 +68,7 @@ describe("useFeedbackState - trigger_name functionality", () => {
     vi.useRealTimers()
   })
 
-  it("uses default trigger_name when no default_trigger_name is specified", async () => {
+  it("uses default trigger when no default_trigger_name is specified", async () => {
     const mockHandler = vi.fn()
     const { result } = renderHook(() =>
       useFeedbackState("initial", "test-id", {
@@ -89,6 +89,8 @@ describe("useFeedbackState - trigger_name functionality", () => {
       expect.objectContaining({
         trigger_name: "auto_state_change",
         session_id: "test-id",
+        kind: "edit",
+        source: "human",
       })
     )
   })
@@ -118,7 +120,7 @@ describe("useFeedbackState - trigger_name functionality", () => {
     )
   })
 
-  it("overrides default with setState trigger_name parameter", async () => {
+  it("overrides default with setState trigger parameter", async () => {
     const mockHandler = vi.fn()
     const { result } = renderHook(() =>
       useFeedbackState("initial", "test-id", {
@@ -331,6 +333,33 @@ describe("useFeedbackState - trigger_name functionality", () => {
       })
     )
   })
+
+  it("emits kind=edit and source=human for state changes", async () => {
+    const mockHandler = vi.fn()
+    const { result } = renderHook(() =>
+      useFeedbackState("initial", "test-id", {
+        debounceMs: 500,
+        onFeedback: mockHandler,
+      })
+    )
+
+    act(() => {
+      result.current[1]("changed")
+    })
+
+    act(() => {
+      vi.advanceTimersByTime(500)
+    })
+
+    expect(mockHandler).toHaveBeenCalledWith(
+      expect.objectContaining({
+        kind: "edit",
+        source: "human",
+        confidence: expect.any(Number),
+        value: expect.any(String),
+      })
+    )
+  })
 })
 
 // Tests for ignoreInitialNullish functionality
@@ -423,6 +452,8 @@ describe("useFeedbackState - ignoreInitialNullish functionality", () => {
       expect.objectContaining({
         session_id: "api-data-session",
         trigger_name: "auto_state_change",
+        kind: "edit",
+        source: "human",
       })
     )
   })
@@ -591,9 +622,9 @@ describe("useFeedbackState - baseline diffing", () => {
 
     expect(mockHandler).toHaveBeenCalledTimes(1)
     const call = mockHandler.mock.calls[0]?.[0]
-    const correction = JSON.parse(call.correction)
-    expect(correction.before).toBe("a")
-    expect(correction.after).toBe("abc")
+    const value = JSON.parse(call.value)
+    expect(value.before).toBe("a")
+    expect(value.after).toBe("abc")
   })
 
   it("when initial is nullish and ignored, baseline becomes first non-nullish value", async () => {
@@ -626,8 +657,8 @@ describe("useFeedbackState - baseline diffing", () => {
 
     expect(mockHandler).toHaveBeenCalledTimes(1)
     const call = mockHandler.mock.calls[0]?.[0]
-    const correction = JSON.parse(call.correction)
-    expect(correction.before).toBe("first")
-    expect(correction.after).toBe("second")
+    const value = JSON.parse(call.value)
+    expect(value.before).toBe("first")
+    expect(value.after).toBe("second")
   })
 })

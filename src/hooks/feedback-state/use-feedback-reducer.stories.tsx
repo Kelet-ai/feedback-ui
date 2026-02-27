@@ -378,10 +378,10 @@ interface FeedbackStateOptions<T> {
 
 ## Integration:
 - Uses existing Kelet context for feedback submission
-- Sends feedback with \`source: 'IMPLICIT'\`
-- Includes diff data in the \`correction\` field
-- Major changes (>50% different) are sent as downvotes
-- Minor changes (≤50% different) are sent as upvotes
+- Sends feedback with \`kind: 'edit'\` and \`source: 'human'\`
+- Includes diff data in the \`value\` field
+- \`confidence\` field contains the diff percentage
+- \`score\` is determined by change size: >50% different → 0, ≤50% → 1
 - Automatically extracts trigger names from \`action.type\`
 
 Perfect for automatically capturing user interactions as implicit feedback in reducer-based components!
@@ -472,10 +472,11 @@ Try clicking the buttons and watch the console for feedback logs with extracted 
     // Get the actual call and verify the essential properties
     const feedbackCall = (args.onFeedback as any)?.mock?.calls?.[0]?.[0]
     await expect(feedbackCall.session_id).toBe("counter-demo")
-    await expect(feedbackCall.source).toBe("IMPLICIT")
+    await expect(feedbackCall.kind).toBe("edit")
+    await expect(feedbackCall.source).toBe("human")
     await expect(feedbackCall.trigger_name).toBe("increment") // Extracted from action.type
-    await expect(feedbackCall.correction).toBeTruthy()
-    await expect(feedbackCall.explanation).toContain("diff percentage")
+    await expect(feedbackCall.value).toBeTruthy()
+    await expect(feedbackCall.confidence).toBeDefined()
 
     // Test another action type
     const addButton = canvas.getByText("Add 5")
@@ -654,9 +655,9 @@ This test simulates rapid user interactions and verifies that only ONE feedback 
     const feedbackCall = (args.onFeedback as any)?.mock?.calls?.[0]?.[0]
     await expect(feedbackCall.trigger_name).toBe("increment")
 
-    // The correction should show the change from 0 to 4 (not individual steps)
-    await expect(feedbackCall.correction).toContain('"count": 0')
-    await expect(feedbackCall.correction).toContain('"count": 4')
+    // The value should show the change from 0 to 4 (not individual steps)
+    await expect(feedbackCall.value).toContain('"count": 0')
+    await expect(feedbackCall.value).toContain('"count": 4')
   },
 }
 
