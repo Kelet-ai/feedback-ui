@@ -63,15 +63,15 @@ export function useStateChangeTracking<T>(
       const diffPercentage = calculateDiffPercentage(startState, endState)
       const diffString = formatDiff(startState, endState, diffType)
 
-      let vote: "upvote" | "downvote"
-      if (options?.vote) {
-        if (typeof options.vote === "function") {
-          vote = options.vote(startState, endState, diffPercentage)
+      let score: number
+      if (options?.score != null) {
+        if (typeof options.score === "function") {
+          score = options.score(startState, endState, diffPercentage)
         } else {
-          vote = options.vote
+          score = options.score
         }
       } else {
-        vote = diffPercentage > 0.5 ? "downvote" : "upvote"
+        score = diffPercentage > 0.5 ? 0 : 1
       }
 
       const idString =
@@ -79,12 +79,13 @@ export function useStateChangeTracking<T>(
 
       feedbackHandler({
         session_id: idString,
-        vote,
-        explanation: `State change with diff percentage: ${(diffPercentage * 100).toFixed(1)}%`,
-        correction: diffString,
-        source: "IMPLICIT",
-        extra_metadata: options?.metadata,
+        kind: "edit",
+        source: "human",
         trigger_name: triggerName,
+        score,
+        value: diffString,
+        confidence: diffPercentage,
+        metadata: options?.metadata,
       })
     },
     [options, session_id, diffType, feedbackHandler]

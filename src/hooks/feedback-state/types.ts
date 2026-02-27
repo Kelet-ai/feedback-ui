@@ -13,7 +13,7 @@ export interface FeedbackStateOptions<T> {
   debounceMs?: number
 
   /**
-   * Format for the diff output in the correction field
+   * Format for the diff output in the value field
    * @default 'git'
    */
   diffType?: DiffType
@@ -34,16 +34,15 @@ export interface FeedbackStateOptions<T> {
   onFeedback?: FeedbackHandler
 
   /**
-   * Vote classification - static vote or function to determine vote based on changes
-   * @default Automatic determination based on diff percentage (>50% = downvote, ≤50% = upvote)
+   * Score classification - static score or function to determine score based on changes
+   * @default Automatic determination based on diff percentage (>50% = 0, ≤50% = 1)
    */
-  vote?:
-    | "upvote"
-    | "downvote"
-    | ((before: T, after: T, diffPercentage: number) => "upvote" | "downvote")
+  score?:
+    | number
+    | ((before: T, after: T, diffPercentage: number) => number)
 
   /**
-   * Default trigger name for state changes when no trigger_name is specified in setState/dispatch
+   * Default trigger name for state changes when no trigger is specified in setState/dispatch
    * @default 'auto_state_change'
    */
   default_trigger_name?: string

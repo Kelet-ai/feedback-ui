@@ -64,8 +64,11 @@ describe("KeletProvider", () => {
 
       await result.current.feedback({
         session_id: "test-id",
-        vote: "upvote",
-        explanation: "Great feature!",
+        kind: "feedback",
+        source: "human",
+        trigger_name: "thumbs",
+        score: 1,
+        value: "Great feature!",
       })
 
       expect(mockFetch).toHaveBeenCalledWith(
@@ -76,14 +79,17 @@ describe("KeletProvider", () => {
             "Content-Type": "application/json",
             Authorization: "Bearer test-api-key",
           },
-          body: JSON.stringify({
-            session_id: "test-id",
-            source: "EXPLICIT",
-            vote: "upvote",
-            explanation: "Great feature!",
-          }),
         })
       )
+
+      const body = JSON.parse(mockFetch.mock.calls[0]![1]!.body)
+      expect(body.session_id).toBe("test-id")
+      expect(body.kind).toBe("feedback")
+      expect(body.source).toBe("human")
+      expect(body.trigger_name).toBe("thumbs")
+      expect(body.score).toBe(1)
+      expect(body.value).toBe("Great feature!")
+      expect(body.timestamp).toBeDefined()
     })
 
     it("should handle API errors gracefully", async () => {
@@ -103,7 +109,10 @@ describe("KeletProvider", () => {
       await expect(
         result.current.feedback({
           session_id: "test-id",
-          vote: "upvote",
+          kind: "feedback",
+          source: "human",
+          trigger_name: "thumbs",
+          score: 1,
         })
       ).rejects.toThrow("Failed to submit feedback: Unauthorized")
     })
@@ -137,7 +146,10 @@ describe("KeletProvider", () => {
 
       await result.current.feedback({
         session_id: "nested-test",
-        vote: "downvote",
+        kind: "feedback",
+        source: "human",
+        trigger_name: "thumbs",
+        score: 0,
       })
 
       expect(mockFetch).toHaveBeenCalledWith(
@@ -203,11 +215,13 @@ describe("KeletProvider", () => {
     it("should include all feedback properties in API call", async () => {
       const feedbackData: FeedbackData = {
         session_id: "complex-test",
-        vote: "downvote",
-        explanation: "Could be better",
-        correction: "Try this instead",
-        selection: "selected text",
-        source: "IMPLICIT",
+        kind: "edit",
+        source: "human",
+        trigger_name: "auto_state_change",
+        score: 0,
+        value: "Try this instead",
+        confidence: 0.75,
+        metadata: { selection: "selected text" },
       }
 
       const wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -220,22 +234,19 @@ describe("KeletProvider", () => {
 
       await result.current.feedback(feedbackData)
 
-      expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.kelet.ai/api/projects/test/signal",
-        expect.objectContaining({
-          body: JSON.stringify({
-            session_id: "complex-test",
-            source: "IMPLICIT",
-            vote: "downvote",
-            explanation: "Could be better",
-            correction: "Try this instead",
-            selection: "selected text",
-          }),
-        })
-      )
+      const body = JSON.parse(mockFetch.mock.calls[0]![1]!.body)
+      expect(body.session_id).toBe("complex-test")
+      expect(body.kind).toBe("edit")
+      expect(body.source).toBe("human")
+      expect(body.trigger_name).toBe("auto_state_change")
+      expect(body.score).toBe(0)
+      expect(body.value).toBe("Try this instead")
+      expect(body.confidence).toBe(0.75)
+      expect(body.metadata.selection).toBe("selected text")
+      expect(body.timestamp).toBeDefined()
     })
 
-    it("should default source to EXPLICIT when not provided", async () => {
+    it("should add timestamp automatically when not provided", async () => {
       const wrapper = ({ children }: { children: React.ReactNode }) => (
         <KeletProvider apiKey="test-key" project="test">
           {children}
@@ -245,20 +256,17 @@ describe("KeletProvider", () => {
       const { result } = renderHook(() => useKelet(), { wrapper })
 
       await result.current.feedback({
-        session_id: "default-source-test",
-        vote: "upvote",
+        session_id: "timestamp-test",
+        kind: "feedback",
+        source: "human",
+        trigger_name: "thumbs",
+        score: 1,
       })
 
-      expect(mockFetch).toHaveBeenCalledWith(
-        expect.any(String),
-        expect.objectContaining({
-          body: JSON.stringify({
-            session_id: "default-source-test",
-            source: "EXPLICIT",
-            vote: "upvote",
-          }),
-        })
-      )
+      const body = JSON.parse(mockFetch.mock.calls[0]![1]!.body)
+      expect(body.timestamp).toBeDefined()
+      // Verify it's a valid ISO 8601 string
+      expect(new Date(body.timestamp).toISOString()).toBe(body.timestamp)
     })
   })
 })
@@ -307,7 +315,10 @@ describe("useDefaultFeedbackHandler hook", () => {
     await expect(
       result.current({
         session_id: "test",
-        vote: "upvote",
+        kind: "feedback",
+        source: "human",
+        trigger_name: "thumbs",
+        score: 1,
       })
     ).resolves.not.toThrow()
 
@@ -342,20 +353,19 @@ describe("useDefaultFeedbackHandler hook", () => {
 
     await result.current({
       session_id: "default-handler-test",
-      vote: "upvote",
-      explanation: "Using default handler",
+      kind: "feedback",
+      source: "human",
+      trigger_name: "thumbs",
+      score: 1,
+      value: "Using default handler",
     })
 
-    expect(mockFetch).toHaveBeenCalledWith(
-      "https://api.kelet.ai/api/projects/test-project/signal",
-      expect.objectContaining({
-        body: JSON.stringify({
-          session_id: "default-handler-test",
-          source: "EXPLICIT",
-          vote: "upvote",
-          explanation: "Using default handler",
-        }),
-      })
-    )
+    const body = JSON.parse(mockFetch.mock.calls[0]![1]!.body)
+    expect(body.session_id).toBe("default-handler-test")
+    expect(body.kind).toBe("feedback")
+    expect(body.source).toBe("human")
+    expect(body.trigger_name).toBe("thumbs")
+    expect(body.score).toBe(1)
+    expect(body.value).toBe("Using default handler")
   })
 })

@@ -85,7 +85,7 @@ Perfect for professional applications with clean, modern UI.
       control: "text",
       description: "Required session ID for tracking feedback",
     },
-    extra_metadata: {
+    metadata: {
       control: "object",
       description: "Optional metadata to include with feedback",
     },
@@ -162,10 +162,14 @@ Professional and clean!
     // Assert upvote is selected (data-selected) and downvote is not
     await expect(upvoteButton).toHaveAttribute("data-selected", "true")
     await expect(downvoteButton).toHaveAttribute("data-selected", "false")
-    await expect(args.onFeedback).toHaveBeenCalledWith({
-      session_id: "shadcn-default",
-      vote: "upvote",
-    })
+    await expect(args.onFeedback).toHaveBeenCalledWith(
+      expect.objectContaining({
+        session_id: "shadcn-default",
+        kind: "feedback",
+        source: "human",
+        score: 1,
+      })
+    )
 
     // 3. Click downvote
     await userEvent.click(downvoteButton)
@@ -173,10 +177,14 @@ Professional and clean!
     // Assert downvote is selected and upvote is not
     await expect(downvoteButton).toHaveAttribute("data-selected", "true")
     await expect(upvoteButton).toHaveAttribute("data-selected", "false")
-    await expect(args.onFeedback).toHaveBeenLastCalledWith({
-      session_id: "shadcn-default",
-      vote: "downvote",
-    })
+    await expect(args.onFeedback).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        session_id: "shadcn-default",
+        kind: "feedback",
+        source: "human",
+        score: 0,
+      })
+    )
 
     // 4. Add detailed feedback
     const textarea = await within(document.body).findByPlaceholderText(
@@ -187,11 +195,15 @@ Professional and clean!
     const submitButton = within(document.body).getByText("Submit")
     await userEvent.click(submitButton)
 
-    await expect(args.onFeedback).toHaveBeenLastCalledWith({
-      session_id: "shadcn-default",
-      vote: "downvote",
-      explanation: "The explanation could be clearer",
-    })
+    await expect(args.onFeedback).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        session_id: "shadcn-default",
+        kind: "feedback",
+        source: "human",
+        score: 0,
+        value: "The explanation could be clearer",
+      })
+    )
   },
 }
 

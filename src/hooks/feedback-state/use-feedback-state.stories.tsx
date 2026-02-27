@@ -315,10 +315,10 @@ interface FeedbackStateOptions<T> {
 
 ## Integration:
 - Uses existing Kelet context for feedback submission
-- Sends feedback with \`source: 'IMPLICIT'\`
-- Includes diff data in the \`correction\` field
-- Major changes (>50% different) are sent as downvotes
-- Minor changes (≤50% different) are sent as upvotes
+- Sends feedback with \`kind: 'edit'\` and \`source: 'human'\`
+- Includes diff data in the \`value\` field
+- \`confidence\` field contains the diff percentage
+- \`score\` is determined by change size: >50% different → 0, ≤50% → 1
 
 Perfect for automatically capturing user state changes as implicit feedback!
         `,
@@ -399,10 +399,11 @@ Try clicking the buttons and watch the console for feedback logs!
     // Get the actual call and verify the essential properties
     const feedbackCall = (args.onFeedback as any)?.mock?.calls?.[0]?.[0]
     await expect(feedbackCall.session_id).toBe("counter-demo")
-    await expect(feedbackCall.source).toBe("IMPLICIT")
-    await expect(feedbackCall.vote).toBe("downvote")
-    await expect(feedbackCall.correction).toBeTruthy()
-    await expect(feedbackCall.explanation).toContain("diff percentage")
+    await expect(feedbackCall.kind).toBe("edit")
+    await expect(feedbackCall.source).toBe("human")
+    await expect(feedbackCall.score).toBeDefined()
+    await expect(feedbackCall.value).toBeTruthy()
+    await expect(feedbackCall.confidence).toBeDefined()
 
     // Test function update
     const doubleButton = canvas.getByText("Double (Function Update)")
@@ -547,11 +548,12 @@ Use the text input to set custom values like \`"hello"\`, \`123\`, or \`{"custom
     // Get the actual call and verify the essential properties
     const feedbackCall = (args.onFeedback as any)?.mock?.calls?.[0]?.[0]
     await expect(feedbackCall.session_id).toBe("custom-demo")
-    await expect(feedbackCall.source).toBe("IMPLICIT")
-    await expect(feedbackCall.vote).toBe("upvote") // Fixed: object change is now calculated as <50%
-    await expect(feedbackCall.correction).toBeTruthy()
-    await expect(feedbackCall.explanation).toContain("diff percentage")
-    await expect(feedbackCall.extra_metadata.test).toBe(true)
+    await expect(feedbackCall.kind).toBe("edit")
+    await expect(feedbackCall.source).toBe("human")
+    await expect(feedbackCall.score).toBeDefined()
+    await expect(feedbackCall.value).toBeTruthy()
+    await expect(feedbackCall.confidence).toBeDefined()
+    await expect(feedbackCall.metadata.test).toBe(true)
 
     // Clear and set a number
     await userEvent.clear(customInput)
@@ -624,11 +626,12 @@ This test simulates rapid user interactions and verifies that only ONE feedback 
 
     const feedbackCall = (args.onFeedback as any)?.mock?.calls?.[0]?.[0]
     await expect(feedbackCall.session_id).toBe("rapid-changes-demo")
-    await expect(feedbackCall.source).toBe("IMPLICIT")
+    await expect(feedbackCall.kind).toBe("edit")
+    await expect(feedbackCall.source).toBe("human")
 
-    // The correction should show the change from 0 to 4 (not individual steps)
-    await expect(feedbackCall.correction).toContain("-0")
-    await expect(feedbackCall.correction).toContain("+4")
+    // The value should show the change from 0 to 4 (not individual steps)
+    await expect(feedbackCall.value).toContain("-0")
+    await expect(feedbackCall.value).toContain("+4")
   },
 }
 
@@ -638,10 +641,10 @@ export const CustomVoteLogic: Story = {
     session_id: "issue-tracker",
     options: {
       debounceMs: 300,
-      vote: (before: any, after: any, _diffPercentage: number) => {
-        // Custom logic: upvote if priority increased, downvote if decreased
-        if (after.priority > before.priority) return "upvote"
-        if (after.priority < before.priority) return "downvote"
+      score: (before: any, after: any, _diffPercentage: number) => {
+        // Custom logic: score 1 if priority increased, score 0 if decreased
+        if (after.priority > before.priority) return 1
+        if (after.priority < before.priority) return 0
 
         // For same priority, use severity logic
         const severityOrder = { low: 1, medium: 2, high: 3, critical: 4 }
@@ -650,7 +653,7 @@ export const CustomVoteLogic: Story = {
         const afterSev =
           severityOrder[after.severity as keyof typeof severityOrder] || 1
 
-        return afterSev > beforeSev ? "downvote" : "upvote" // Higher severity = downvote
+        return afterSev > beforeSev ? 0 : 1 // Higher severity = score 0
       },
     },
   },
@@ -658,18 +661,18 @@ export const CustomVoteLogic: Story = {
     docs: {
       description: {
         story: `
-**Custom Vote Logic** - Demonstrates custom vote determination based on business logic.
+**Custom Score Logic** - Demonstrates custom score determination based on business logic.
 
 **Features:**
-- Custom vote function with access to before/after states and diff percentage
-- Business-specific logic (priority increase = upvote, severity increase = downvote)
+- Custom score function with access to before/after states and diff percentage
+- Business-specific logic (priority increase = score 1, severity increase = score 0)
 - Demonstrates real-world scenario for issue tracking systems
 
-**Vote Logic:**
-- Priority increased: upvote (good change)
-- Priority decreased: downvote (regression) 
-- Higher severity: downvote (problem got worse)
-- Lower severity: upvote (problem got better)
+**Score Logic:**
+- Priority increased: score 1 (good change)
+- Priority decreased: score 0 (regression)
+- Higher severity: score 0 (problem got worse)
+- Lower severity: score 1 (problem got better)
         `,
       },
     },
@@ -690,10 +693,11 @@ export const CustomVoteLogic: Story = {
 
     const feedbackCall = (args.onFeedback as any)?.mock?.calls?.[0]?.[0]
     await expect(feedbackCall.session_id).toBe("issue-tracker")
-    await expect(feedbackCall.source).toBe("IMPLICIT")
+    await expect(feedbackCall.kind).toBe("edit")
+    await expect(feedbackCall.source).toBe("human")
 
-    // The custom vote logic should determine the vote, not the default percentage logic
-    await expect(feedbackCall.vote).toBeDefined()
+    // The custom score logic should determine the score, not the default percentage logic
+    await expect(feedbackCall.score).toBeDefined()
   },
 }
 
@@ -703,17 +707,17 @@ export const StaticVoteConfiguration: Story = {
     session_id: "content-editor",
     options: {
       debounceMs: 300,
-      vote: "upvote", // Always upvote regardless of changes
+      score: 1, // Always score 1 regardless of changes
     },
   },
   parameters: {
     docs: {
       description: {
         story: `
-**Static Vote Configuration** - Always sends the same vote type.
+**Static Score Configuration** - Always sends the same score.
 
 **Features:**
-- Static vote setting overrides automatic determination
+- Static score setting overrides automatic determination
 - Useful for scenarios where all changes are considered positive/negative
 - Example: Content editing where any engagement is positive
 
@@ -737,7 +741,7 @@ export const StaticVoteConfiguration: Story = {
     await expect(args.onFeedback).toHaveBeenCalledTimes(1)
 
     const feedbackCall = (args.onFeedback as any)?.mock?.calls?.[0]?.[0]
-    await expect(feedbackCall.vote).toBe("upvote") // Should always be upvote
+    await expect(feedbackCall.score).toBe(1) // Should always be score 1
 
     // Make another change (completely different content)
     const prefixButton = canvas.getByText('Prefix with "Updated"')
@@ -749,7 +753,7 @@ export const StaticVoteConfiguration: Story = {
     // Still upvote despite major change
     await expect(args.onFeedback).toHaveBeenCalledTimes(2)
     const secondCall = (args.onFeedback as any)?.mock?.calls?.[1]?.[0]
-    await expect(secondCall.vote).toBe("upvote") // Still upvote
+    await expect(secondCall.score).toBe(1) // Still score 1
   },
 }
 
@@ -965,7 +969,8 @@ This prevents noise from the common \`useState(null)\` → API load → \`setSta
 
     const feedbackCall = (args.onFeedback as any)?.mock?.calls?.[0]?.[0]
     await expect(feedbackCall.session_id).toBe("user-data-with-ignore")
-    await expect(feedbackCall.source).toBe("IMPLICIT")
+    await expect(feedbackCall.kind).toBe("edit")
+    await expect(feedbackCall.source).toBe("human")
   },
 }
 

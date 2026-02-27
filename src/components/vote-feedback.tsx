@@ -77,8 +77,9 @@ interface VoteFeedbackContextValue {
   popoverId: string
   triggerId: string
   session_id: string
-  extra_metadata?: Record<string, any>
+  metadata?: Record<string, any>
   trigger_name?: string
+  trace_id?: string
 }
 
 const VoteFeedbackContext = createContext<VoteFeedbackContextValue | null>(null)
@@ -99,12 +100,14 @@ const VoteFeedbackRoot = ({
   onFeedback,
   defaultText = "",
   session_id: sessionIdProp,
-  extra_metadata,
-  trigger_name,
+  metadata,
+  trigger_name: triggerProp,
+  trace_id,
 }: VoteFeedbackRootProps) => {
   // Resolve session_id (support both string and function)
   const session_id =
     typeof sessionIdProp === "function" ? sessionIdProp() : sessionIdProp
+  const trigger_name = triggerProp || undefined
   const [showPopover, setShowPopover] = useState(false)
   const [feedbackText, setFeedbackText] = useState(defaultText)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -135,9 +138,12 @@ const VoteFeedbackRoot = ({
     setVote("upvote")
     const data: FeedbackData = {
       session_id,
-      vote: "upvote",
-      ...(extra_metadata && { extra_metadata }),
-      ...(trigger_name && { trigger_name }),
+      kind: "feedback",
+      source: "human",
+      trigger_name,
+      score: 1,
+      ...(metadata && { metadata }),
+      ...(trace_id && { trace_id }),
     }
 
     try {
@@ -146,7 +152,7 @@ const VoteFeedbackRoot = ({
     } finally {
       setIsSubmitting(false)
     }
-  }, [handler, session_id, extra_metadata, trigger_name])
+  }, [handler, session_id, metadata, trigger_name, trace_id])
 
   const handleDownvote = useCallback(async () => {
     setVote("downvote")
@@ -154,9 +160,12 @@ const VoteFeedbackRoot = ({
     if (handler) {
       const data: FeedbackData = {
         session_id,
-        vote: "downvote",
-        ...(extra_metadata && { extra_metadata }),
-        ...(trigger_name && { trigger_name }),
+        kind: "feedback",
+        source: "human",
+        trigger_name,
+        score: 0,
+        ...(metadata && { metadata }),
+        ...(trace_id && { trace_id }),
       }
 
       try {
@@ -182,7 +191,7 @@ const VoteFeedbackRoot = ({
       document.body.appendChild(announcement)
       setTimeout(() => document.body.removeChild(announcement), 1000)
     }, 0)
-  }, [handler, session_id, extra_metadata, trigger_name])
+  }, [handler, session_id, metadata, trigger_name, trace_id])
 
   const handleTextareaChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -195,13 +204,16 @@ const VoteFeedbackRoot = ({
     const hasText = feedbackText.trim().length > 0
 
     if (hasText) {
-      // Submit with explanation
+      // Submit with value (explanation text)
       const data: FeedbackData = {
         session_id,
-        vote: "downvote",
-        explanation: feedbackText,
-        ...(extra_metadata && { extra_metadata }),
-        ...(trigger_name && { trigger_name }),
+        kind: "feedback",
+        source: "human",
+        trigger_name,
+        score: 0,
+        value: feedbackText,
+        ...(metadata && { metadata }),
+        ...(trace_id && { trace_id }),
       }
 
       try {
@@ -232,8 +244,9 @@ const VoteFeedbackRoot = ({
     feedbackText,
     defaultText,
     session_id,
-    extra_metadata,
+    metadata,
     trigger_name,
+    trace_id,
   ])
 
   const handleKeyDown = useCallback(
@@ -289,8 +302,9 @@ const VoteFeedbackRoot = ({
     popoverId,
     triggerId,
     session_id,
-    extra_metadata,
+    metadata,
     trigger_name,
+    trace_id,
   }
 
   return (

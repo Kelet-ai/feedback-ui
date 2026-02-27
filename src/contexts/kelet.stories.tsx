@@ -79,8 +79,11 @@ function YourComponent() {
   const handleFeedback = async () => {
     await feedback({
       session_id: 'unique-id',
-      vote: 'upvote',
-      explanation: 'Great feature!'
+      kind: 'feedback',
+      source: 'human',
+      trigger_name: 'thumbs',
+      score: 1,
+      value: 'Great feature!'
     });
   };
   
@@ -145,7 +148,10 @@ function ReusableButton() {
     // Works with or without provider - no-op if no provider
     await feedback({
       session_id: 'button-click',
-      vote: 'upvote'
+      kind: 'feedback',
+      source: 'human',
+      trigger_name: 'thumbs',
+      score: 1
     });
   };
   
@@ -169,7 +175,7 @@ The provider automatically handles common scenarios:
 
 \`\`\`tsx
 try {
-  await feedback({ session_id: 'test', vote: 'upvote' });
+  await feedback({ session_id: 'test', kind: 'feedback', source: 'human', trigger_name: 'thumbs', score: 1 });
 } catch (error) {
   console.error('Feedback failed:', error.message);
   // Handle error appropriately
@@ -246,8 +252,11 @@ export const BasicProvider: Story = {
         try {
           await feedback({
             session_id: `demo-${Date.now()}`,
-            vote: "upvote",
-            explanation: feedbackText || undefined,
+            kind: "feedback",
+            source: "human",
+            trigger_name: "thumbs",
+            score: 1,
+            value: feedbackText || undefined,
           })
           setFeedbackText("")
         } catch (_error) {
@@ -354,13 +363,16 @@ This is useful when you have:
       const { api_key, project, feedback } = useKelet()
       const [status, setStatus] = useState("")
 
-      const handleFeedback = async (vote: "upvote" | "downvote") => {
+      const handleFeedback = async (score: number) => {
         setStatus("Submitting...")
         try {
           await feedback({
             session_id: `${project}-demo-${Date.now()}`,
-            vote,
-            explanation: `Feedback for ${project} project`,
+            kind: "feedback",
+            source: "human",
+            trigger_name: "thumbs",
+            score,
+            value: `Feedback for ${project} project`,
           })
           setStatus(`✓ Submitted to ${project}`)
           setTimeout(() => setStatus(""), 2000)
@@ -401,7 +413,7 @@ This is useful when you have:
             <button
               data-testid={`${testId}-upvote`}
               data-feedback-id={`${testId}-upvote`}
-              onClick={() => handleFeedback("upvote")}
+              onClick={() => handleFeedback(1)}
               style={{
                 backgroundColor: "rgba(255,255,255,0.2)",
                 border: "1px solid rgba(255,255,255,0.3)",
@@ -417,7 +429,7 @@ This is useful when you have:
             <button
               data-testid={`${testId}-downvote`}
               data-feedback-id={`${testId}-downvote`}
-              onClick={() => handleFeedback("downvote")}
+              onClick={() => handleFeedback(0)}
               style={{
                 backgroundColor: "rgba(255,255,255,0.2)",
                 border: "1px solid rgba(255,255,255,0.3)",
@@ -569,7 +581,10 @@ Key behaviors:
           // This will be mocked to fail in the test
           await feedback({
             session_id: "error-test",
-            vote: "upvote",
+            kind: "feedback",
+            source: "human",
+            trigger_name: "thumbs",
+            score: 1,
           })
           setStatus("Success (unexpected!)")
         } catch (_error) {
@@ -628,7 +643,10 @@ Key behaviors:
           // This should work silently (no-op when no provider)
           await defaultHandler({
             session_id: "no-provider-test",
-            vote: "upvote",
+            kind: "feedback",
+            source: "human",
+            trigger_name: "thumbs",
+            score: 1,
           })
           setStatus("Default handler worked (no-op)")
         } catch (_error) {
@@ -780,14 +798,17 @@ Shows:
       const { api_key, project, feedback } = useKelet()
       const [lastSubmission, setLastSubmission] = useState("")
 
-      const handleQuickFeedback = async (vote: "upvote" | "downvote") => {
+      const handleQuickFeedback = async (score: number) => {
         try {
           await feedback({
             session_id: `quick-${Date.now()}`,
-            vote,
-            explanation: `Quick ${vote} from useKelet hook`,
+            kind: "feedback",
+            source: "human",
+            trigger_name: "thumbs",
+            score,
+            value: `Quick ${score === 1 ? "upvote" : "downvote"} from useKelet hook`,
           })
-          setLastSubmission(`${vote} submitted to ${project}`)
+          setLastSubmission(`${score === 1 ? "upvote" : "downvote"} submitted to ${project}`)
         } catch (_error) {
           setLastSubmission("Error: " + (_error as Error).message)
         }
@@ -822,7 +843,7 @@ Shows:
             <button
               data-testid="use-kelet-upvote"
               data-feedback-id="use-kelet-upvote"
-              onClick={() => handleQuickFeedback("upvote")}
+              onClick={() => handleQuickFeedback(1)}
               style={{
                 backgroundColor: "#48bb78",
                 color: "white",
@@ -838,7 +859,7 @@ Shows:
             <button
               data-testid="use-kelet-downvote"
               data-feedback-id="use-kelet-downvote"
-              onClick={() => handleQuickFeedback("downvote")}
+              onClick={() => handleQuickFeedback(0)}
               style={{
                 backgroundColor: "#e53e3e",
                 color: "white",
@@ -877,8 +898,11 @@ Shows:
         try {
           await feedbackHandler({
             session_id: `default-handler-${Date.now()}`,
-            vote: "upvote",
-            explanation: "Using default feedback handler",
+            kind: "feedback",
+            source: "human",
+            trigger_name: "thumbs",
+            score: 1,
+            value: "Using default feedback handler",
           })
           setStatus("✓ Submitted successfully")
           setTimeout(() => setStatus(""), 2000)
