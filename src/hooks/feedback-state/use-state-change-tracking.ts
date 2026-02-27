@@ -63,16 +63,10 @@ export function useStateChangeTracking<T>(
       const diffPercentage = calculateDiffPercentage(startState, endState)
       const diffString = formatDiff(startState, endState, diffType)
 
-      let score: number
-      if (options?.score != null) {
-        if (typeof options.score === "function") {
-          score = options.score(startState, endState, diffPercentage)
-        } else {
-          score = options.score
-        }
-      } else {
-        score = diffPercentage > 0.5 ? 0 : 1
-      }
+      const score =
+        typeof options?.score === "function"
+          ? options.score(startState, endState, diffPercentage)
+          : (options?.score ?? (diffPercentage > 0.5 ? 0 : 1))
 
       const idString =
         typeof session_id === "function" ? session_id(endState) : session_id
