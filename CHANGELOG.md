@@ -1,3 +1,12 @@
+# [1.3.0](https://github.com/kelet-ai/feedback-ui/compare/v1.2.0...v1.3.0) (2026-03-29)
+
+
+### Features
+
+* close headless popover on click-outside ([d5f29b9](https://github.com/kelet-ai/feedback-ui/commit/d5f29b9578ab081836f5434bf3af0f648389e2b0))
+
+
+
 # [1.2.0](https://github.com/kelet-ai/feedback-ui/compare/v1.1.1...v1.2.0) (2026-03-29)
 
 
@@ -37,15 +46,6 @@
 
 * remove broken otel integration ([687b0db](https://github.com/kelet-ai/feedback-ui/commit/687b0dbca958bdca6976f3cdb23e2133d99ab447))
 * remove broken otel integration ([43e448b](https://github.com/kelet-ai/feedback-ui/commit/43e448b39736908a2adf7623884e8cfafbfb1abb))
-
-
-
-## [1.0.1](https://github.com/kelet-ai/feedback-ui/compare/v1.0.0...v1.0.1) (2025-09-08)
-
-
-### Bug Fixes
-
-* getTraceParent instead of getOtelTraceId ([f264086](https://github.com/kelet-ai/feedback-ui/commit/f264086e418b8686952930f5d4eadad5363cbe77))
 
 
 
