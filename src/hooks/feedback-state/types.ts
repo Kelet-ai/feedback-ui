@@ -37,9 +37,7 @@ export interface FeedbackStateOptions<T> {
    * Score classification - static score or function to determine score based on changes
    * @default Automatic determination based on diff percentage (>50% = 0, ≤50% = 1)
    */
-  score?:
-    | number
-    | ((before: T, after: T, diffPercentage: number) => number)
+  score?: number | ((before: T, after: T, diffPercentage: number) => number)
 
   /**
    * Default trigger name for state changes when no trigger is specified in setState/dispatch

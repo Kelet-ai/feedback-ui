@@ -1,4 +1,4 @@
-import {
+import React, {
   cloneElement,
   createContext,
   isValidElement,
@@ -72,6 +72,7 @@ interface VoteFeedbackContextValue {
   handleTextareaChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
   handleSubmit: () => void
   handleKeyDown: (e: React.KeyboardEvent) => void
+  closePopover: () => void
   textareaRef: React.RefObject<HTMLTextAreaElement | null>
   triggerRef: React.RefObject<HTMLButtonElement | null>
   popoverId: string
@@ -133,6 +134,12 @@ const VoteFeedbackRoot = ({
     // Return focus to trigger button for accessibility
     setTimeout(() => triggerRef.current?.focus(), 0)
   }, [session_id, defaultText])
+
+  const closePopover = useCallback(() => {
+    setShowPopover(false)
+    setFeedbackText(defaultText)
+    setTimeout(() => triggerRef.current?.focus(), 0)
+  }, [defaultText])
 
   const handleUpvote = useCallback(async () => {
     setVote("upvote")
@@ -252,9 +259,7 @@ const VoteFeedbackRoot = ({
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        setShowPopover(false)
-        setFeedbackText(defaultText)
-        triggerRef.current?.focus()
+        closePopover()
       } else if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
         e.preventDefault()
         handleSubmit().then((_) => {})
@@ -280,7 +285,7 @@ const VoteFeedbackRoot = ({
         }
       }
     },
-    [handleSubmit, showPopover, popoverId, defaultText]
+    [handleSubmit, showPopover, popoverId, closePopover]
   )
 
   const contextValue: VoteFeedbackContextValue = {
@@ -297,6 +302,7 @@ const VoteFeedbackRoot = ({
     handleTextareaChange,
     handleSubmit,
     handleKeyDown,
+    closePopover,
     textareaRef,
     triggerRef,
     popoverId,
@@ -417,8 +423,33 @@ const DownvoteButton = ({
 
 // Popover container component
 const Popover = ({ asChild, children, ...props }: PopoverProps) => {
-  const { showPopover, handleKeyDown, popoverId, triggerId } =
-    useVoteFeedbackContext()
+  const {
+    showPopover,
+    closePopover,
+    handleKeyDown,
+    popoverId,
+    triggerId,
+    triggerRef,
+  } = useVoteFeedbackContext()
+
+  const containerRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    if (!showPopover) return
+
+    const handleMouseDown = (event: MouseEvent) => {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node) &&
+        !triggerRef.current?.contains(event.target as Node)
+      ) {
+        closePopover()
+      }
+    }
+
+    document.addEventListener("mousedown", handleMouseDown)
+    return () => document.removeEventListener("mousedown", handleMouseDown)
+  }, [showPopover, closePopover, triggerRef])
 
   if (!showPopover) {
     return null
@@ -438,10 +469,10 @@ const Popover = ({ asChild, children, ...props }: PopoverProps) => {
   if (asChild && isValidElement(children)) {
     return (
       <>
-        {cloneElement(
-          children,
-          mergeProps(slotProps, children.props as Record<string, any>)
-        )}
+        {cloneElement(children as React.ReactElement<Record<string, any>>, {
+          ...mergeProps(slotProps, children.props as Record<string, any>),
+          ref: containerRef,
+        })}
         <div id={`${popoverId}-description`} className="sr-only">
           Provide additional feedback for your downvote
         </div>
@@ -450,7 +481,7 @@ const Popover = ({ asChild, children, ...props }: PopoverProps) => {
   }
 
   return (
-    <div {...slotProps}>
+    <div ref={containerRef as React.RefObject<HTMLDivElement>} {...slotProps}>
       <div id={`${popoverId}-description`} className="sr-only">
         Provide additional feedback for your downvote
       </div>

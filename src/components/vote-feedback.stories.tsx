@@ -918,3 +918,130 @@ Watch the **Interactions** panel to see automated testing, and **Actions** panel
     </VoteFeedback.Root>
   ),
 }
+
+export const HeadlessClickOutside: Story = {
+  args: {
+    session_id: "click-outside-demo",
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Clicking outside the popover closes it without submitting feedback.",
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    const downvoteButton = canvas.getByText("👎 Dislike")
+
+    // Open the popover
+    await userEvent.click(downvoteButton)
+    expect(canvas.getByRole("dialog")).toBeInTheDocument()
+
+    // Click the outside element — should close the popover
+    const outside = canvas.getByTestId("outside-target")
+    await userEvent.click(outside)
+    expect(canvas.queryByRole("dialog")).not.toBeInTheDocument()
+  },
+  render: (args) => (
+    <div style={{ display: "flex", gap: "32px", alignItems: "flex-start" }}>
+      <VoteFeedback.Root {...args}>
+        <div style={{ position: "relative", display: "inline-block" }}>
+          <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+            <VoteFeedback.UpvoteButton
+              style={{
+                padding: "8px 16px",
+                backgroundColor: "#22c55e",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                cursor: "pointer",
+                fontSize: "14px",
+              }}
+            >
+              👍 Like
+            </VoteFeedback.UpvoteButton>
+
+            <VoteFeedback.DownvoteButton
+              style={{
+                padding: "8px 16px",
+                backgroundColor: "#ef4444",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                cursor: "pointer",
+                fontSize: "14px",
+              }}
+            >
+              👎 Dislike
+            </VoteFeedback.DownvoteButton>
+          </div>
+
+          <VoteFeedback.Popover
+            style={{
+              position: "absolute",
+              top: "100%",
+              left: "0",
+              marginTop: "8px",
+              padding: "12px",
+              backgroundColor: "white",
+              border: "1px solid #e5e7eb",
+              borderRadius: "8px",
+              boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)",
+              width: "240px",
+              zIndex: 10,
+            }}
+          >
+            <VoteFeedback.Textarea
+              style={{
+                width: "100%",
+                padding: "8px",
+                border: "1px solid #e5e7eb",
+                borderRadius: "4px",
+                resize: "none",
+                marginBottom: "8px",
+                minHeight: "60px",
+                fontSize: "14px",
+                fontFamily: "inherit",
+                boxSizing: "border-box" as const,
+              }}
+              placeholder="Tell us what went wrong..."
+            />
+            <VoteFeedback.SubmitButton
+              style={{
+                padding: "6px 14px",
+                backgroundColor: "#3b82f6",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                cursor: "pointer",
+                fontSize: "14px",
+                float: "right" as const,
+              }}
+            >
+              Send
+            </VoteFeedback.SubmitButton>
+          </VoteFeedback.Popover>
+        </div>
+      </VoteFeedback.Root>
+
+      <div
+        data-testid="outside-target"
+        style={{
+          padding: "12px 20px",
+          backgroundColor: "#f3f4f6",
+          border: "1px dashed #9ca3af",
+          borderRadius: "6px",
+          color: "#6b7280",
+          fontSize: "14px",
+          cursor: "pointer",
+          userSelect: "none" as const,
+        }}
+      >
+        Click me to close popover
+      </div>
+    </div>
+  ),
+}

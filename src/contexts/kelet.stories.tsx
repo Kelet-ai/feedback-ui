@@ -808,7 +808,9 @@ Shows:
             score,
             value: `Quick ${score === 1 ? "upvote" : "downvote"} from useKelet hook`,
           })
-          setLastSubmission(`${score === 1 ? "upvote" : "downvote"} submitted to ${project}`)
+          setLastSubmission(
+            `${score === 1 ? "upvote" : "downvote"} submitted to ${project}`
+          )
         } catch (_error) {
           setLastSubmission("Error: " + (_error as Error).message)
         }
