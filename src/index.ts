@@ -14,6 +14,7 @@ export {
   KeletProvider,
   KeletContext,
   useKelet,
+  useKeletSignal,
   useDefaultFeedbackHandler,
 } from "@/contexts/kelet"
 

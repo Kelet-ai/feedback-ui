@@ -43,9 +43,26 @@ export const useKelet = (): KeletContextValue => {
   return context
 }
 
-export const useDefaultFeedbackHandler = (): ((
-  data: FeedbackData
-) => Promise<void>) => {
+/**
+ * Returns the signal-sending function from the nearest KeletProvider.
+ *
+ * Use this hook to send signals manually — e.g. tracking custom events,
+ * page views, or any interaction not covered by useFeedbackState.
+ *
+ * Safe to call outside a provider: returns a no-op and logs a warning.
+ *
+ * @example
+ * const sendSignal = useKeletSignal()
+ *
+ * sendSignal({
+ *   session_id: 'my-session',
+ *   kind: 'feedback',
+ *   source: 'human',
+ *   score: 1,
+ *   trigger_name: 'copy_button_clicked',
+ * })
+ */
+export const useKeletSignal = (): ((data: FeedbackData) => Promise<void>) => {
   const context = useContext(KeletContext)
   if (!context) {
     console.warn(
@@ -58,6 +75,8 @@ export const useDefaultFeedbackHandler = (): ((
     return context.feedback
   }
 }
+
+export const useDefaultFeedbackHandler = useKeletSignal
 
 // The KeletProvider component
 export const KeletProvider: React.FC<

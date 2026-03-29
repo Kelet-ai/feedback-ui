@@ -126,6 +126,43 @@ function ContentEditor() {
 }
 ```
 
+### **Pattern 4: Manual Signal Sending**
+
+Send signals directly without tying them to component state — useful for custom events, page views, or any interaction not covered by the other patterns:
+
+```tsx
+import { KeletProvider, useKeletSignal } from "@kelet-ai/feedback-ui"
+
+function CopyButton({ sessionId }: { sessionId: string }) {
+  const sendSignal = useKeletSignal()
+
+  return (
+    <button
+      onClick={() => {
+        navigator.clipboard.writeText("...")
+        sendSignal({
+          session_id: sessionId,
+          kind: "feedback",
+          source: "human",
+          score: 1,
+          trigger_name: "copy_button_clicked",
+        })
+      }}
+    >
+      Copy
+    </button>
+  )
+}
+
+function App() {
+  return (
+    <KeletProvider apiKey="..." project="my-project">
+      <CopyButton sessionId="response-abc123" />
+    </KeletProvider>
+  )
+}
+```
+
 ### **Pattern 3: Complex State with Reducer**
 
 For advanced state management with automatic trigger tracking, by using a drop-in replacement for useReducer:
@@ -356,6 +393,39 @@ Context-aware feedback form that appears after voting.
   <VoteFeedback.SubmitButton>Send</VoteFeedback.SubmitButton>
 </VoteFeedback.Popover>
 ```
+
+---
+
+## ✉️ Manual Signal Sending
+
+### **useKeletSignal Hook**
+
+Returns the signal-sending function from the nearest `KeletProvider`. Use this to send signals manually for any event — custom interactions, page views, feature usage — without tying them to component state.
+
+Safe to call outside a provider: returns a no-op and logs a warning.
+
+```tsx
+import { useKeletSignal } from "@kelet-ai/feedback-ui"
+
+function MyComponent() {
+  const sendSignal = useKeletSignal()
+
+  const handleAction = () => {
+    sendSignal({
+      session_id: "my-session",
+      kind: "feedback",
+      source: "human",
+      score: 1,
+      trigger_name: "user_action",
+      metadata: { context: "sidebar" },
+    })
+  }
+
+  return <button onClick={handleAction}>Do something</button>
+}
+```
+
+Requires a `KeletProvider` ancestor to send signals to the API.
 
 ---
 
